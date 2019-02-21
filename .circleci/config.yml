@@ -25,7 +25,7 @@ jobs:
           paths:
             - ".git"
             
-  install-and-test:
+  test:
     docker:
     
       - image: circleci/node:11.7   
