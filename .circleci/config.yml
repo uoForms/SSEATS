@@ -25,16 +25,18 @@ jobs:
 
       - restore_cache:
           keys:
-            - dependencies-{{ checksum "package-lock.json" }}
+            - dependencies-{{ checksum "cws-react-node/package-lock.json" }}
             # fallback to using the latest cache if no exact match is found
             - dependencies-
+      
+      - run: cd cws-react-node
 
       - run: npm install
 
       - save_cache:
           paths:
             - node_modules
-          key: dependencies-{{ checksum "package.json" }}
+          key: dependencies-{{ checksum "cws-react-node/package.json" }}
 
       # run tests!
       - run: npm test
