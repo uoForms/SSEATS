@@ -9,7 +9,7 @@ jobs:
 
       - image: circleci/node:11.7
 
-    working_directory: "cws-react-node"
+    working_directory: "~/cws-react-node"
     
     steps:
       - restore_cache:
