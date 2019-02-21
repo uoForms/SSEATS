@@ -1,51 +1,40 @@
-# Javascript Node CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-javascript/ for more details
-#
-version: 2.1
+version: 2
 jobs:
   build:
     docker:
-
       - image: circleci/node:11.7
-
     working_directory: "~/project"
-    
     steps:
       - restore_cache:
          keys:
            - source-{{ .Branch }}-{{ .Revision }}
            - source-{{ .Branch }}-
            - source-
-    
       - checkout
-      
       - save_cache:
           key: source-{{ .Branch }}-{{ .Revision }}
           paths:
             - ".git"
-            
   test:
     docker:
-    
       - image: circleci/node:11.7   
-    
     working_directory: "~/project/cws-react-node"
-      
     steps:
-      
       - restore_cache:
           keys:
             - dependencies-{{ checksum "cws-react-node/package-lock.json" }}
-            # fallback to using the latest cache if no exact match is found
             - dependencies-
-      
       - run: npm install
-
       - save_cache:
           paths:
             - node_modules
           key: dependencies-{{ checksum "cws-react-node/package.json" }}
-
-      # run tests!
       - run: npm test
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
