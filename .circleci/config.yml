@@ -42,7 +42,7 @@ workflows:
       - test
       - deploy-job:
           requires:
-            - build-job
+            - test
           filters:
             branches:
               only: master
