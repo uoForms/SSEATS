@@ -39,6 +39,8 @@ jobs:
            - source-
       - checkout:
           path: "~/project"
+      - run: npm install
+      - run: npm install firebase-tools
       - run:
           name: Deploy Master to Firebase
           command: firebase deploy --token=$FIREBASE_DEPLOY_TOKEN
