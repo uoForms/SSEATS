@@ -18,17 +18,17 @@ jobs:
   test:
     docker:
       - image: circleci/node:11.7   
-    working_directory: "~/project/cws-react-node"
+    working_directory: "~/project/cws/cws-react-node"
     steps:
       - restore_cache:
           keys:
-            - dependencies-{{ checksum "cws-react-node/package-lock.json" }}
+            - dependencies-{{ checksum "package.json" }}
             - dependencies-
       - run: npm install
       - save_cache:
           paths:
             - node_modules
-          key: dependencies-{{ checksum "cws-react-node/package.json" }}
+          key: dependencies-{{ checksum "package.json" }}
       - run: npm test
 workflows:
   version: 2
