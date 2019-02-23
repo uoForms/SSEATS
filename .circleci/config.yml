@@ -1,0 +1,49 @@
+version: 2
+jobs:
+  test:
+    docker:
+      - image: circleci/node:11.7   
+    working_directory: "~/project/cws-react-node"
+    steps:
+      - restore_cache:
+         keys:
+           - source-{{ .Branch }}-{{ .Revision }}
+           - source-{{ .Branch }}-
+           - source-
+      - checkout:
+          path: "~/project"
+      - save_cache:
+          key: source-{{ .Branch }}-{{ .Revision }}
+          paths:
+            - ".git"
+      - restore_cache:
+          keys:
+            - dependencies-{{ checksum "package.json" }}
+            - dependencies-
+      - run: npm install
+      - save_cache:
+          paths:
+            - node_modules
+          key: dependencies-{{ checksum "package.json" }}
+      - run: npm test
+      
+  deploy-job:
+    docker:
+      - image: circleci/node:11.7
+    working_directory: "~/project/cws-react-node"
+    steps:
+      - run:
+          name: Deploy Master to Firebase
+          command: ./node_modules/.bin/firebase deploy --token=$FIREBASE_DEPLOY_TOKEN
+workflows:
+  version: 2
+  deploy:
+    jobs:
+      - test
+      - deploy-job:
+          requires:
+            - test
+          filters:
+            branches:
+              only: master
+      
