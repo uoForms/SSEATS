@@ -2,7 +2,7 @@ version: 2
 jobs:
   test:
     docker:
-      - image: circleci/node:11.7   
+      - image: circleci/node:11.7@sha256:9ae8f69112581cef7c87bc3b9bcbc7229e734dbfca82ea7499b7c1e59bf34dd3
     working_directory: "~/project/cws-react-node"
     steps:
       - restore_cache:
@@ -29,18 +29,10 @@ jobs:
       
   deploy-job:
     docker:
-      - image: circleci/node:11.7
+      - image: circleci/node:11.7@sha256:9ae8f69112581cef7c87bc3b9bcbc7229e734dbfca82ea7499b7c1e59bf34dd3
     working_directory: "~/project/cws-react-node"
     steps:
-      - restore_cache:
-         keys:
-           - source-{{ .Branch }}-{{ .Revision }}
-           - source-{{ .Branch }}-
-           - source-
-      - checkout:
-          path: "~/project"
-      - run: npm install
-      - run: npm install firebase-tools
+      - run: npm run build
       - run:
           name: Deploy Master to Firebase
           command: firebase deploy --token=$FIREBASE_DEPLOY_TOKEN
