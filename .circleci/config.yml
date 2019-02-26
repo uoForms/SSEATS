@@ -32,10 +32,17 @@ jobs:
       - image: circleci/node:11.7@sha256:9ae8f69112581cef7c87bc3b9bcbc7229e734dbfca82ea7499b7c1e59bf34dd3
     working_directory: "~/project/cws-react-node"
     steps:
+      - checkout:
+          path: "~/project"
+      - restore_cache:
+          keys:
+            - dependencies-{{ checksum "package.json" }}
+            - dependencies-
+      - run: npm install
       - run: npm run build
       - run:
           name: Deploy Master to Firebase
-          command: firebase deploy --token=$FIREBASE_DEPLOY_TOKEN
+          command: ./node_modules/.bin/firebase deploy --token=$FIREBASE_DEPLOY_TOKEN
 workflows:
   version: 2
   deploy:
