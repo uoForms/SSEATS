@@ -48,5 +48,10 @@ workflows:
   deploy:
     jobs:
       - test
-      - deploy-job
+      - deploy-job:
+          requires:
+            - test
+          filters:
+            branches:
+              only: master
       
