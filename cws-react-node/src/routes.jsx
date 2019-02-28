@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 // pages
 import Login from './login.jsx';
-import Default from './default.jsx'
+import NotFound from './404.jsx'
 
 export default class Routes extends React.Component {
   render() {
@@ -10,7 +10,7 @@ export default class Routes extends React.Component {
         <BrowserRouter>
           <Switch>
             <Route exact path='/' component={Login} />
-            <Route path='/*' component={Default} />
+            <Route path='/*' component={NotFound} />
           </Switch>
         </BrowserRouter>
     );
