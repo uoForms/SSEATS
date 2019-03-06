@@ -33,7 +33,7 @@ export default class Login extends React.Component {
       <div class="form">
         {this.state.showError ? <p class="warning">{this.state.errorMessage}</p> : null}
         <div class="form-group">
-          <label>Username</label><br/>
+          <label>Username</label>
           <input 
             id="username"
             class="form-component"
@@ -41,10 +41,10 @@ export default class Login extends React.Component {
             placeholder="Username"
             title="Username"
             onChange={() => this.setState({username:document.getElementById('username').value})}
-          /><br/>
+          />
         </div>
         <div class="form-group">
-          <label>Password</label><br/>
+          <label>Password</label>
           <input
             id="password"
             class="form-component"
@@ -52,7 +52,7 @@ export default class Login extends React.Component {
             placeholder="Password"
             title="Password"
             onChange={() => this.setState({password:document.getElementById('password').value})}
-          /><br/>
+          />
         </div>
         <button class="form-group" title="Login to your account." onClick={(event)=>this.handleClick(event)}>Login</button>
       </div>
