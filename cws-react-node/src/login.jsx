@@ -30,23 +30,31 @@ export default class Login extends React.Component {
 
   render() {
     return (
-      <div id="textForm">
-        {this.state.showError ? <h5 id="loginError">{this.state.errorMessage}</h5> : null}
-        <input 
-          id="textfield1"
-          type="text"  
-          placeholder="Username" 
-          title="Enter your username." 
-          onChange={() => this.setState({username:document.getElementById('textfield1').value})}
-        /><br/>
-        <input  
-          id="textfield2"
-          type="password" 
-          placeholder="Password" 
-          title="Enter your password." 
-          onChange={() => this.setState({password:document.getElementById('textfield2').value})}
-        /><br/>
-        <button id="textfield3" title="Login to your account." onClick={(event)=>this.handleClick(event)}>Login</button>
+      <div class="form">
+        {this.state.showError ? <p class="warning">{this.state.errorMessage}</p> : null}
+        <div class="form-group">
+          <label>Username</label><br/>
+          <input 
+            id="username"
+            class="form-component"
+            type="text"
+            placeholder="Username"
+            title="Username"
+            onChange={() => this.setState({username:document.getElementById('username').value})}
+          /><br/>
+        </div>
+        <div class="form-group">
+          <label>Password</label><br/>
+          <input
+            id="password"
+            class="form-component"
+            type="password"
+            placeholder="Password"
+            title="Password"
+            onChange={() => this.setState({password:document.getElementById('password').value})}
+          /><br/>
+        </div>
+        <button class="form-group" title="Login to your account." onClick={(event)=>this.handleClick(event)}>Login</button>
       </div>
     );
   }
