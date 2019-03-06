@@ -1,0 +1,17 @@
+[id^='textfield'] {
+    margin: 3px;
+    border-radius: 3px;
+}
+
+[id^='textForm'] {
+    background: white;
+    max-width: 360px;
+    margin: 100px auto 16px;
+    padding: 32px 24px 16px;
+    border-radius: 3px;
+}
+
+[id$='Error'] {
+    color:red;
+    margin:5px;
+}
