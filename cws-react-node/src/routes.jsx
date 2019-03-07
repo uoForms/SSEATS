@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 // pages
 import Login from './login.jsx';
 import NotFound from './404.jsx'
+import Report from './report.jsx'
 
 export default class Routes extends React.Component {
   render() {
@@ -10,6 +11,7 @@ export default class Routes extends React.Component {
         <BrowserRouter>
           <Switch>
             <Route exact path='/' component={Login} />
+            <Route exact path='/report' component={Report}/>
             <Route path='/*' component={NotFound} />
           </Switch>
         </BrowserRouter>
