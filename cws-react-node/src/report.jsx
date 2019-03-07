@@ -15,7 +15,7 @@ class Report extends React.Component {
       columnDefs : [
         {headerName: "Name", field : "name"},
         {headerName: "Score", field : "score"},
-        {headerName: "Comment", field : "comment"}
+        {headerName: "Comment", field : "comment"},
       ],
       rowData:[
         {name: "Test",score :"9", comment:"Testing Table"},
