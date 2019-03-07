@@ -25,6 +25,9 @@ jobs:
           paths:
             - node_modules
           key: dependencies-{{ checksum "package.json" }}
+      - run:    
+         name: Check Valid Build
+         command: npm run build     
       - run: npm test
       
   deploy-job:
