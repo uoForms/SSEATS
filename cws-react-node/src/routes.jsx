@@ -11,8 +11,8 @@ export default class Routes extends React.Component {
         <BrowserRouter>
           <Switch>
             <Route exact path='/' component={Login} />
+            <Route exact path='/report' component={Report}/>
             <Route path='/*' component={NotFound} />
-            <Route exact path='/' component={Report}/>
           </Switch>
         </BrowserRouter>
     );
