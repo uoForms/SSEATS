@@ -17,11 +17,11 @@ export default class Login extends React.Component {
     let wrong = true;
     let msg = 'You must enter username and password.';
     // Simulate a invalid login.
-    if (this.state.username != '' && this.state.password != '') {
+    if (this.state.username !== '' && this.state.password !== '') {
       msg = "Invalid username or password.";
     }
     // Simulate a valid login.
-    if (this.state.username == 'admin' && this.state.password == 'admin') {
+    if (this.state.username === 'admin' && this.state.password === 'admin') {
       wrong = false;
       window.location.href = '/home';
     }
