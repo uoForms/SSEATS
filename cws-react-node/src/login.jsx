@@ -3,32 +3,32 @@ import Alert from 'react-bootstrap/Alert';
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
+import { withFirebase } from './component/firebase/context'
 
-export default class Login extends React.Component {
+class LoginForm extends React.Component {
   constructor(props) {
     super(props);
-    this.state={
+    this.INITIAL_STATE = {
       username:'',
       password:'',
       showError:false,
       errorMessage:''
     };
+    this.state = this.INITIAL_STATE;
   }
 
   handleClick(event) {
-    // Defaults to incomplete credentials.
-    let wrong = true;
-    let msg = 'You must enter username and password.';
-    // Simulate a invalid login.
     if (this.state.username !== '' && this.state.password !== '') {
-      msg = "Invalid username or password.";
+      this.props.firebase.doSignInWithEmailAndPassword(this.state.username, this.state.password)
+      .then(() => {
+        console.log('success');
+        this.setState(this.INITIAL_STATE);
+        this.props.history.push('/home');
+      }).catch(() => {
+        console.log('failed');
+        this.setState({showError:true, errorMessage:"Invalid username or password."});
+      });
     }
-    // Simulate a valid login.
-    if (this.state.username === 'admin' && this.state.password === 'admin') {
-      wrong = false;
-      window.location.href = '/home';
-    }
-    this.setState({showError:wrong, errorMessage:msg});
   }
 
   render() {
@@ -55,10 +55,14 @@ export default class Login extends React.Component {
               title="Password"
               onChange={() => this.setState({password:document.getElementById('password').value})}
             />
-        </Form.Group>
-        <Button onClick={(event)=>this.handleClick(event)}>Login</Button>
-      </Card.Body>
-    </Card>
+          </Form.Group>
+          <Button onClick={(event)=>this.handleClick(event)}>Login</Button>
+        </Card.Body>
+      </Card>
     );
   }
 }
+
+const LoginPage = withFirebase(LoginForm);
+
+export default LoginPage;

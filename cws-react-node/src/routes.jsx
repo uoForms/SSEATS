@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 // pages
-import Login from './login.jsx';
+import LoginPage from './login.jsx';
 import NotFound from './404.jsx'
 import Report from './report.jsx'
 
@@ -10,7 +10,7 @@ export default class Routes extends React.Component {
     return (
         <BrowserRouter>
           <Switch>
-            <Route exact path='/' component={Login} />
+            <Route exact path='/' component={LoginPage} />
             <Route exact path='/report' component={Report}/>
             <Route path='/*' component={NotFound} />
           </Switch>
