@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
+import Card from 'react-bootstrap/Card';
 
 class NotFound extends Component {
 
   render() {
-    return (<body>
+    return (
+      <body>
     <div id="message">
       <h2>404</h2>
       <h1>Page Not Found</h1>
