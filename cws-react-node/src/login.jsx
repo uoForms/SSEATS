@@ -28,6 +28,10 @@ class LoginForm extends React.Component {
         console.log('failed');
         this.setState({showError:true, errorMessage:"Invalid username or password."});
       });
+    } else if(this.state.username !== '' || this.state.password !== '') {
+      this.setState({showError:true, errorMessage:"Must enter a username and password"})
+    } else {
+      this.setState({showError:false})
     }
   }
 
