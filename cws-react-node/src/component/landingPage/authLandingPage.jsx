@@ -1,6 +1,5 @@
 import React from 'react';
 import Card from 'react-bootstrap/Card';
-import Form from 'react-bootstrap/Form';
 import ListGroup from 'react-bootstrap/ListGroup'
 
 class AuthLandingPage extends React.Component {
