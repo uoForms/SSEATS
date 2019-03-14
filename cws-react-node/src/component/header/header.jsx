@@ -15,7 +15,7 @@ export default class Header extends React.Component {
           <Navbar.Brand href="/">POMME</Navbar.Brand>
           <Nav className="mr-auto">
             <Nav.Item>
-              <Nav.Link href="/home">Home</Nav.Link>
+              <Nav.Link href="/">Home</Nav.Link>
             </Nav.Item>
           </Nav>
           <Nav>
