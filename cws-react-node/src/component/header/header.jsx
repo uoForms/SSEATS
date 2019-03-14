@@ -12,10 +12,10 @@ export default class Header extends React.Component {
   render() {
     return (
         <Navbar bg="dark" variant="dark">
-          <Navbar.Brand href="/home">POMME</Navbar.Brand>
+          <Navbar.Brand href="/">POMME</Navbar.Brand>
           <Nav className="mr-auto">
             <Nav.Item>
-              <Nav.Link href="#home">Home</Nav.Link>
+              <Nav.Link href="/home">Home</Nav.Link>
             </Nav.Item>
           </Nav>
           <Nav>
