@@ -3,10 +3,6 @@ import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup'
 
 class NoAuthLandingPage extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   render(){
     return(
       <Card style={{ width: '75rem', margin: '5rem auto'}}>
