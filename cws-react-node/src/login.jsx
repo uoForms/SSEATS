@@ -23,7 +23,7 @@ class LoginForm extends React.Component {
       .then(() => {
         console.log('success');
         this.setState(this.INITIAL_STATE);
-        this.props.history.push('/home');
+        this.props.history.push('/');
       }).catch(() => {
         console.log('failed');
         this.setState({showError:true, errorMessage:"Invalid username or password."});

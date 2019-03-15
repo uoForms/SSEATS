@@ -10,8 +10,28 @@ import Report from './report.jsx'
 
 
 class RoutesBase extends React.Component {
+  constructor(props){
+    super(props)
+    this.state = {
+      isAuthenticating: true
+    };
+  }
 
-  unauthenticatedRouting(){
+  resolveUser() {
+    return new Promise((resolve, reject) => {
+      this.props.firebase.auth.onAuthStateChanged((user) => {
+        resolve(user);
+      });
+    });
+  }
+
+  componentDidMount() {
+    this.resolveUser().then((user) => {
+      this.setState({isAuthenticating: false});
+    });
+  }
+
+  unauthenticatedRouting() {
     return (
         <BrowserRouter>
           <Switch>
@@ -40,8 +60,12 @@ class RoutesBase extends React.Component {
   }
 
   render() {
-    return this.props.firebase.auth.currentUser === null ?
-      this.unauthenticatedRouting() : this.authenticatedRouting();
+    if(this.state.isAuthenticating){
+      return null;
+    } else {
+      return this.props.firebase.auth.currentUser === null ?
+        this.unauthenticatedRouting() : this.authenticatedRouting();
+    }
   }
 }
 
