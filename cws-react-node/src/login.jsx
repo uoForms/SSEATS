@@ -1,61 +1,72 @@
 import React from 'react';
-import './form.css';
+import Alert from 'react-bootstrap/Alert';
+import Card from 'react-bootstrap/Card';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
+import { withFirebase } from './component/firebase/context'
 
-export default class Login extends React.Component {
+class LoginForm extends React.Component {
   constructor(props) {
     super(props);
-    this.state={
+    this.INITIAL_STATE = {
       username:'',
       password:'',
       showError:false,
       errorMessage:''
     };
+    this.state = this.INITIAL_STATE;
   }
 
   handleClick(event) {
-    // Defaults to incomplete credentials.
-    let wrong = true;
-    let msg = 'You must enter username and password.';
-    // Simulate a invalid login.
     if (this.state.username !== '' && this.state.password !== '') {
-      msg = "Invalid username or password.";
+      this.props.firebase.doSignInWithEmailAndPassword(this.state.username, this.state.password)
+      .then(() => {
+        console.log('success');
+        this.setState(this.INITIAL_STATE);
+        this.props.history.push('/');
+      }).catch(() => {
+        console.log('failed');
+        this.setState({showError:true, errorMessage:"Invalid username or password."});
+      });
+    } else if(this.state.username !== '' || this.state.password !== '') {
+      this.setState({showError:true, errorMessage:"Must enter a username and password"})
+    } else {
+      this.setState({showError:false})
     }
-    // Simulate a valid login.
-    if (this.state.username === 'admin' && this.state.password === 'admin') {
-      wrong = false;
-      window.location.href = '/home';
-    }
-    this.setState({showError:wrong, errorMessage:msg});
   }
 
   render() {
     return (
-      <div class="form">
-        {this.state.showError ? <p class="warning">{this.state.errorMessage}</p> : null}
-        <div class="form-group">
-          <label>Username</label>
-          <input 
-            id="username"
-            class="form-component"
-            type="text"
-            placeholder="Username"
-            title="Username"
-            onChange={() => this.setState({username:document.getElementById('username').value})}
-          />
-        </div>
-        <div class="form-group">
-          <label>Password</label>
-          <input
-            id="password"
-            class="form-component"
-            type="password"
-            placeholder="Password"
-            title="Password"
-            onChange={() => this.setState({password:document.getElementById('password').value})}
-          />
-        </div>
-        <button class="form-group" title="Login to your account." onClick={(event)=>this.handleClick(event)}>Login</button>
-      </div>
+      <Card style={{ width: '30rem', margin: '5rem auto'}}>
+        <Card.Body>
+          {this.state.showError ? <Alert variant={'danger'}>{this.state.errorMessage}</Alert> : null}
+          <Form.Group>
+            <Form.Label>Username</Form.Label>
+            <Form.Control
+              id="username"
+              type="text"
+              placeholder="Username"
+              title="Username"
+              onChange={() => this.setState({username:document.getElementById('username').value})}
+            />
+          </Form.Group>
+          <Form.Group className="form-group">
+            <Form.Label>Password</Form.Label>
+            <Form.Control
+              id="password"
+              type="password"
+              placeholder="Password"
+              title="Password"
+              onChange={() => this.setState({password:document.getElementById('password').value})}
+            />
+          </Form.Group>
+          <Button onClick={(event)=>this.handleClick(event)}>Login</Button>
+        </Card.Body>
+      </Card>
     );
   }
 }
+
+const LoginPage = withFirebase(LoginForm);
+
+export default LoginPage;
