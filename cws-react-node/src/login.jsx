@@ -21,11 +21,9 @@ class LoginForm extends React.Component {
     if (this.state.username !== '' && this.state.password !== '') {
       this.props.firebase.doSignInWithEmailAndPassword(this.state.username, this.state.password)
       .then(() => {
-        console.log('success');
         this.setState(this.INITIAL_STATE);
         window.location.reload();
       }).catch((e) => {
-        console.log(e);
         this.setState({showError:true, errorMessage:"Invalid username or password."});
       });
     } else if(this.state.username !== '' || this.state.password !== '') {
