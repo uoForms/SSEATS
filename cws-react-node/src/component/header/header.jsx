@@ -22,6 +22,9 @@ export default class Header extends React.Component {
             <Nav.Item>
               <Nav.Link href="/login">Login</Nav.Link>
             </Nav.Item>
+            <Nav.Item>
+              <Nav.Link href="/">Logout</Nav.Link>
+            </Nav.Item>
           </Nav>
         </Navbar>
 
