@@ -9,8 +9,7 @@ import LoginPage from './login.jsx';
 import NotFound from './404.jsx'
 import Report from './report.jsx'
 // scripts
-import manageRoles from './manageRoles.js'
-// local variables
+import manageRoles from './component/firebase/manageRoles.js'
 
 class RoutesBase extends React.Component {
   constructor(props){
@@ -25,12 +24,13 @@ class RoutesBase extends React.Component {
       this.props.firebase.auth.onAuthStateChanged((user) => {
         if (this.props.firebase.auth.currentUser!==null) {
           // Fetch user permissions before page loads
-          this.props.firebase.db.collection('users').doc(this.props.firebase.auth.currentUser.uid).collection('permissions').get().then(permissions=>{
-            for (let i = 0; i < permissions.docs.length; i++){
-              this.props.firebase.userPermissions.push(permissions.docs[i].get('label'));
-            }
-            resolve(user);
-          });
+          this.props.firebase.db.collection('users').doc(this.props.firebase.auth.currentUser.uid)
+            .collection('permissions').get().then(permissions=>{
+              for (let i = 0; i < permissions.docs.length; i++){
+                this.props.firebase.userPermissions.push(permissions.docs[i].get('label'));
+              }
+              resolve(user);
+            });
         } else {
           resolve(user);
         }
@@ -65,7 +65,7 @@ class RoutesBase extends React.Component {
                 <Redirect to="/"/>
             )}/>
             <Route exact path='/' component={AuthLandingPage} />
-            {this.props.firebase.userPermissions.includes('SeeScores')?<Route exact path='/report' component={Report}/>:null}
+            <Route exact path='/report' component={Report}/>
             <Route component={NotFound} />
           </Switch>
         </BrowserRouter>
@@ -78,7 +78,8 @@ class RoutesBase extends React.Component {
     } else {
       // update permissions
       if (this.props.firebase.auth.currentUser!==null) {
-        setTimeout(manageRoles.updateUserPermissions, 0, this.props.firebase.db.collection('users').doc(this.props.firebase.auth.currentUser.uid));
+        setTimeout(manageRoles.updateUserPermissions, 0, 
+          this.props.firebase.db.collection('users').doc(this.props.firebase.auth.currentUser.uid));
       }
       return this.props.firebase.auth.currentUser === null ?
         this.unauthenticatedRouting() : this.authenticatedRouting();
