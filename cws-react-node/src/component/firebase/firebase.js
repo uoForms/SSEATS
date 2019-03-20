@@ -16,6 +16,7 @@ class Firebase {
     app.initializeApp(config);
     this.auth = app.auth();
     this.db = app.firestore();
+    this.userPermissions = [];
   }
 
   doSignInWithEmailAndPassword = (email, password) =>
