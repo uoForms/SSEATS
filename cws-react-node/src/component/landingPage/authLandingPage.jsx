@@ -5,7 +5,7 @@ import ListGroup from 'react-bootstrap/ListGroup'
 class AuthLandingPage extends React.Component {
   render(){
     return(
-      <Card style={{ width: '75rem', margin: '5rem auto'}}>
+      <Card style={{ width: '75vw', minWidth: '10rem', margin: '5rem auto'}}>
         <Card.Body>
           <div className="h3">Welcome to POMME!</div>
         </Card.Body>
