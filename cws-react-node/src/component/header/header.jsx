@@ -11,7 +11,7 @@ class HeaderBase extends React.Component {
   }
 
   routingNavItems() {
-    let list = this.props.firebase.userPermissions
+    return this.props.firebase.userPermissions
       .filter(permission => permission.type !== null
         && permission.type === 'page')
       .map((page, i) => {
@@ -22,8 +22,6 @@ class HeaderBase extends React.Component {
           </Nav.Item>
         );
       });
-    console.log(list);
-    return list;
   }
 
   userNavItems(){
