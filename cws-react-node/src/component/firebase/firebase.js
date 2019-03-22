@@ -23,7 +23,12 @@ class Firebase {
 
   passwordResetEmail = (email) =>
     this.auth.sendPasswordResetEmail(email);
-}
+
+  doLogout = () =>  this.auth.signOut();
+
+  }
+
+
 
 export default Firebase;
 
