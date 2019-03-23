@@ -36,7 +36,7 @@ class ForgotPassword extends React.Component {
 
   render() {
     return (
-      <Card style={{ width: '30rem', margin: '5rem auto'}}>
+      <Card style={{ width: '30vw', margin: '5rem auto'}}>
         <Card.Body>
           {this.state.showError ? <Alert variant={'danger'}>{this.state.errorMessage}</Alert> : null}
           <Form.Group>
