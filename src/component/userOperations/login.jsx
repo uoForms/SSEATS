@@ -3,7 +3,7 @@ import Alert from 'react-bootstrap/Alert';
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import { withFirebase } from './component/firebase/context'
+import { withFirebase } from '../firebase/context'
 
 class LoginForm extends React.Component {
   constructor(props) {

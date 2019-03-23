@@ -2,15 +2,18 @@ import React from 'react';
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import { withFirebase } from './component/firebase/context';
 
-// pages
+// Pages
+import Report from './component/assessing/report.jsx'
+
 import LandingPage from './component/landingPage/landingPage.jsx';
-import LoginPage from './login.jsx';
-import NotFound from './404.jsx'
-import Report from './report.jsx'
-import ForgotPassword from './forgotPassword.jsx'
 
+import ForgotPassword from './component/userOperations/forgotPassword.jsx'
+import LoginPage from './component/userOperations/login.jsx';
 
-// scripts
+// Error
+import NotFound from './component/error/404.jsx'
+
+// Scripts
 import manageRoles from './component/firebase/manageRoles.js'
 
 class RoutesBase extends React.Component {

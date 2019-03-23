@@ -2,7 +2,7 @@ import React from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham.css';
-import { withFirebase } from './component/firebase/context'
+import { withFirebase } from '../firebase/context'
 
 class ReportBase extends React.Component {
   constructor(props){
@@ -12,7 +12,7 @@ class ReportBase extends React.Component {
     //this.db = app.database();
 
     this.state = {
-      
+
       columnDefs : [
         {headerName: "Name", field : "name"},
         {headerName: "Score", field : "score"},
@@ -31,7 +31,7 @@ class ReportBase extends React.Component {
     }
   }
 
-   
+
   render() {
     return (
       <div className="ag-theme-balham"

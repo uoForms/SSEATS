@@ -46,7 +46,7 @@ class HeaderBase extends React.Component {
   render() {
     return (
         <Navbar bg="dark" variant="dark">
-          <Navbar.Brand href="/">POMME</Navbar.Brand>
+          <Navbar.Brand href="/">SSEATS</Navbar.Brand>
           <Nav className="mr-auto">
             <Nav.Item>
               <Nav.Link href="/">Home</Nav.Link>
