@@ -3,12 +3,12 @@ import 'firebase/auth';
 import 'firebase/firestore'
 
 var config = {
-    apiKey: "AIzaSyDtZEaJq2J1qCRubI9dUtuWYQcU-DmUxks",
-    authDomain: "pomme-cws.firebaseapp.com",
-    databaseURL: "https://pomme-cws.firebaseio.com",
-    projectId: "pomme-cws",
-    storageBucket: "pomme-cws.appspot.com",
-    messagingSenderId: "750521849961"
+  apiKey: "AIzaSyBYhYolH-zgdIn_980Ij1mal54zwHSRpw4",
+  authDomain: "sse-ats.firebaseapp.com",
+  databaseURL: "https://sse-ats.firebaseio.com",
+  projectId: "sse-ats",
+  storageBucket: "sse-ats.appspot.com",
+  messagingSenderId: "642639128592"
 };
 
 class Firebase {
