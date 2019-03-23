@@ -46,7 +46,7 @@ class ForgotPassword extends React.Component {
               type="text"
               placeholder="Email Address"
               title="Email Address"
-              onChange={() => this.setState({username:document.getElementById('email').value})}
+              onChange={() => this.setState({email:document.getElementById('email').value})}
             />
           </Form.Group>
           <Button onClick={(event)=>this.handleClick(event)}>Send Password Reset Email</Button>
