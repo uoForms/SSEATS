@@ -59,6 +59,11 @@ class LoginForm extends React.Component {
             />
           </Form.Group>
           <Button onClick={(event)=>this.handleClick(event)}>Login</Button>
+          <Form.Group>
+            <a href="/forgotPassword" onclick="">
+              Forgot Password?
+            </a>
+          </Form.Group>
         </Card.Body>
       </Card>
     );

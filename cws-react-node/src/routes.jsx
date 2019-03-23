@@ -8,6 +8,9 @@ import NoAuthLandingPage from './component/landingPage/noAuthLandingPage.jsx';
 import LoginPage from './login.jsx';
 import NotFound from './404.jsx'
 import Report from './report.jsx'
+import ForgotPassword from './forgotPassword.jsx'
+
+
 // scripts
 import manageRoles from './component/firebase/manageRoles.js'
 
@@ -49,6 +52,7 @@ class RoutesBase extends React.Component {
         <BrowserRouter>
           <Switch>
             <Route exact path='/' component={NoAuthLandingPage} />
+            <Route exact path='/forgotPassword' component={ForgotPassword}/>
             <Route exact path='/login' component={LoginPage} />
             <Route component={NotFound} />
           </Switch>
@@ -64,6 +68,7 @@ class RoutesBase extends React.Component {
             <Route exact path="/login" render={() => (
                 <Redirect to="/"/>
             )}/>
+            <Route exact path='/forgotPassword' component={ForgotPassword}/>
             <Route exact path='/' component={AuthLandingPage} />
             <Route exact path='/report' component={Report}/>
             <Route component={NotFound} />
