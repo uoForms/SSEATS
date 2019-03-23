@@ -8,13 +8,11 @@ import NoAuthLandingPage from './component/landingPage/noAuthLandingPage.jsx';
 import LoginPage from './login.jsx';
 import NotFound from './404.jsx'
 import Report from './report.jsx'
-<<<<<<< HEAD
 import forgotPassword from './forgotPassword.jsx'
 
 =======
 // scripts
 import manageRoles from './component/firebase/manageRoles.js'
->>>>>>> master
 
 class RoutesBase extends React.Component {
   constructor(props){
