@@ -10,14 +10,10 @@ import LandingPage from './component/landingPage/landingPage.jsx';
 import ForgotPassword from './component/userOperations/forgotPassword.jsx'
 import LoginPage from './component/userOperations/login.jsx';
 
-
 // Error
-import NotFound from './components/error/404.jsx'
+import NotFound from './component/error/404.jsx'
 
-
-
-
-// scripts
+// Scripts
 import manageRoles from './component/firebase/manageRoles.js'
 
 class RoutesBase extends React.Component {
