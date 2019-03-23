@@ -5,7 +5,7 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { withFirebase } from './component/firebase/context'
 
-class ForgotPassword extends React.Component {
+class ForgotPasswordBase extends React.Component {
   constructor(props) {
     super(props);
     this.INITIAL_STATE = {
@@ -56,6 +56,6 @@ class ForgotPassword extends React.Component {
   }
 }
 
-const forgotPassword = withFirebase(ForgotPassword);
+const ForgotPassword = withFirebase(ForgotPasswordBase);
 
 export default forgotPassword;

@@ -3,7 +3,7 @@ import Nav from 'react-bootstrap/Nav'
 import Navbar from 'react-bootstrap/Navbar'
 import { withFirebase } from '../firebase/context'
 
-class Header extends React.Component {
+class HeaderBase extends React.Component {
   content = ""
   setContent(content) {
     this.content = content
@@ -39,5 +39,5 @@ class Header extends React.Component {
 
 }
 
-const headerBase = withFirebase(Header);
-export default headerBase;
+const Header = withFirebase(HeaderBase);
+export default Header;
