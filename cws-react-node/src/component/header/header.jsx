@@ -4,10 +4,44 @@ import Navbar from 'react-bootstrap/Navbar'
 import { withFirebase } from '../firebase/context'
 
 class HeaderBase extends React.Component {
-  content = ""
-  setContent(content) {
-    this.content = content
-  };
+  filterPage(value){
+    console.log("32");
+    console.log(value);
+    return value.type !== null && value.type === 'page';
+  }
+
+  routingNavItems() {
+    return this.props.firebase.userPermissions
+      .filter(permission => permission.type !== null
+        && permission.type === 'page')
+      .map((page, i) => {
+        console.log(i)
+        return (
+          <Nav.Item key={i}>
+            <Nav.Link href={page.link}>{page.shortLabel}</Nav.Link>
+          </Nav.Item>
+        );
+      });
+  }
+
+  userNavItems(){
+    let navItems = [];
+    if(this.props.firebase.auth.currentUser === null){
+      navItems.push(
+        <Nav.Item key='0'>
+          <Nav.Link href="/login">Login</Nav.Link>
+        </Nav.Item>
+      );
+    } else {
+      navItems.push(
+        <Nav.Item key="0">
+          <Nav.Link onClick={(event)=>this.handleClick(event)}>Logout</Nav.Link>
+        </Nav.Item>
+      );
+    }
+    return navItems;
+  }
+
 
   render() {
     return (
@@ -17,18 +51,14 @@ class HeaderBase extends React.Component {
             <Nav.Item>
               <Nav.Link href="/">Home</Nav.Link>
             </Nav.Item>
+            {this.routingNavItems()}
           </Nav>
           <Nav>
-            <Nav.Item>
-              <Nav.Link href="/login">Login</Nav.Link>
-            </Nav.Item>
-            <Nav.Item>
-              <Nav.Link onClick={(event)=>this.handleClick(event)}>Logout</Nav.Link>
-            </Nav.Item>
+            {this.userNavItems()}
           </Nav>
         </Navbar>
 
-      );
+    );
   }
 
   handleClick(event) {
