@@ -7,6 +7,9 @@ import LandingPage from './component/landingPage/landingPage.jsx';
 import LoginPage from './login.jsx';
 import NotFound from './404.jsx'
 import Report from './report.jsx'
+import ForgotPassword from './forgotPassword.jsx'
+
+
 // scripts
 import manageRoles from './component/firebase/manageRoles.js'
 
@@ -26,6 +29,7 @@ class RoutesBase extends React.Component {
           <Switch>
             <Route exact path='/' component={LandingPage} />
             <Route exact path='/login' component={LoginPage} />
+            <Route exact path='/forgotPassword' component={ForgotPassword}/>
             <Route component={NotFound} />
           </Switch>
         </BrowserRouter>
@@ -52,6 +56,7 @@ class RoutesBase extends React.Component {
                 <Redirect to="/"/>
             )}/>
             <Route exact path='/' component={LandingPage} />
+            <Route exact path='/forgotPassword' component={ForgotPassword}/>
             {this.authorisedRouteList()}
             <Route component={NotFound} />
           </Switch>

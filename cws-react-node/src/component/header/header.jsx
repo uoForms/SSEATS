@@ -33,11 +33,9 @@ class HeaderBase extends React.Component {
         </Nav.Item>
       );
     } else {
-      // TODO: When user session operations is complete, change this render
-      //       to have the logged in nav items.
       navItems.push(
-        <Nav.Item key='0'>
-          <Nav.Link href="/login">Login</Nav.Link>
+        <Nav.Item key="0">
+          <Nav.Link onClick={(event)=>this.handleClick(event)}>Logout</Nav.Link>
         </Nav.Item>
       );
     }
@@ -62,6 +60,13 @@ class HeaderBase extends React.Component {
 
     );
   }
+
+  handleClick(event) {
+    event.stopPropagation();
+    this.props.firebase.doLogout();
+    window.location.reload();
+  }
+
 }
 
 const Header = withFirebase(HeaderBase);
