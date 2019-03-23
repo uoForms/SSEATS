@@ -4,10 +4,16 @@ import { withFirebase } from './component/firebase/context';
 
 // pages
 import LandingPage from './component/landingPage/landingPage.jsx';
-import LoginPage from './login.jsx';
+
+//User operations
+import ForgotPassword from './component/userOperations/forgotPassword.jsx'
+import LoginPage from './component/userOperations/login.jsx';
+//Assessing
+import Report from './component/assessing/report.jsx'
+
 import NotFound from './404.jsx'
-import Report from './report.jsx'
-import ForgotPassword from './forgotPassword.jsx'
+
+
 
 
 // scripts
