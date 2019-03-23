@@ -2,8 +2,9 @@ import React from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham.css';
-import 'firebase/database'
-class Report extends React.Component {
+import { withFirebase } from './component/firebase/context'
+
+class ReportBase extends React.Component {
   constructor(props){
     super(props);
 
@@ -45,4 +46,5 @@ class Report extends React.Component {
   }
 }
 
+const Report = withFirebase(ReportBase);
 export default Report;
