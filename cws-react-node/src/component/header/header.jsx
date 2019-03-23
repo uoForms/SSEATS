@@ -7,9 +7,10 @@ class Header extends React.Component {
   content = ""
   constructor(props) {
     super(props);
-      this.content = content
   }
-  
+  setContent(content) {
+    this.content = content
+  };
 
   render() {
     return (
