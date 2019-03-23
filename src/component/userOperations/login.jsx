@@ -3,7 +3,7 @@ import Alert from 'react-bootstrap/Alert';
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import { withFirebase } from './component/firebase/context'
+import { withFirebase } from '../firebase/context'
 
 class LoginForm extends React.Component {
   constructor(props) {
@@ -58,7 +58,14 @@ class LoginForm extends React.Component {
               onChange={() => this.setState({password:document.getElementById('password').value})}
             />
           </Form.Group>
-          <Button onClick={(event)=>this.handleClick(event)}>Login</Button>
+          <Form.Group>
+            <Button onClick={(event)=>this.handleClick(event)}>Login</Button>
+          </Form.Group>
+          <Form.Group>
+            <a href="/forgotPassword" onclick="">
+              Forgot Password?
+            </a>
+          </Form.Group>
         </Card.Body>
       </Card>
     );

@@ -3,7 +3,7 @@ jobs:
   test:
     docker:
       - image: circleci/node:11.7@sha256:9ae8f69112581cef7c87bc3b9bcbc7229e734dbfca82ea7499b7c1e59bf34dd3
-    working_directory: "~/project/cws-react-node"
+    working_directory: "~/project"
     steps:
       - restore_cache:
          keys:
@@ -25,15 +25,15 @@ jobs:
           paths:
             - node_modules
           key: dependencies-{{ checksum "package.json" }}
-      - run:    
+      - run:
          name: Check Valid Build
-         command: npm run build     
+         command: npm run build
       - run: npm test
-      
+
   deploy-job:
     docker:
       - image: circleci/node:11.7@sha256:9ae8f69112581cef7c87bc3b9bcbc7229e734dbfca82ea7499b7c1e59bf34dd3
-    working_directory: "~/project/cws-react-node"
+    working_directory: "~/project"
     steps:
       - checkout:
           path: "~/project"
@@ -57,4 +57,3 @@ workflows:
           filters:
             branches:
               only: master
-      
