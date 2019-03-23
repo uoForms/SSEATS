@@ -27,7 +27,7 @@ class ForgotPassword extends React.Component {
         console.log('failed');
         this.setState({showError:true, errorMessage:"Invalid Email."});
       });
-    } else if(this.state.email == '') {
+    } else if(this.state.email === '') {
       this.setState({showError:true, errorMessage:"Must enter a valid email."})
     } else {
       this.setState({showError:false})
