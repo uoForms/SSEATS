@@ -2,16 +2,17 @@ import React from 'react';
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import { withFirebase } from './component/firebase/context';
 
-// pages
-import LandingPage from './component/landingPage/landingPage.jsx';
-
-//User operations
-import ForgotPassword from './component/userOperations/forgotPassword.jsx'
-import LoginPage from './component/userOperations/login.jsx';
-//Assessing
+// Pages
 import Report from './component/assessing/report.jsx'
 
-import NotFound from './404.jsx'
+import LandingPage from './component/landingPage/landingPage.jsx';
+
+import ForgotPassword from './component/userOperations/forgotPassword.jsx'
+import LoginPage from './component/userOperations/login.jsx';
+
+
+// Error
+import NotFound from './components/error/404.jsx'
 
 
 
