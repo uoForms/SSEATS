@@ -1,10 +1,13 @@
 import React from 'react';
 import Nav from 'react-bootstrap/Nav'
 import Navbar from 'react-bootstrap/Navbar'
+import { withFirebase } from '../firebase/context'
 
-export default class Header extends React.Component {
+class Header extends React.Component {
   content = ""
-
+  constructor(props) {
+    super(props);
+  }
   setContent(content) {
     this.content = content
   };
@@ -23,11 +26,21 @@ export default class Header extends React.Component {
               <Nav.Link href="/login">Login</Nav.Link>
             </Nav.Item>
             <Nav.Item>
-              <Nav.Link href="/">Logout</Nav.Link>
+              <Nav.Link onClick={(event)=>this.handleClick(event)}>Logout</Nav.Link>
             </Nav.Item>
           </Nav>
         </Navbar>
 
       );
   }
+
+  handleClick(event) {
+    event.stopPropagation();
+    this.props.firebase.doLogout();
+    window.location.reload();
+  }
+
 }
+
+const headerBase = withFirebase(Header);
+export default headerBase;

@@ -27,7 +27,7 @@ class ForgotPassword extends React.Component {
         console.log('failed');
         this.setState({showError:true, errorMessage:"Invalid Email."});
       });
-    } else if(this.state.email.length === 0) {
+    } else if(this.state.email === '') {
       this.setState({showError:true, errorMessage:"Must enter a valid email."})
     } else {
       this.setState({showError:false})
@@ -46,7 +46,7 @@ class ForgotPassword extends React.Component {
               type="text"
               placeholder="Email Address"
               title="Email Address"
-              onChange={() => this.setState({email:document.getElementById('email').value})}
+              onChange={() => this.setState({username:document.getElementById('email').value})}
             />
           </Form.Group>
           <Button onClick={(event)=>this.handleClick(event)}>Send Password Reset Email</Button>
