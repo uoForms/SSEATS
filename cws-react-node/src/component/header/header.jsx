@@ -5,9 +5,6 @@ import { withFirebase } from '../firebase/context'
 
 class Header extends React.Component {
   content = ""
-  constructor(props) {
-    super(props);
-  }
   setContent(content) {
     this.content = content
   };
