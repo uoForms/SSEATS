@@ -64,7 +64,7 @@ class HeaderBase extends React.Component {
   handleClick(event) {
     event.stopPropagation();
     this.props.firebase.doLogout();
-    window.location.reload();
+    window.location.replace("/");
   }
 
 }
