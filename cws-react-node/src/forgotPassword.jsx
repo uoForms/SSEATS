@@ -58,4 +58,4 @@ class ForgotPasswordBase extends React.Component {
 
 const ForgotPassword = withFirebase(ForgotPasswordBase);
 
-export default forgotPassword;
+export default ForgotPassword;
