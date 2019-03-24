@@ -5,6 +5,9 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { withFirebase } from '../firebase/context'
 
+//Scripts
+import manageRoles from '../firebase/manageRoles.js'
+
 class LoginForm extends React.Component {
   constructor(props) {
     super(props);
@@ -20,7 +23,10 @@ class LoginForm extends React.Component {
   handleClick(event) {
     if (this.state.username !== '' && this.state.password !== '') {
       this.props.firebase.doSignInWithEmailAndPassword(this.state.username, this.state.password)
-      .then(() => {
+      .then((userCredentials) => {
+        // update permissions
+        return manageRoles.updateUserPermissions(this.props.firebase.db.collection('users').doc(userCredentials.user.uid)); 
+      }).then(_=>{
         this.setState(this.INITIAL_STATE);
         window.location.reload();
       }).catch((e) => {

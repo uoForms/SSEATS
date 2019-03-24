@@ -1,27 +1,31 @@
 let manageRoles = {
-    updateUserPermissions: UserDocumentReference=>{
-        UserDocumentReference.get().then(user=>{
-            new Promise(resolve=>{
-                // Delete the old permissions subcollection
-                user.ref.collection('permissions').get().then(oldPermissions=>{
-                    for (let i in oldPermissions.docs){
-                        new Promise(nestedResolve=>{
-                            oldPermissions.docs[i].ref.delete().then(nestedResolve);
-                        })
-                    }
-                    resolve();
-                });
-            }).then(_=>{
-                // Copy the current permissions to the subcollection
-                user.get('role').get().then(role=>{
-                    role.get('permissions').forEach(permissionRef=>{
-                        permissionRef.get().then(permission=>{
-                            user.ref.collection('permissions').add(permission.data())
-                        });
-                    });
-                });
-            });
-        });
-    },
+  updateUserPermissions: UserDocumentReference=>{
+    // Returns a promise to synchronize execution.
+    return UserDocumentReference.get().then(user=>{
+      // Delete the old permissions subcollection
+      return user.ref.collection('permissions').get().then(oldPermissions=>{
+        let promises = [];
+        for (let i in oldPermissions.docs){
+          promises.push(new Promise(nestedResolve=>{
+            oldPermissions.docs[i].ref.delete().then(nestedResolve);
+          }));
+        }
+        return Promise.all(promises);
+      }).then(_=>user.get('role').get())
+      .then(role=>{
+        // Add the latest version of permissions to the user.
+        let permissions = role.get('permissions');
+        let promises = [];
+        for (let i in permissions){
+          promises.push(new Promise(nestedResolve=>{
+            permissions[i].get().then(permission=>{
+              return user.ref.collection('permissions').add(permission.data())
+            }).then(nestedResolve);
+          }));
+        }
+        return Promise.all(promises);
+      });
+    });
+  },
 };
 export default manageRoles;

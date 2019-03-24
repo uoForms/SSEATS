@@ -14,7 +14,6 @@ import LoginPage from './component/userOperations/login.jsx';
 import NotFound from './component/error/404.jsx'
 
 // Scripts
-import manageRoles from './component/firebase/manageRoles.js'
 
 class RoutesBase extends React.Component {
   constructor(props) {
@@ -68,11 +67,6 @@ class RoutesBase extends React.Component {
   }
 
   render() {
-    // update permissions
-    if (this.props.firebase.auth.currentUser!==null) {
-      setTimeout(manageRoles.updateUserPermissions, 0,
-        this.props.firebase.db.collection('users').doc(this.props.firebase.auth.currentUser.uid));
-    }
     return this.props.firebase.auth.currentUser === null ?
       this.unauthenticatedRouting() : this.authenticatedRouting();
     }
