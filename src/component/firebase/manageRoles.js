@@ -6,8 +6,8 @@ let manageRoles = {
       return user.ref.collection('permissions').get().then(oldPermissions=>{
         let promises = [];
         for (let i in oldPermissions.docs){
-          promises.push(new Promise(nestedResolve=>{
-            oldPermissions.docs[i].ref.delete().then(nestedResolve);
+          promises.push(new Promise(resolve=>{
+            oldPermissions.docs[i].ref.delete().then(resolve);
           }));
         }
         return Promise.all(promises);
@@ -17,10 +17,10 @@ let manageRoles = {
         let permissions = role.get('permissions');
         let promises = [];
         for (let i in permissions){
-          promises.push(new Promise(nestedResolve=>{
+          promises.push(new Promise(resolve=>{
             permissions[i].get().then(permission=>{
               return user.ref.collection('permissions').add(permission.data())
-            }).then(nestedResolve);
+            }).then(resolve);
           }));
         }
         return Promise.all(promises);
