@@ -35,7 +35,7 @@ class CreateSubjectBase extends React.Component {
       return noUndef
     })()) {
       this.setState({showError:false, errorMessage:""})
-      manageSubjects.createSubject(this.props.firebase.db, this.state.data).then(_=>console.log("message")).then(_=>{
+      manageSubjects.createSubject(this.props.firebase.db, this.state.data).then(_=>{
         this.props.history.push('/');
       }).catch((e) => {
         this.setState({showError:true, errorMessage:"Invalid fields."});
