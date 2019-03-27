@@ -14,6 +14,6 @@ function __updateSubject(userDocumentReference, data) {
     data.user = false;
   }
   // Fix the timestamp to match firestore type
-  data.date_of_birth = new Date(data.date_of_birth);
+  data.creation_date = new Date(data.creation_date);
   return userDocumentReference.set(data);
 }

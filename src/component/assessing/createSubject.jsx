@@ -11,16 +11,12 @@ class CreateSubjectBase extends React.Component {
     super(props);
     this.INITIAL_STATE = {
       data:{
-        surname:undefined,
         name:undefined,
-        postal_code:undefined,
-        date_of_birth:undefined
+        creation_date:undefined
       },
       type:{
-        surname:"text",
         name:"text",
-        postal_code:"text",
-        date_of_birth:"date"
+        creation_date:"date"
       },
       showError:false,
       errorMessage:''
@@ -40,7 +36,9 @@ class CreateSubjectBase extends React.Component {
     })()) {
       this.setState({showError:false, errorMessage:""})
       console.log(this.props.firebase)
-      manageSubjects.createSubject(this.props.firebase.db, this.state.data).then(_=>console.log("message")).catch((e) => {
+      manageSubjects.createSubject(this.props.firebase.db, this.state.data).then(_=>console.log("message")).then(_=>{
+        this.props.history.push('/');
+      }).catch((e) => {
         this.setState({showError:true, errorMessage:"Invalid fields."});
       });
     } else {
