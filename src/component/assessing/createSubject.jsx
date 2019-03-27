@@ -35,7 +35,6 @@ class CreateSubjectBase extends React.Component {
       return noUndef
     })()) {
       this.setState({showError:false, errorMessage:""})
-      console.log(this.props.firebase)
       manageSubjects.createSubject(this.props.firebase.db, this.state.data).then(_=>console.log("message")).then(_=>{
         this.props.history.push('/');
       }).catch((e) => {
@@ -70,8 +69,14 @@ class CreateSubjectBase extends React.Component {
       <Card style={{ width: '50vw', minWidth: '10rem', margin: '5rem auto'}}>
         <Card.Body>
           {this.state.showError ? <Alert variant={'danger'}>{this.state.errorMessage}</Alert> : null}
-          {(_=>{
-            let fields = [];for (let key in this.state.data)fields.push(this.field(key));return fields;})()}
+          {
+            (_=>{
+              let fields = [];
+              for (let key in this.state.data)
+                fields.push(this.field(key));
+              return fields;
+            })()
+          }
           <Form.Group>
             <Button onClick={(event)=>this.handleClick(event)}>Submit</Button>
           </Form.Group>
