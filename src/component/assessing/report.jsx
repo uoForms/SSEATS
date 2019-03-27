@@ -8,16 +8,9 @@ class ReportBase extends React.Component {
   constructor(props){
     super(props);
 
-    //this.auth = app.auth();
-    //this.db = app.database();
-
     this.state = {
 
-      columnDefs : [
-        {headerName: "Name", field : "name"},
-        {headerName: "Score", field : "score"},
-        {headerName: "Comment", field : "comment"},
-      ],
+      columnDefs : this.getColumn(),
       rowData:[
         {name: "Test",score :"9", comment:"Testing Table"},
         {name: "Test1",score :"1", comment:"Testing Table"},
@@ -29,15 +22,46 @@ class ReportBase extends React.Component {
 
       ]
     }
+    this.getRows()
   }
 
+  getRows(){
+    this.props.firebase.db.collection('subjects').where("name","==","Machine 1").get().then(result=>{
+      console.log(result.docs)
+    });
+  }
+
+  getColumn(){
+    return[
+      {
+        headerName: "Subject", 
+        field : "name"
+      },
+      {
+        headerName: "Feature", 
+        field : "feature"     
+      },
+      {
+        headerName: "Criteria", 
+        field : "criteria"        
+      },
+      {
+        headerName: "Score",
+        field : "score"
+      },
+      {
+        headerName: "Comment", 
+        field : "comment"
+      }
+    ]
+  }
 
   render() {
     return (
       <div className="ag-theme-balham"
-        style = {{ height: '200px', width: '600px'}}
+        style = {{ height: '90%', width: '70%', margin: '5rem auto'}}
       >
-        <AgGridReact
+        <AgGridReact 
           columnDefs = {this.state.columnDefs}
           rowData = { this.state.rowData}>
         </AgGridReact>
