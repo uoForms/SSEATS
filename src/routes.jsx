@@ -9,6 +9,7 @@ import LandingPage from './component/landingPage/landingPage.jsx';
 
 import ForgotPassword from './component/userOperations/forgotPassword.jsx'
 import LoginPage from './component/userOperations/login.jsx';
+import CreateAccount from './component/userOperations/createAccount.jsx';
 
 // Error
 import NotFound from './component/error/404.jsx'
@@ -22,7 +23,8 @@ class RoutesBase extends React.Component {
     // Dictionary that contains all the possible routes
     // This is to better restrict page access using firebase
     this.pages = {
-      "/report" : Report
+      "/report" : Report,
+      "/account/create": CreateAccount
     };
   }
 
