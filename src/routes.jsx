@@ -23,7 +23,7 @@ class RoutesBase extends React.Component {
     // This is to better restrict page access using firebase
     this.pages = {
       "/report" : Report,
-      "/createSubject" : CreateSubject
+      "/subject/create" : CreateSubject
     };
   }
 
