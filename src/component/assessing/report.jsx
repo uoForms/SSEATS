@@ -11,7 +11,8 @@ class ReportBase extends React.Component {
     this.state = {
 
       columnDefs : this.getColumn(),
-      rowData:[
+      rowData: []
+      /*[
         {name: "Test",score :"9", comment:"Testing Table"},
         {name: "Test1",score :"1", comment:"Testing Table"},
         {name: "Test2",score :"2", comment:"Testing Table"},
@@ -20,56 +21,64 @@ class ReportBase extends React.Component {
         {name: "Test5",score :"5", comment:"Testing Table"},
         {name: "Test6",score :"6", comment:"Testing Table"}
 
-      ]
+      ]*/
     }
     this.getRows()
   }
 
   getRows(){
     var rows = []
-    var feature
     this.props.firebase.db.collection('subjects').get().then(result=>{
       result.docs.forEach(doc=>{
-        var documentData = doc.data()
-        var name = documentData['name']
         doc.ref.collection('assessments').get().then(assessment=>{
           assessment.docs.forEach(coll=>{
             var categoryRef = coll.data()
+            var dateValue= categoryRef['date']
             categoryRef['category'].get().then(referenceCategory =>{
               var categoryCategoryRef = referenceCategory.data()
               var categoryName = categoryCategoryRef['name']
-
               //Getting the Category Name
-              this.props.firebase.db.collection('categories').get().then(category=>{
-                category.docs.forEach(catDoc=>{
+
+              this.props.firebase.db.collection('categories').get().then(categoryDocs=>{
+                categoryDocs.docs.forEach(catDoc=>{
                   catDoc.ref.collection("features").get().then(featureDoc=>{
                     featureDoc.docs.forEach(featureCollection =>{
                       var featureDocument = featureCollection.data()
-                      feature = featureDocument['name']
-
-
+                      var featureValue = featureDocument['name']
                       //Getting the score
                       coll.ref.collection('scores').get().then(scoreCollection => {
                         scoreCollection.docs.forEach(scoreRef=>{
                           var scoreDoc = scoreRef.data()
-                          var score = scoreDoc['score']
+                          var scoreValue = scoreDoc['score']
                           scoreDoc['type'].get().then(scoreType =>{
                             var scoreTypeData = scoreType.data()
-                            var criteria = scoreTypeData['name']
-                            console.log(name)
-                            console.log(categoryName)
-                            console.log(feature)
-                            console.log(criteria)
-                            console.log(score)
-                            rows.push({name: name, category:categoryName, feature: feature})
+                            var criteriaValue = scoreTypeData['name']
+                            
+                            var row = {
+                              category:categoryName.toString(), 
+                              feature: featureValue.toString(), 
+                              criteria: criteriaValue.toString(),
+                              date: dateValue.toDate(),
+                              score: scoreValue.toString(),
+                              }
+                            console.log(dateValue.toDate())
+                            rows.push(row)
+                            this.setState({rowData:rows})
+
                           })
                         })
                       })
-
                     })
                   })
                 })
               })  
+            })
+          })
+        })
+    });
+  })
+}
+
               /* Get Score Scale */
               /*
               categoryCategoryRef['report_type'].get().then(reportType =>{
@@ -86,12 +95,17 @@ class ReportBase extends React.Component {
               })*/
 
 
-            })
-          })
+
+  getname(){
+    this.props.firebase.db.collection('subjects').get().then(result=>{
+      result.docs.forEach(doc=>{
+        var documentData = doc.data()
+        var name = documentData['name']
+        return name
         })
     });
-  })
-}
+  }
+
   getSubjects(){
     var names = []
     this.props.firebase.db.collection('subjects').get().then(result=>{
@@ -103,10 +117,6 @@ class ReportBase extends React.Component {
 
   getColumn(){
     return[
-      {
-        headerName: "Subject", 
-        field : "name"
-      },
       {
         headerName: "Category", 
         field : "category"     
