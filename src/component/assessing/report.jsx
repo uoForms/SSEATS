@@ -27,6 +27,7 @@ class ReportBase extends React.Component {
   }
 
   getRows(){
+    var rows = []
     var feature
     this.props.firebase.db.collection('subjects').get().then(result=>{
       result.docs.forEach(doc=>{
