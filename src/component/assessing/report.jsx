@@ -28,13 +28,16 @@ class ReportBase extends React.Component {
   getRows(){
     this.props.firebase.db.collection('subjects').get().then(result=>{
       result.docs.forEach(doc=>{
-        var name = doc.get('name');
-        var data = doc.get('Creation Date');
-        console.log(name)
-        console.log(data)
+        var documentData = doc.data()
+        console.log(documentData['name'])
         doc.ref.collection('assessments').get().then(assessment=>{
           assessment.docs.forEach(coll=>{
-            console.log(coll.get('category'))
+            var categoryRef = coll.data()
+            categoryRef['category'].get().then(referenceCategory =>{
+              var categoryName = referenceCategory.data()
+              categoryName = categoryName['name']
+              console.log(categoryName)
+            })
           })
         })
     });
