@@ -43,7 +43,7 @@ class AppBase extends Component {
       return null;
     }
     return (
-      <div>
+      <div style={{minHeight:"100vh", display:"flex", flexDirection:"column"}}>
         <Header />
         <Routes />
       </div>

@@ -53,17 +53,19 @@ class ReportBase extends React.Component {
                           scoreDoc['type'].get().then(scoreType =>{
                             var scoreTypeData = scoreType.data()
                             var criteriaValue = scoreTypeData['name']
-                            
+
                             var row = {
                               category:categoryName.toString(), 
                               feature: featureValue.toString(), 
                               criteria: criteriaValue.toString(),
                               date: dateValue.toDate(),
                               score: scoreValue.toString(),
-                              }
-                            console.log(dateValue.toDate())
+                              comment: scoreDoc['comment'],
+                            }
                             rows.push(row)
                             this.setState({rowData:rows})
+                            console.log(rows)
+
 
                           })
                         })
@@ -147,11 +149,12 @@ class ReportBase extends React.Component {
   render() {
     return (
       <div className="ag-theme-balham"
-        style = {{ height: '90%', width: '70%', margin: '5rem auto'}}
+        style = {{flex:1, height:'80vh', width: '80%', margin: '2rem auto'}}
       >
         <AgGridReact 
+          style={{maxWidth:"100%"}}
           columnDefs = {this.state.columnDefs}
-          rowData = { this.state.rowData}>
+          rowData = {this.state.rowData}>
         </AgGridReact>
       </div>
     );
