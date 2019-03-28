@@ -3,6 +3,7 @@ import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 import { withFirebase } from '../firebase/context'
+import { createBrotliDecompress } from 'zlib';
 
 class ReportBase extends React.Component {
   constructor(props){
@@ -26,17 +27,64 @@ class ReportBase extends React.Component {
   }
 
   getRows(){
+    var feature
     this.props.firebase.db.collection('subjects').get().then(result=>{
       result.docs.forEach(doc=>{
         var documentData = doc.data()
-        console.log(documentData['name'])
+        var name = documentData['name']
         doc.ref.collection('assessments').get().then(assessment=>{
           assessment.docs.forEach(coll=>{
             var categoryRef = coll.data()
             categoryRef['category'].get().then(referenceCategory =>{
-              var categoryName = referenceCategory.data()
-              categoryName = categoryName['name']
-              console.log(categoryName)
+              var categoryCategoryRef = referenceCategory.data()
+              var categoryName = categoryCategoryRef['name']
+
+              //Getting the Category Name
+              this.props.firebase.db.collection('categories').get().then(category=>{
+                category.docs.forEach(catDoc=>{
+                  catDoc.ref.collection("features").get().then(featureDoc=>{
+                    featureDoc.docs.forEach(featureCollection =>{
+                      var featureDocument = featureCollection.data()
+                      feature = featureDocument['name']
+
+
+                      //Getting the score
+                      coll.ref.collection('scores').get().then(scoreCollection => {
+                        scoreCollection.docs.forEach(scoreRef=>{
+                          var scoreDoc = scoreRef.data()
+                          var score = scoreDoc['score']
+                          scoreDoc['type'].get().then(scoreType =>{
+                            var scoreTypeData = scoreType.data()
+                            var criteria = scoreTypeData['name']
+                            console.log(name)
+                            console.log(categoryName)
+                            console.log(feature)
+                            console.log(criteria)
+                            console.log(score)
+                          })
+                        })
+                      })
+
+                    })
+                  })
+                })
+              })  
+              /* Get Score Scale */
+              /*
+              categoryCategoryRef['report_type'].get().then(reportType =>{
+                var reportRef = reportType.data()
+                console.log("reportRef", reportRef)
+                reportRef['scores'].forEach(scoreScaleDocs=> {
+                  scoreScaleDocs.get().then(scoreScale => {
+                    console.log(scoreScale.data())
+                    var scoreScaleData = scoreScale.data()
+                    var scaleMin = scoreScaleData['min']
+                    var scaleMax = scoreScaleData['max']
+                  })
+                })
+              })*/
+
+
             })
           })
         })
@@ -59,12 +107,20 @@ class ReportBase extends React.Component {
         field : "name"
       },
       {
+        headerName: "Category", 
+        field : "category"     
+      },
+      {
         headerName: "Feature", 
         field : "feature"     
       },
       {
         headerName: "Criteria", 
         field : "criteria"        
+      },
+      {
+        headerName: "Date", 
+        field : "date"        
       },
       {
         headerName: "Score",
