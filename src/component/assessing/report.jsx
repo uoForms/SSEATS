@@ -3,7 +3,6 @@ import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 import { withFirebase } from '../firebase/context'
-import { createBrotliDecompress } from 'zlib';
 
 class ReportBase extends React.Component {
   constructor(props){
@@ -62,6 +61,7 @@ class ReportBase extends React.Component {
                             console.log(feature)
                             console.log(criteria)
                             console.log(score)
+                            rows.push({name: name, category:categoryName, feature: feature})
                           })
                         })
                       })
