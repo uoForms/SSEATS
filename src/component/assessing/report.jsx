@@ -12,16 +12,6 @@ class ReportBase extends React.Component {
 
       columnDefs : this.getColumn(),
       rowData: []
-      /*[
-        {name: "Test",score :"9", comment:"Testing Table"},
-        {name: "Test1",score :"1", comment:"Testing Table"},
-        {name: "Test2",score :"2", comment:"Testing Table"},
-        {name: "Test3",score :"3", comment:"Testing Table"},
-        {name: "Test4",score :"4", comment:"Testing Table"},
-        {name: "Test5",score :"5", comment:"Testing Table"},
-        {name: "Test6",score :"6", comment:"Testing Table"}
-
-      ]*/
     }
     this.getRows()
   }
