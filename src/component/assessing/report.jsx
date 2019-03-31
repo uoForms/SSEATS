@@ -8,38 +8,165 @@ class ReportBase extends React.Component {
   constructor(props){
     super(props);
 
-    //this.auth = app.auth();
-    //this.db = app.database();
-
     this.state = {
 
-      columnDefs : [
-        {headerName: "Name", field : "name"},
-        {headerName: "Score", field : "score"},
-        {headerName: "Comment", field : "comment"},
-      ],
-      rowData:[
-        {name: "Test",score :"9", comment:"Testing Table"},
-        {name: "Test1",score :"1", comment:"Testing Table"},
-        {name: "Test2",score :"2", comment:"Testing Table"},
-        {name: "Test3",score :"3", comment:"Testing Table"},
-        {name: "Test4",score :"4", comment:"Testing Table"},
-        {name: "Test5",score :"5", comment:"Testing Table"},
-        {name: "Test6",score :"6", comment:"Testing Table"}
+      columnDefs : this.getColumn(),
+      rowData: []
 
-      ]
     }
+    this.getRows()
+  }
+ // check parent function
+  getRows(){
+    var rows = [];
+    // get all subjects
+    this.props.firebase.db.collection('subjects').get().then(subjects=>{
+
+      // iterate the arrays synchronously
+      let promises = [];
+      let promises1 = [];
+      let promises2 = [];
+      let promises3 = [];
+      let promises4 = [];
+      let promises5 = [];
+
+      for(let i in subjects.docs){
+        promises.push(subjects.docs[i].ref.collection('assessments').get().then(assessments=>{
+          for(let j in assessments.docs){
+            let categoryRef = assessments.docs[j].data();
+            //Get the Date
+            let dateValue= categoryRef['date']
+            promises1.push(categoryRef['category'].get().then(referenceCategory =>{
+              let categoryCategoryRef = referenceCategory.data()
+              //Get the Category
+              let categoryName = categoryCategoryRef['name'];
+              promises2.push(this.props.firebase.db.collection('categories').get().then(categoryDocs =>{
+                for (let x in categoryDocs.docs){
+                  promises3.push(categoryDocs.docs[x].ref.collection("features").get().then(featureDocs =>{
+                    for(let y in featureDocs.docs){
+                      let featureDocument = featureDocs.docs[y].data()
+                      //Get the Feature
+                      let featureValue = featureDocument['name'] 
+                      promises4.push(assessments.docs[j].ref.collection('scores').get().then(scoreCollection => {
+                        for(let z in scoreCollection.docs){
+                          let scoreDoc = scoreCollection.docs[z].data()
+                          //Get the Score
+                          let scoreValue = scoreDoc['score']
+                          promises5.push(scoreDoc['type'].get().then(scoreType =>{
+                            let scoreTypeData = scoreType.data()
+                            //Get the Criteria
+                            let criteriaValue = scoreTypeData['name']
+                            //Create the row
+                            var row = {
+                              category: categoryName.toString(), 
+                              feature: featureValue.toString(), 
+                              criteria: criteriaValue.toString(),
+                              date: dateValue.toDate().toISOString().slice(0,10),
+                              score: scoreValue.toString(),
+                              comment: scoreDoc['comment'],
+                            }
+                            rows.push(row)
+                          }))
+                        }
+                      }))
+                    }
+                  }))
+                }
+              }))
+            }));
+          }
+        }));
+      }
+      return Promise.all(promises).then(_=>{
+        return Promise.all(promises1).then(_=>{
+          return Promise.all(promises2).then(_=>{
+            return Promise.all(promises3).then(_=>{
+              return Promise.all(promises4).then(_=>{
+                return Promise.all(promises5).then(_=>{
+                  this.setState({rowData:rows})
+                })
+              })
+            })
+          })
+        })
+      });
+    });
+}
+
+              /* Get Score Scale */
+              /*
+              categoryCategoryRef['report_type'].get().then(reportType =>{
+                var reportRef = reportType.data()
+                console.log("reportRef", reportRef)
+                reportRef['scores'].forEach(scoreScaleDocs=> {
+                  scoreScaleDocs.get().then(scoreScale => {
+                    console.log(scoreScale.data())
+                    var scoreScaleData = scoreScale.data()
+                    var scaleMin = scoreScaleData['min']
+                    var scaleMax = scoreScaleData['max']
+                  })
+                })
+              })*/
+
+
+
+  getname(){
+    this.props.firebase.db.collection('subjects').get().then(result=>{
+      result.docs.forEach(doc=>{
+        var documentData = doc.data()
+        var name = documentData['name']
+        return name
+        })
+    });
   }
 
+  getSubjects(){
+    var names = []
+    this.props.firebase.db.collection('subjects').get().then(result=>{
+      result.docs.forEach(doc=>{
+        names.push(doc.get('name'))
+      })
+    });
+  }
+
+  getColumn(){
+    return[
+      {
+        headerName: "Category", 
+        field : "category"     
+      },
+      {
+        headerName: "Feature", 
+        field : "feature"     
+      },
+      {
+        headerName: "Criteria", 
+        field : "criteria"        
+      },
+      {
+        headerName: "Date", 
+        field : "date"        
+      },
+      {
+        headerName: "Score",
+        field : "score"
+      },
+      {
+        headerName: "Comment", 
+        field : "comment"
+      }
+    ]
+  }
 
   render() {
     return (
       <div className="ag-theme-balham"
-        style = {{ height: '200px', width: '600px'}}
+        style = {{flex:1, height:'80vh', width: '80%', margin: '2rem auto'}}
       >
-        <AgGridReact
+        <AgGridReact 
+          style={{maxWidth:"100%"}}
           columnDefs = {this.state.columnDefs}
-          rowData = { this.state.rowData}>
+          rowData = {this.state.rowData}>
         </AgGridReact>
       </div>
     );

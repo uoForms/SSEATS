@@ -5,8 +5,6 @@ import { withFirebase } from '../firebase/context'
 
 class HeaderBase extends React.Component {
   filterPage(value){
-    console.log("32");
-    console.log(value);
     return value.type !== null && value.type === 'page';
   }
 
@@ -15,7 +13,6 @@ class HeaderBase extends React.Component {
       .filter(permission => permission.type !== null
         && permission.type === 'page')
       .map((page, i) => {
-        console.log(i)
         return (
           <Nav.Item key={i}>
             <Nav.Link href={page.link}>{page.shortLabel}</Nav.Link>
