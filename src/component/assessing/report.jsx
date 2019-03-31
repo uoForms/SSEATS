@@ -25,37 +25,45 @@ class ReportBase extends React.Component {
     }
     this.getRows()
   }
-
+ // check parent function
   getRows(){
-    var rows = []
-    this.props.firebase.db.collection('subjects').get().then(result=>{
-      result.docs.forEach(doc=>{
-        doc.ref.collection('assessments').get().then(assessment=>{
-          assessment.docs.forEach(coll=>{
-            var categoryRef = coll.data()
-            var dateValue= categoryRef['date']
-            categoryRef['category'].get().then(referenceCategory =>{
-              var categoryCategoryRef = referenceCategory.data()
-              var categoryName = categoryCategoryRef['name']
-              //Getting the Category Name
+    var rows = [];
+    // get all subjects
+    this.props.firebase.db.collection('subjects').get().then(subjects=>{
+      // iterate the array synchronously
+      let promises = [];
+      let promises1 = [];
+      let promises2 = [];
+      let promises3 = [];
+      let promises4 = [];
+      let promises5 = [];
 
-              this.props.firebase.db.collection('categories').get().then(categoryDocs=>{
-                categoryDocs.docs.forEach(catDoc=>{
-                  catDoc.ref.collection("features").get().then(featureDoc=>{
-                    featureDoc.docs.forEach(featureCollection =>{
-                      var featureDocument = featureCollection.data()
-                      var featureValue = featureDocument['name']
-                      //Getting the score
-                      coll.ref.collection('scores').get().then(scoreCollection => {
-                        scoreCollection.docs.forEach(scoreRef=>{
-                          var scoreDoc = scoreRef.data()
-                          var scoreValue = scoreDoc['score']
-                          scoreDoc['type'].get().then(scoreType =>{
-                            var scoreTypeData = scoreType.data()
-                            var criteriaValue = scoreTypeData['name']
+      for(let i in subjects.docs){
+        promises.push(subjects.docs[i].ref.collection('assessments').get().then(assessments=>{
+          for(let j in assessments.docs){
+            let categoryRef = assessments.docs[j].data();
+            let dateValue= categoryRef['date']
+            promises1.push(categoryRef['category'].get().then(referenceCategory =>{
+              let categoryCategoryRef = referenceCategory.data()
+              let categoryName = categoryCategoryRef['name'];
+              promises2.push(this.props.firebase.db.collection('categories').get().then(categoryDocs =>{
+                for (let x in categoryDocs.docs){
+                  promises3.push(categoryDocs.docs[x].ref.collection("features").get().then(featureDocs =>{
+                    for(let y in featureDocs.docs){
+                      let featureDocument = featureDocs.docs[y].data()
+                      let featureValue = featureDocument['name'] 
+                      console.log(featureValue)
+                      promises4.push(assessments.docs[j].ref.collection('scores').get().then(scoreCollection => {
+                        for(let z in scoreCollection.docs){
+                          let scoreDoc = scoreCollection.docs[z].data()
+                          let scoreValue = scoreDoc['score']
+                          console.log(scoreDoc)
+                          promises5.push(scoreDoc['type'].get().then(scoreType =>{
+                            let scoreTypeData = scoreType.data()
+                            let criteriaValue = scoreTypeData['name']
 
                             var row = {
-                              category:categoryName.toString(), 
+                              category: categoryName.toString(), 
                               feature: featureValue.toString(), 
                               criteria: criteriaValue.toString(),
                               date: dateValue.toDate(),
@@ -63,22 +71,31 @@ class ReportBase extends React.Component {
                               comment: scoreDoc['comment'],
                             }
                             rows.push(row)
-                            this.setState({rowData:rows})
-                            console.log(rows)
-
-
-                          })
-                        })
-                      })
-                    })
-                  })
+                          }))
+                        }
+                      }))
+                    }
+                  }))
+                }
+              }))
+            }));
+          }
+        }));
+      }
+      return Promise.all(promises).then(_=>{
+        return Promise.all(promises1).then(_=>{
+          return Promise.all(promises2).then(_=>{
+            return Promise.all(promises3).then(_=>{
+              return Promise.all(promises4).then(_=>{
+                return Promise.all(promises5).then(_=>{
+                  this.setState({rowData:rows})
                 })
-              })  
+              })
             })
           })
         })
+      });
     });
-  })
 }
 
               /* Get Score Scale */
