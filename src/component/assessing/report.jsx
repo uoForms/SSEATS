@@ -12,6 +12,7 @@ class ReportBase extends React.Component {
 
       columnDefs : this.getColumn(),
       rowData: []
+
     }
     this.getRows()
   }
@@ -20,7 +21,8 @@ class ReportBase extends React.Component {
     var rows = [];
     // get all subjects
     this.props.firebase.db.collection('subjects').get().then(subjects=>{
-      // iterate the array synchronously
+
+      // iterate the arrays synchronously
       let promises = [];
       let promises1 = [];
       let promises2 = [];
@@ -32,31 +34,34 @@ class ReportBase extends React.Component {
         promises.push(subjects.docs[i].ref.collection('assessments').get().then(assessments=>{
           for(let j in assessments.docs){
             let categoryRef = assessments.docs[j].data();
+            //Get the Date
             let dateValue= categoryRef['date']
             promises1.push(categoryRef['category'].get().then(referenceCategory =>{
               let categoryCategoryRef = referenceCategory.data()
+              //Get the Category
               let categoryName = categoryCategoryRef['name'];
               promises2.push(this.props.firebase.db.collection('categories').get().then(categoryDocs =>{
                 for (let x in categoryDocs.docs){
                   promises3.push(categoryDocs.docs[x].ref.collection("features").get().then(featureDocs =>{
                     for(let y in featureDocs.docs){
                       let featureDocument = featureDocs.docs[y].data()
+                      //Get the Feature
                       let featureValue = featureDocument['name'] 
-                      console.log(featureValue)
                       promises4.push(assessments.docs[j].ref.collection('scores').get().then(scoreCollection => {
                         for(let z in scoreCollection.docs){
                           let scoreDoc = scoreCollection.docs[z].data()
+                          //Get the Score
                           let scoreValue = scoreDoc['score']
-                          console.log(scoreDoc)
                           promises5.push(scoreDoc['type'].get().then(scoreType =>{
                             let scoreTypeData = scoreType.data()
+                            //Get the Criteria
                             let criteriaValue = scoreTypeData['name']
-
+                            //Create the row
                             var row = {
                               category: categoryName.toString(), 
                               feature: featureValue.toString(), 
                               criteria: criteriaValue.toString(),
-                              date: dateValue.toDate(),
+                              date: dateValue.toDate().toISOString().slice(0,10),
                               score: scoreValue.toString(),
                               comment: scoreDoc['comment'],
                             }
