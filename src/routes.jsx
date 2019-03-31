@@ -4,6 +4,7 @@ import { withFirebase } from './component/firebase/context';
 
 // Pages
 import Report from './component/assessing/report.jsx'
+import CreateSubject from './component/assessing/createSubject.jsx'
 
 import LandingPage from './component/landingPage/landingPage.jsx';
 
@@ -21,7 +22,8 @@ class RoutesBase extends React.Component {
     // Dictionary that contains all the possible routes
     // This is to better restrict page access using firebase
     this.pages = {
-      "/report" : Report
+      "/report" : Report,
+      "/subject/create" : CreateSubject
     };
   }
 
