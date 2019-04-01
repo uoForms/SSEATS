@@ -26,7 +26,6 @@ class RoutesBase extends React.Component {
     // This is to better restrict page access using firebase
     this.pages = {
       "/report" : Report,
-      "/account/create": CreateAccount,
       "/subject/create" : CreateSubject
     };
   }
@@ -52,6 +51,7 @@ class RoutesBase extends React.Component {
             <Switch>
               <Route exact path='/' component={LandingPage} />
               <Route exact path='/login' component={LoginPage} />
+              <Route exact path='/account/create' component={CreateAccount} />
               <Route exact path='/forgotPassword' component={ForgotPassword}/>
               <Route component={NotFound} />
             </Switch>

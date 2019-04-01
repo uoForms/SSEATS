@@ -19,16 +19,6 @@ class Firebase {
     this.userPermissions = [];
   }
 
-  doAccountCreation = (email, role) => this.auth.createUserWithEmailAndPassword(email,
-        Math.random().toString(36).substring(2, 15) +
-        Math.random().toString(36).substring(2, 15)
-    ).then((user) => {
-      console.log('hey');
-      this.db.collection('users').doc(user.uid).set({
-        role: role
-      })
-    });
-
   doSignInWithEmailAndPassword = (email, password) =>
     this.auth.signInWithEmailAndPassword(email, password);
 
