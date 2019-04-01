@@ -6,14 +6,12 @@ import { withFirebase } from '../firebase/context';
 class LandingPageBase extends React.Component {
 
   pageListItems(){
-    console.log("logged");
-    console.log(this.props.firebase.currentUser);
     return this.props.firebase.userPermissions
       .filter(permission => permission.type !== null
         && permission.type === 'page')
       .map((page, i) => {
         return (
-          <ListGroup.Item action className="h5" key={i} href={page.link}>
+          <ListGroup.Item action className="h5" key={i} onClick={(event)=>this.props.history.push(page.link)}>
             {page.longLabel}
           </ListGroup.Item>
         );
@@ -21,11 +19,9 @@ class LandingPageBase extends React.Component {
   }
 
   loginList(){
-    console.log("not logged");
-    console.log(this.props.firebase.currentUser);
     let listItems = [];
     listItems.push(
-      <ListGroup.Item action className="h5" key="0" href="/login">
+      <ListGroup.Item action className="h5" key="0" onClick={(event)=>this.props.history.push('/login')}>
         To use this application, you need to be logged in. Click here to log in.
       </ListGroup.Item>
     );

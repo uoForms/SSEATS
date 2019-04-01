@@ -15,7 +15,7 @@ class HeaderBase extends React.Component {
       .map((page, i) => {
         return (
           <Nav.Item key={i}>
-            <Nav.Link href={page.link}>{page.shortLabel}</Nav.Link>
+            <Nav.Link onClick={(event)=>this.props.history.push(page.link)}>{page.shortLabel}</Nav.Link>
           </Nav.Item>
         );
       });
@@ -26,7 +26,7 @@ class HeaderBase extends React.Component {
     if(this.props.firebase.auth.currentUser === null){
       navItems.push(
         <Nav.Item key='0'>
-          <Nav.Link href="/login">Login</Nav.Link>
+          <Nav.Link onClick={(event)=>this.props.history.push('/login')}>Login</Nav.Link>
         </Nav.Item>
       );
     } else {
@@ -43,10 +43,10 @@ class HeaderBase extends React.Component {
   render() {
     return (
         <Navbar bg="dark" variant="dark">
-          <Navbar.Brand href="/">SSEATS</Navbar.Brand>
+          <Navbar.Brand onClick={(event)=>this.props.history.push('/')}>SSEATS</Navbar.Brand>
           <Nav className="mr-auto">
             <Nav.Item>
-              <Nav.Link href="/">Home</Nav.Link>
+              <Nav.Link onClick={(event)=>this.props.history.push('/')}>Home</Nav.Link>
             </Nav.Item>
             {this.routingNavItems()}
           </Nav>
@@ -60,8 +60,7 @@ class HeaderBase extends React.Component {
 
   handleClick(event) {
     event.stopPropagation();
-    this.props.firebase.doLogout();
-    window.location.replace("/");
+    this.props.firebase.doLogout().then(_ => this.props.history.push('/'));
   }
 
 }

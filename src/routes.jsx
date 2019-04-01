@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import { withFirebase } from './component/firebase/context';
 
+import Header from './component/header/header.jsx';
 // Pages
 import Report from './component/assessing/report.jsx'
 import CreateSubject from './component/assessing/createSubject.jsx'
@@ -27,15 +28,27 @@ class RoutesBase extends React.Component {
     };
   }
 
+  componentWillMount() {
+    this.proxy = new Proxy(this.props.firebase.userPermissions, (permissions) =>
+      console.log(permissions)
+      //this.setState({ location });
+    );
+  }
+
   unauthenticatedRouting() {
     return (
         <BrowserRouter>
-          <Switch>
-            <Route exact path='/' component={LandingPage} />
-            <Route exact path='/login' component={LoginPage} />
-            <Route exact path='/forgotPassword' component={ForgotPassword}/>
-            <Route component={NotFound} />
-          </Switch>
+          <div>
+            <Switch>
+              <Route component={Header}></Route>
+            </Switch>
+            <Switch>
+              <Route exact path='/' component={LandingPage} />
+              <Route exact path='/login' component={LoginPage} />
+              <Route exact path='/forgotPassword' component={ForgotPassword}/>
+              <Route component={NotFound} />
+            </Switch>
+          </div>
         </BrowserRouter>
     );
   }
@@ -54,16 +67,21 @@ class RoutesBase extends React.Component {
   authenticatedRouting() {
     return (
         <BrowserRouter>
-          <Switch>
-            {/* Since logged in, just redirect to home */}
-            <Route exact path="/login" render={() => (
-                <Redirect to="/"/>
-            )}/>
-            <Route exact path='/' component={LandingPage} />
-            <Route exact path='/forgotPassword' component={ForgotPassword}/>
-            {this.authorisedRouteList()}
-            <Route component={NotFound} />
-          </Switch>
+          <div>
+            <Switch>
+              <Route component={Header}></Route>
+            </Switch>
+            <Switch>
+              {/* Since logged in, just redirect to home */}
+              <Route exact path="/login" render={() => (
+                  <Redirect to="/"/>
+              )}/>
+              <Route exact path='/' component={LandingPage} />
+              <Route exact path='/forgotPassword' component={ForgotPassword}/>
+              {this.authorisedRouteList()}
+              <Route component={NotFound} />
+            </Switch>
+          </div>
         </BrowserRouter>
     );
   }
