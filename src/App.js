@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import Header from './component/header/header.jsx';
 import Routes from './routes.jsx';
 import { withFirebase } from './component/firebase/context';
 
@@ -43,8 +42,7 @@ class AppBase extends Component {
       return null;
     }
     return (
-      <div>
-        <Header />
+      <div style={{minHeight:"100vh", display:"flex", flexDirection:"column"}}>
         <Routes />
       </div>
     );

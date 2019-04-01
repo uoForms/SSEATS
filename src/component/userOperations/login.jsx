@@ -1,9 +1,12 @@
-import React from 'react';
+ import React from 'react';
 import Alert from 'react-bootstrap/Alert';
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { withFirebase } from '../firebase/context'
+
+//Scripts
+import manageRoles from '../firebase/manageRoles.js'
 
 class LoginForm extends React.Component {
   constructor(props) {
@@ -20,9 +23,13 @@ class LoginForm extends React.Component {
   handleClick(event) {
     if (this.state.username !== '' && this.state.password !== '') {
       this.props.firebase.doSignInWithEmailAndPassword(this.state.username, this.state.password)
-      .then(() => {
+      .then((userCredentials) => {
+        // update permissions
+        return manageRoles.updateUserPermissions(this.props.firebase.db.collection('users').doc(userCredentials.user.uid));
+      }).then(_=>{
         this.setState(this.INITIAL_STATE);
-        window.location.reload();
+        this.props.history.push('/')
+        //window.location.reload();
       }).catch((e) => {
         this.setState({showError:true, errorMessage:"Invalid username or password."});
       });
@@ -62,9 +69,9 @@ class LoginForm extends React.Component {
             <Button onClick={(event)=>this.handleClick(event)}>Login</Button>
           </Form.Group>
           <Form.Group>
-            <a href="/forgotPassword" onclick="">
-              Forgot Password?
-            </a>
+            <Button variant="link"
+              onClick={(event)=>this.props.history.push("/forgotPassword")}
+            >Forgot Password?</Button>
           </Form.Group>
         </Card.Body>
       </Card>
