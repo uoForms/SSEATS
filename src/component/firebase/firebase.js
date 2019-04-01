@@ -27,7 +27,7 @@ class Firebase {
 
   doLogout = () =>  this.auth.signOut().then(_ => this.userPermissions = []);
 
-  }
+}
 
 
 

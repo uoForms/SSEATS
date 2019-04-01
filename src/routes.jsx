@@ -1,12 +1,12 @@
 import React from 'react';
-import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
+import { Router, Route, Switch, Redirect } from 'react-router-dom';
 import { withFirebase } from './component/firebase/context';
+import { createBrowserHistory } from 'history';
 
 import Header from './component/header/header.jsx';
 // Pages
 import Report from './component/assessing/report.jsx'
 import CreateSubject from './component/assessing/createSubject.jsx'
-
 import LandingPage from './component/landingPage/landingPage.jsx';
 
 import ForgotPassword from './component/userOperations/forgotPassword.jsx'
@@ -19,7 +19,8 @@ import NotFound from './component/error/404.jsx'
 
 class RoutesBase extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
+    this.history = createBrowserHistory();
     // Dictionary that contains all the possible routes
     // This is to better restrict page access using firebase
     this.pages = {
@@ -28,16 +29,20 @@ class RoutesBase extends React.Component {
     };
   }
 
-  componentWillMount() {
-    this.proxy = new Proxy(this.props.firebase.userPermissions, (permissions) =>
-      console.log(permissions)
-      //this.setState({ location });
-    );
+  componentWillMount(){
+    this.setState({perms: this.props.firebase.userPermissions})
+    this.listener = this.history.listen((location, action) => {
+      this.setState({perms: this.props.firebase.userPermissions})
+    });
+  }
+
+  componentWillUnmount(){
+    this.listener();
   }
 
   unauthenticatedRouting() {
     return (
-        <BrowserRouter>
+        <Router history={this.history}>
           <div>
             <Switch>
               <Route component={Header}></Route>
@@ -49,12 +54,12 @@ class RoutesBase extends React.Component {
               <Route component={NotFound} />
             </Switch>
           </div>
-        </BrowserRouter>
+        </Router>
     );
   }
 
   authorisedRouteList(){
-    return this.props.firebase.userPermissions
+    return this.state.perms
       .filter(permission => permission.type !== null
         && permission.type === 'page')
       .map((page, i) => {
@@ -66,7 +71,7 @@ class RoutesBase extends React.Component {
 
   authenticatedRouting() {
     return (
-        <BrowserRouter>
+        <Router history={this.history}>
           <div>
             <Switch>
               <Route component={Header}></Route>
@@ -82,7 +87,7 @@ class RoutesBase extends React.Component {
               <Route component={NotFound} />
             </Switch>
           </div>
-        </BrowserRouter>
+        </Router>
     );
   }
 
