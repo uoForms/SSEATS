@@ -2,6 +2,36 @@ let score = {
   createScore: (assessmentDocumentReference, data)=>{
     return assessmentDocumentReference.collection('scores').doc().set(data)
   },
+  // Returns a promise containing an object contaning a category, feature, criteria hiearchy.
+  getCriterias: db=>{
+    let criteriaMap = {};
+    return db.collection('categories').get().then(categories=>{
+      let promises = [];
+      for (let i in categories.docs) {
+        let category = categories.docs[i].get('name');
+        criteriaMap[category] = {};
+        promises.push(categories.docs[i].ref.collection('features').get().then(features=>{
+          let promises1 = [];
+          for (let j in features.docs) {
+            let feature = features.docs[j].get('name');
+            criteriaMap[category][feature] = [];
+            promises1.push(features.docs[j].ref.collection('criteria').get().then(criterias=>{
+              let promises2 = [];
+              for (let k in criterias.docs) {
+                promises2.push(new Promise(resolve=>{
+                  criteriaMap[category][feature].push(criterias.docs[k].get('name'));
+                  resolve();
+                }));
+              }
+              return Promise.all(promises2);
+            }));
+          }
+          return Promise.all(promises1);
+        }));
+      }
+      return Promise.all(promises);
+    }).then(_=>criteriaMap);
+  },
   // Returns a promise that has rows as a value.
   getRows: (firestore, subjectsQuerySnapshot)=>{
     // Key is criteria ref, value is array of corresponding rows.
@@ -14,7 +44,7 @@ let score = {
         let promises1 = [];
         for(let j in assessments.docs){
           //Get the Date
-          let dateValue= assessments.docs[j].data().date;
+          let dateValue= assessments.docs[j].get('date');
           promises1.push(assessments.docs[j].ref.collection('scores').get().then(scores => {
             let promises2 = [];
             for(let k in scores.docs){

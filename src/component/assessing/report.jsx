@@ -90,10 +90,11 @@ class ReportBase extends React.Component {
           this.state.sidebarOpen?
           <Sidebar
             sidebar={<AddScore subjectDocumentReference={null}/>}
-            open="true"
+            open={true}
+            children={<div/>}
             onSetOpen={event=>this.onSetSidebarOpen(event, this)}
             styles={{ sidebar: { background: "white" } }}
-            pullRight="true"
+            pullRight={true}
           />
           :null
         }
