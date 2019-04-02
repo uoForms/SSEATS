@@ -2,6 +2,7 @@ let score = {
   createScore: (assessmentDocumentReference, data)=>{
     return assessmentDocumentReference.collection('scores').doc().set(data)
   },
+  
   // Returns a promise containing an object contaning a category, feature, criteria hiearchy.
   getCriterias: db=>{
     let criteriaMap = {};
@@ -19,7 +20,7 @@ let score = {
               let promises2 = [];
               for (let k in criterias.docs) {
                 promises2.push(new Promise(resolve=>{
-                  criteriaMap[category][feature].push(criterias.docs[k].get('name'));
+                  criteriaMap[category][feature].push({[criterias.docs[k].get('name')] : criterias.docs[k].ref.path});
                   resolve();
                 }));
               }
@@ -32,6 +33,23 @@ let score = {
       return Promise.all(promises);
     }).then(_=>criteriaMap);
   },
+
+  getScore: (categoryDocumentReference)=>{
+    let scoreRefs = [];
+    return categoryDocumentReference.get().then(category=>{
+      return category.get('report_type').get();
+    }).then(report_type=>{
+      let promises = [];
+      let scores = report_type.get('scores');
+      for (let i in scores) {
+        promises.push(scores[i].get().then(score=>{
+          scoreRefs.push(score.data())
+        }))
+      }
+      return Promise.all(promises);
+    }).then(_=>scoreRefs);
+  },
+
   // Returns a promise that has rows as a value.
   getRows: (firestore, subjectsQuerySnapshot)=>{
     // Key is criteria ref, value is array of corresponding rows.
