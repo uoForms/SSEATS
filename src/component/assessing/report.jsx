@@ -132,13 +132,13 @@ class ReportBase extends React.Component {
     let promises = []
     promises.push(this.props.firebase.db.collection('subjects').get().then(result=>{
       result.docs.forEach(doc=>{
-        let subject = {name: doc.get('name').toString(), snapshot: doc}
+        let subject = {name: doc.get('name'), docRef: doc.ref.path}
         names.push(subject)
       })
     }))
     return Promise.all(promises).then(_=>{
       let subjectMap = names.map((subject, i) => {
-        return <option key ={i} name = {subject['name']} value = {subject}> {subject['name']}</option>
+        return <option key ={i} name = {subject['name']} value = {subject['docRef']}> {subject['name']}</option>
       })
       this.setState({subjects: subjectMap})
     })
@@ -192,7 +192,10 @@ class ReportBase extends React.Component {
           id = "subject"
           placeholder = "Select a Subject"
           title = "Subject"
-          onChange={() => console.log((document.getElementById('subject').value))}
+          onChange={_ => {
+            let selectedSubject = document.getElementById('subject').value
+            console.log(selectedSubject)
+          }}
           children = {this.state.subjects}
           >
         </Form.Control>
