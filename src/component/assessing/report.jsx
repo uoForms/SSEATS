@@ -4,6 +4,7 @@ import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 import { withFirebase } from '../firebase/context'
+import manageScore from '../firebase/manageScore'
 
 class ReportBase extends React.Component {
   constructor(props){
@@ -131,13 +132,13 @@ class ReportBase extends React.Component {
     let promises = []
     promises.push(this.props.firebase.db.collection('subjects').get().then(result=>{
       result.docs.forEach(doc=>{
-        let subject = {name: doc.get('name').toString(), uid: doc.ref, snapshot: doc}
+        let subject = {name: doc.get('name').toString(), snapshot: doc}
         names.push(subject)
       })
     }))
     return Promise.all(promises).then(_=>{
-      let subjectMap = names.map((name, i) => {
-        return <option key ={i} value ={name['uid']}> {name['name']}</option>
+      let subjectMap = names.map((subject, i) => {
+        return <option key ={i} name = {subject['name']} value = {subject}> {subject['name']}</option>
       })
       this.setState({subjects: subjectMap})
     })
@@ -172,6 +173,14 @@ class ReportBase extends React.Component {
     ]
   }
 
+  handleChange (snapshot){
+    console.log(snapshot['snapshot'])
+    manageScore.getRows(this.props.firebase.db, snapshot['snapshot']).then(rows =>{
+      console.log(rows)
+      this.setState({rowData: rows})
+    })
+    
+  }
   render() {
     return (
       <div className="ag-theme-balham"
@@ -183,7 +192,7 @@ class ReportBase extends React.Component {
           id = "subject"
           placeholder = "Select a Subject"
           title = "Subject"
-          onChange={() => this.setState({subject: document.getElementById('subject').value})}
+          onChange={() => console.log((document.getElementById('subject').value))}
           children = {this.state.subjects}
           >
         </Form.Control>
