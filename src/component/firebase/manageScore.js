@@ -1,6 +1,12 @@
 let score = {
-  createScore: (assessmentDocumentReference, data)=>{
-    return assessmentDocumentReference.collection('scores').doc().set(data)
+  // create assessment, then create score
+  createScore: (subjectDocumentReference, data)=>{
+    let assessmentDocumentReference = subjectDocumentReference.collection('assessments').doc()
+    return assessmentDocumentReference.set({
+      category:data.type.split('/features/')[0],
+      date:new Date(),
+      entry_type:'single'
+    }).then(_=>assessmentDocumentReference.collection('scores').doc().set(data));
   },
   
   // Returns a promise containing an object contaning a category, feature, criteria hiearchy.

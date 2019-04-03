@@ -1,5 +1,4 @@
 import React from 'react';
-//import Alert from 'react-bootstrap/Alert';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { withFirebase } from '../firebase/context'
@@ -72,33 +71,36 @@ class AddScoreBase extends React.Component {
   }
 
   handleClick() {
-    console.log(this.state.criteria)
-    console.log(this.state.score)
-    console.log(this.state.comment)
-    if (this.props.subjectDocumentReference) {
-      manageScore.createScore(this.props.subjectDocumentReference);
+    if (this.props.subjectDocumentReference && this.sate.criteria) {
+      manageScore.createScore(this.props.subjectDocumentReference, {
+        type: this.state.criteria,
+        score: this.state.score,
+        comment: this.state.comment
+      });
     }
   }
 
   render() {
     return (
-      <Form>
+      <Form className="p-3">
         <Form.Group>
           <Form.Label>Criteria</Form.Label>
           <Form.Control
             as="select"
             id="criteria"
             title="Criteria"
-            onChange={_=>{
+            onClick={_=>{
               let select = document.getElementById("criteria");
-              this.setState({criteria:select.selectedIndex===0?undefined:select[select.selectedIndex].value});
-              this.setScores();
+              // Update score input when a criteria is selected.
+              this.setState({criteria:select.selectedIndex===0?undefined:select[select.selectedIndex].value}, this.setScores);
             }}
           >
             <option></option>
             {this.state.criteriaOptions}
           </Form.Control>
-          <Form.Label>Select</Form.Label>
+        </Form.Group>
+        <Form.Group>
+          <Form.Label>Score</Form.Label>
           <Form.Control
             as="select"
             id="score"
@@ -110,6 +112,8 @@ class AddScoreBase extends React.Component {
           >
           {this.state.selectOptions}
           </Form.Control>
+        </Form.Group>
+        <Form.Group>
           <Form.Label>Comment</Form.Label>
           <Form.Control
             id="comment"
