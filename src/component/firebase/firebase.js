@@ -25,9 +25,9 @@ class Firebase {
   passwordResetEmail = (email) =>
     this.auth.sendPasswordResetEmail(email);
 
-  doLogout = () =>  this.auth.signOut();
+  doLogout = () =>  this.auth.signOut().then(_ => this.userPermissions = []);
 
-  }
+}
 
 
 
