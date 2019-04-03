@@ -3,7 +3,7 @@ let score = {
   createScore: (subjectDocumentReference, data)=>{
     let assessmentDocumentReference = subjectDocumentReference.collection('assessments').doc()
     return assessmentDocumentReference.set({
-      category:data.type.split('/features/')[0],
+      category:data.type.parent.parent.parent.parent,
       date:new Date(),
       entry_type:'single'
     }).then(_=>assessmentDocumentReference.collection('scores').doc().set(data));
@@ -63,36 +63,34 @@ let score = {
     
     // Step 1, get all scores and Initialize the scoresMap. O(n), n is number of scores
     let promises = [];
-    for(let i in subjectsQuerySnapshot.docs){
-      promises.push(subjectsQuerySnapshot.docs[i].ref.collection('assessments').get().then(assessments=>{
-        let promises1 = [];
-        for(let j in assessments.docs){
-          //Get the Date
-          let dateValue= assessments.docs[j].get('date');
-          promises1.push(assessments.docs[j].ref.collection('scores').get().then(scores => {
-            let promises2 = [];
-            for(let k in scores.docs){
-              promises2.push(new Promise(resolve=>{
-                let score = scores.docs[k].data();
-                // Create key if not there.
-                if (scoresMap[score.type.path] === undefined){
-                  scoresMap[score.type.path] = [];
-                }
-                // Start putting the score data for row.
-                scoresMap[score.type.path].push({
-                  date: dateValue.toDate().toISOString().slice(0,10),
-                  comment: score.comment,
-                  score: score.score
-                });
-                resolve();
-              }));
-            }
-            return Promise.all(promises2);
-          }));
-        }
-        return Promise.all(promises1);
-      }));
-    }
+    promises.push(subjectsQuerySnapshot.ref.collection('assessments').get().then(assessments=>{
+      let promises1 = [];
+      for(let j in assessments.docs){
+        //Get the Date
+        let dateValue= assessments.docs[j].get('date');
+        promises1.push(assessments.docs[j].ref.collection('scores').get().then(scores => {
+          let promises2 = [];
+          for(let k in scores.docs){
+            promises2.push(new Promise(resolve=>{
+              let score = scores.docs[k].data();
+              // Create key if not there.
+              if (scoresMap[score.type.path] === undefined){
+                scoresMap[score.type.path] = [];
+              }
+              // Start putting the score data for row.
+              scoresMap[score.type.path].push({
+                date: dateValue.toDate().toISOString().slice(0,10),
+                comment: score.comment,
+                score: score.score
+              });
+              resolve();
+            }));
+          }
+          return Promise.all(promises2);
+        }));
+      }
+      return Promise.all(promises1);
+    }));
     return Promise.all(promises)
     // Step 2 get all data from the criteria and it's parents and update the scoresMap. O(n)
     .then(_=>{

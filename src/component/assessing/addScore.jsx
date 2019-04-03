@@ -71,12 +71,12 @@ class AddScoreBase extends React.Component {
   }
 
   handleClick() {
-    if (this.props.subjectDocumentReference && this.sate.criteria) {
+    if (this.props.subjectDocumentReference && this.state.criteria) {
       manageScore.createScore(this.props.subjectDocumentReference, {
         type: this.props.firebase.db.doc(this.state.criteria),
         score: this.state.score,
         comment: this.state.comment
-      });
+      }).then(this.props.exit);
     }
   }
 
@@ -89,7 +89,7 @@ class AddScoreBase extends React.Component {
             as="select"
             id="criteria"
             title="Criteria"
-            onClick={_=>{
+            onChange={_=>{
               let select = document.getElementById("criteria");
               // Update score input when a criteria is selected.
               this.setState({criteria:select.selectedIndex===0?undefined:select[select.selectedIndex].value}, this.setScores);
