@@ -60,7 +60,9 @@ class RoutesBase extends React.Component {
                 <Redirect to="/"/>
             )}/>
             <Route exact path='/' component={LandingPage} />
-            <Route exact path='/forgotPassword' component={ForgotPassword}/>
+            <Route exact path='/forgotPassword' render={() => (
+                <Redirect to="/"/>
+            )}/>
             {this.authorisedRouteList()}
             <Route component={NotFound} />
           </Switch>
