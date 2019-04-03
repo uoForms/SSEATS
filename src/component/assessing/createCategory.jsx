@@ -23,7 +23,7 @@ class CreateCategoryBase extends React.Component {
       );
       let reportMapping = {}
       reports.docs.forEach((report) => {
-        reportMapping[report.ref.path] = report
+        reportMapping[report.ref.path] = report;
       });
       this.setState({
         reportTypes: reportMapping,
@@ -36,7 +36,9 @@ class CreateCategoryBase extends React.Component {
     return (
       <Card style={{ width: '50vw', minWidth: '10rem', margin: '5rem auto'}}>
         <Card.Body>
-
+          <Form.Group>
+            <Form.Label>Report Type</Form.Label>
+          </Form.Group>
         </Card.Body>
       </Card>
     );
