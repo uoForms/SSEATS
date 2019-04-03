@@ -9,7 +9,8 @@ class CreateCategoryBase extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      reportTypes : []
+      reportTypes : [],
+      features: []
     };
   }
 
@@ -68,6 +69,18 @@ class CreateCategoryBase extends React.Component {
                 </Form.Control>
             </Form.Group>
           </Form.Row>
+          <Form.Row>
+            <Form.Group as={Col}>
+              <Form.Row>
+                <Form.Label className="mx-1"  as={Col}>Feature Control</Form.Label>
+              </Form.Row>
+              <Form.Row>
+                <Button className="mx-1" variant="success">Add Feature</Button>
+                <Button className="mx-1" variant="danger">Remove Last Feature</Button>
+              </Form.Row>
+            </Form.Group>
+          </Form.Row>
+          
         </Card.Body>
       </Card>
     );
