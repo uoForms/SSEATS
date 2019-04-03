@@ -12,7 +12,10 @@ class ReportBase extends React.Component {
 
     this.state = {
       subject: "",
+      subjectDocRef : "",
+      subjectDoc : "",
       subjects: [],
+      snapshotMap : {},
       columnDefs : this.getColumn(),
       rowData: []
     }
@@ -130,9 +133,12 @@ class ReportBase extends React.Component {
   getSubjects(){
     let names = []
     let promises = []
+    let docSnapMap = {}
     promises.push(this.props.firebase.db.collection('subjects').get().then(result=>{
+      console.log(result) 
       result.docs.forEach(doc=>{
-        let subject = {name: doc.get('name'), docRef: doc.ref.path}
+        let subject = {name: doc.get('name'), docRef: doc.ref.path, docSnapshot: result}
+        docSnapMap[doc.ref.path] = doc
         names.push(subject)
       })
     }))
@@ -140,7 +146,9 @@ class ReportBase extends React.Component {
       let subjectMap = names.map((subject, i) => {
         return <option key ={i} name = {subject['name']} value = {subject['docRef']}> {subject['name']}</option>
       })
-      this.setState({subjects: subjectMap})
+
+      console.log(docSnapMap)
+      this.setState({subjects: subjectMap, snapshotMap: docSnapMap})
     })
   }
 
@@ -173,10 +181,10 @@ class ReportBase extends React.Component {
     ]
   }
 
-  handleChange (snapshot){
-    console.log(snapshot['snapshot'])
-    manageScore.getRows(this.props.firebase.db, snapshot['snapshot']).then(rows =>{
-      console.log(rows)
+  handleChange (documentReference){
+    console.log(documentReference)
+    console.log(this.state.snapshotMap[documentReference])
+    return manageScore.getRows(this.props.firebase.db, this.state.snapshotMap[documentReference]).then(rows =>{
       this.setState({rowData: rows})
     })
     
@@ -193,8 +201,7 @@ class ReportBase extends React.Component {
           placeholder = "Select a Subject"
           title = "Subject"
           onChange={_ => {
-            let selectedSubject = document.getElementById('subject').value
-            console.log(selectedSubject)
+            this.handleChange(document.getElementById('subject').value)
           }}
           children = {this.state.subjects}
           >

@@ -57,8 +57,7 @@ let score = {
     
     // Step 1, get all scores and Initialize the scoresMap. O(n), n is number of scores
     let promises = [];
-    for(let i in subjectsQuerySnapshot.docs){
-      promises.push(subjectsQuerySnapshot.docs[i].ref.collection('assessments').get().then(assessments=>{
+      promises.push(subjectsQuerySnapshot.ref.collection('assessments').get().then(assessments=>{
         let promises1 = [];
         for(let j in assessments.docs){
           //Get the Date
@@ -86,7 +85,6 @@ let score = {
         }
         return Promise.all(promises1);
       }));
-    }
     return Promise.all(promises)
     // Step 2 get all data from the criteria and it's parents and update the scoresMap. O(n)
     .then(_=>{
