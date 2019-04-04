@@ -1,10 +1,14 @@
 import React from 'react';
-import Form from 'react-bootstrap/Form'
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
+import Sidebar from "react-sidebar";
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham.css';
-import { withFirebase } from '../firebase/context'
-import manageScore from '../firebase/manageScore'
+import { withFirebase } from '../firebase/context';
+import AddScore from './addScore.jsx';
+import manageScore from '../firebase/manageScore';
+
 
 class ReportBase extends React.Component {
   constructor(props){
@@ -15,7 +19,8 @@ class ReportBase extends React.Component {
       subjects: [],
       snapshotMap : {},
       columnDefs : this.getColumn(),
-      rowData: []
+      rowData: [],
+      sidebarOpen: false
     }
   }
 
@@ -86,6 +91,10 @@ class ReportBase extends React.Component {
     ]
   }
 
+  onSetSidebarOpen(open, context) {
+    context.setState({sidebarOpen:open});
+  }
+
   handleChange (documentReference){
     if(documentReference ==="clear") {
       this.setState({rowData:[], subjectDocRef:""});
@@ -102,13 +111,31 @@ class ReportBase extends React.Component {
       <div className="ag-theme-balham"
         style = {{flex:1, height:'80vh', width: '80%', margin: '2rem auto'}}
       >
-
+      <Form.Group>
+        {
+          this.state.sidebarOpen?
+          <Sidebar
+            sidebar={<AddScore subjectDocumentReference={this.props.firebase.db.doc(this.state.subjectDocRef)} exit={_=>this.setState({sidebarOpen:false})}/>}
+            open={true}
+            children={<div/>}
+            onSetOpen={event=>this.onSetSidebarOpen(event, this)}
+            styles={{ sidebar: { background: "white" } }}
+            pullRight={true}
+          />
+          :null
+        }
+        {
+          this.state.subjectDocRef==="" ?
+          <Button variant="secondary" disabled>Add Score</Button> :
+          <Button onClick={_=>this.setState({sidebarOpen:true})}>Add Score</Button>
+        }
+      </Form.Group>
       <Form.Group>
         <Form.Control as="select"
           id = "subject"
           placeholder = "Select a Subject"
           title = "Subject"
-          onChange={_ => {
+          onClick={_ => {
             this.handleChange(document.getElementById('subject').value)
           }}
           children = {this.state.subjects}
@@ -119,8 +146,8 @@ class ReportBase extends React.Component {
         <AgGridReact 
           style={{maxWidth:"100%"}}
           columnDefs = {this.state.columnDefs}
-          rowData = {this.state.rowData}>
-        </AgGridReact>
+          rowData = {this.state.rowData}
+        />
       </div>
     );
   }
