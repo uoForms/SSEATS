@@ -112,6 +112,19 @@ class ReportBase extends React.Component {
         style = {{flex:1, height:'80vh', width: '80%', margin: '2rem auto'}}
       >
       <Form.Group>
+        <Form.Label>Select a Subject</Form.Label>
+        <Form.Control as="select"
+          id = "subject"
+          placeholder = "Select a Subject"
+          title = "Subject"
+          onChange={_ => {
+            this.handleChange(document.getElementById('subject').value)
+          }}
+          children = {this.state.subjects}
+          >
+        </Form.Control>
+      </Form.Group>
+      <Form.Group>
         {
           this.state.sidebarOpen?
           <Sidebar
@@ -130,19 +143,6 @@ class ReportBase extends React.Component {
           <Button onClick={_=>this.setState({sidebarOpen:true})}>Add Score</Button>
         }
       </Form.Group>
-      <Form.Group>
-        <Form.Control as="select"
-          id = "subject"
-          placeholder = "Select a Subject"
-          title = "Subject"
-          onClick={_ => {
-            this.handleChange(document.getElementById('subject').value)
-          }}
-          children = {this.state.subjects}
-          >
-        </Form.Control>
-      </Form.Group>
-
         <AgGridReact 
           style={{maxWidth:"100%"}}
           columnDefs = {this.state.columnDefs}
