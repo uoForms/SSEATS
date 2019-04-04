@@ -90,7 +90,7 @@ class CreateCategoryBase extends React.Component {
         );
       });
       return (
-        <ListGroup.Item key={i} data-type="feature" data-index={i}>
+        <ListGroup.Item className="pl-5" key={i} data-type="feature" data-index={i}>
           <Form.Group>
             <Form.Label>Feature Name</Form.Label>
             <Form.Control
@@ -100,21 +100,23 @@ class CreateCategoryBase extends React.Component {
               onChange={_ => this.updateFeature(i)}>
             </Form.Control>
           </Form.Group>
-          { this.state.features[i].criteria.length > 0 ?
-             <div className="h6 pt-2 pb-1">Criteria</div> : null}
-          {criteria}
-          <Form.Row>
-            <Form.Group as={Col}>
-              <Form.Row>
-                <Button className="mx-1"
-                  variant="success"
-                  onClick={_ => this.addCriteria(i)}>Add Criteria</Button>
-                <Button className="mx-1"
-                  variant="danger"
-                  onClick={_ => this.removeCriteria(i)}>Remove Last Criteria</Button>
-              </Form.Row>
-            </Form.Group>
-          </Form.Row>
+          <div className="pl-4">
+            { this.state.features[i].criteria.length > 0 ?
+               <div className="h6 pt-2 pb-1">Criteria</div> : null}
+            {criteria}
+            <Form.Row>
+              <Form.Group as={Col}>
+                <Form.Row>
+                  <Button className="mx-1"
+                    variant="success"
+                    onClick={_ => this.addCriteria(i)}>Add Criteria</Button>
+                  <Button className="mx-1"
+                    variant="danger"
+                    onClick={_ => this.removeCriteria(i)}>Remove Last Criteria</Button>
+                </Form.Row>
+              </Form.Group>
+            </Form.Row>
+          </div>
         </ListGroup.Item>
       );
     })
