@@ -67,14 +67,12 @@ class CreateCategoryBase extends React.Component {
     let value = document.getElementById('feature-' + feature).value;
     let features = this.state.features;
     features[feature]['name'] = value;
-    console.log(this.state.features)
   }
 
   updateCriteria(feature, criteria) {
     let value = document.getElementById('criteria-' + feature + '-' + criteria).value;
     let features = this.state.features;
     features[feature].criteria[criteria] = value;
-    console.log(this.state.features)
   }
 
   renderFeatures() {
@@ -102,6 +100,9 @@ class CreateCategoryBase extends React.Component {
               onChange={_ => this.updateFeature(i)}>
             </Form.Control>
           </Form.Group>
+          { this.state.features[i].criteria.length > 0 ?
+             <div className="h6 pt-2 pb-1">Criteria</div> : null}
+          {criteria}
           <Form.Row>
             <Form.Group as={Col}>
               <Form.Row>
@@ -114,7 +115,6 @@ class CreateCategoryBase extends React.Component {
               </Form.Row>
             </Form.Group>
           </Form.Row>
-          {criteria}
         </ListGroup.Item>
       );
     })
@@ -153,6 +153,10 @@ class CreateCategoryBase extends React.Component {
                 </Form.Control>
             </Form.Group>
           </Form.Row>
+          { this.state.features.length > 0 ? <div className="h5 mb-0 pt-3">Features</div> : null}
+        </Card.Body>
+        { this.state.features.length > 0 ? this.renderFeatures() : null}
+        <Card.Body>
           <Form.Row>
             <Form.Group as={Col}>
               <Form.Row>
@@ -166,7 +170,6 @@ class CreateCategoryBase extends React.Component {
             </Form.Group>
           </Form.Row>
         </Card.Body>
-        { this.state.features.length > 0 ? this.renderFeatures() : null}
       </Card>
     );
   }

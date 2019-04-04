@@ -6,7 +6,8 @@ import { createBrowserHistory } from 'history';
 import Header from './component/header/header.jsx';
 // Pages
 import Report from './component/assessing/report.jsx'
-import CreateSubject from './component/assessing/createSubject.jsx'
+import CreateSubject from './component/assessing/createSubject.jsx';
+import CreateCategory from './component/assessing/createCategory.jsx';
 import LandingPage from './component/landingPage/landingPage.jsx';
 
 import ForgotPassword from './component/userOperations/forgotPassword.jsx'
@@ -25,7 +26,8 @@ class RoutesBase extends React.Component {
     // This is to better restrict page access using firebase
     this.pages = {
       "/report" : Report,
-      "/subject/create" : CreateSubject
+      "/subject/create" : CreateSubject,
+      "/category/create" : CreateCategory,
     };
   }
 
@@ -84,7 +86,7 @@ class RoutesBase extends React.Component {
               <Route exact path='/' component={LandingPage} />
               <Route exact path='/forgotPassword' render={() => (
                 <Redirect to="/"/>
-            )}/>              
+            )}/>
             {this.authorisedRouteList()}
               <Route component={NotFound} />
             </Switch>
