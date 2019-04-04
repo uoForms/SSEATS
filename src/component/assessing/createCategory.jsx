@@ -1,8 +1,9 @@
 import React from 'react';
+import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
+import ListGroup from 'react-bootstrap/ListGroup';
 import { withFirebase } from '../firebase/context'
 
 class CreateCategoryBase extends React.Component {
@@ -37,9 +38,92 @@ class CreateCategoryBase extends React.Component {
     });
   }
 
+  addFeature() {
+    this.state.features.push({
+      name: '',
+      criteria: []
+    });
+    this.forceUpdate();
+  }
+
+  removeFeature() {
+    this.state.features.pop();
+    this.forceUpdate();
+  }
+
+  addCriteria(feature) {
+    this.state.features[feature].criteria.push({
+      name: ''
+    });
+    this.forceUpdate();
+  }
+
+  removeCriteria(feature) {
+    this.state.features[feature].criteria.pop();
+    this.forceUpdate();
+  }
+
+  updateFeature(feature) {
+    let value = document.getElementById('feature-' + feature).value;
+    let features = this.state.features;
+    features[feature]['name'] = value;
+    console.log(this.state.features)
+  }
+
+  updateCriteria(feature, criteria) {
+    let value = document.getElementById('criteria-' + feature + '-' + criteria).value;
+    let features = this.state.features;
+    features[feature].criteria[criteria] = value;
+    console.log(this.state.features)
+  }
+
+  renderFeatures() {
+    let features = this.state.features.map((feature, i) => {
+      let criteria = feature.criteria.map((criterion, j) => {
+        return (
+          <Form.Group key={j}>
+            <Form.Control
+              id = {"criteria-" + i + "-" + j}
+              placeholder = "Enter a new criteria"
+              title = {"Criteria " + j}
+              onChange={_ => this.updateCriteria(i,j)}>
+            </Form.Control>
+          </Form.Group>
+        );
+      });
+      return (
+        <ListGroup.Item key={i} data-type="feature" data-index={i}>
+          <Form.Group>
+            <Form.Label>Feature Name</Form.Label>
+            <Form.Control
+              id = {"feature-" + i}
+              placeholder = "Enter the feature name"
+              title = {"Feature " + i}
+              onChange={_ => this.updateFeature(i)}>
+            </Form.Control>
+          </Form.Group>
+          <Form.Row>
+            <Form.Group as={Col}>
+              <Form.Row>
+                <Button className="mx-1"
+                  variant="success"
+                  onClick={_ => this.addCriteria(i)}>Add Criteria</Button>
+                <Button className="mx-1"
+                  variant="danger"
+                  onClick={_ => this.removeCriteria(i)}>Remove Last Criteria</Button>
+              </Form.Row>
+            </Form.Group>
+          </Form.Row>
+          {criteria}
+        </ListGroup.Item>
+      );
+    })
+    return (<ListGroup variant="flush" children={features} />);
+  }
+
   render() {
     return (
-      <Card style={{ width: '60vw', minWidth: '10rem', margin: '5rem auto'}}>
+      <Card style={{ width: '80vw', maxWidth:'60rem', minWidth: '30rem', margin: '5rem auto'}}>
         <Card.Body>
           <div className="h4">Create Category</div>
           <Form.Row>
@@ -72,16 +156,17 @@ class CreateCategoryBase extends React.Component {
           <Form.Row>
             <Form.Group as={Col}>
               <Form.Row>
-                <Form.Label className="mx-1"  as={Col}>Feature Control</Form.Label>
-              </Form.Row>
-              <Form.Row>
-                <Button className="mx-1" variant="success">Add Feature</Button>
-                <Button className="mx-1" variant="danger">Remove Last Feature</Button>
+                <Button className="mx-1"
+                  variant="success"
+                  onClick={_ => this.addFeature()}>Add Feature</Button>
+                <Button className="mx-1"
+                  variant="danger"
+                  onClick={_ => this.removeFeature()}>Remove Last Feature</Button>
               </Form.Row>
             </Form.Group>
           </Form.Row>
-          
         </Card.Body>
+        { this.state.features.length > 0 ? this.renderFeatures() : null}
       </Card>
     );
   }
