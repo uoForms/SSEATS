@@ -75,6 +75,29 @@ class CreateCategoryBase extends React.Component {
     features[feature].criteria[criteria] = value;
   }
 
+  createCategory() {
+    let newCategory = this.props.firebase.db.collection('categories').doc();
+    newCategory.set({
+      name:this.state.categoryName,
+      user:false,
+      report_type: this.props.firebase.db.doc(this.state.selectedType)
+    });
+    let featureCollection = newCategory.collection('features');
+    this.state.features.forEach(feature => {
+      let newFeature = featureCollection.doc();
+      newFeature.set({
+        name:feature.name
+      })
+      let criteriaCollection = newFeature.collection('criteria');
+      feature.criteria.forEach(criteria => {
+        criteriaCollection.doc().set({
+          name: criteria
+        });
+      });
+    });
+    this.props.history.push('/');
+  }
+
   renderFeatures() {
     let features = this.state.features.map((feature, i) => {
       let criteria = feature.criteria.map((criterion, j) => {
@@ -168,6 +191,15 @@ class CreateCategoryBase extends React.Component {
                 <Button className="mx-1"
                   variant="danger"
                   onClick={_ => this.removeFeature()}>Remove Last Feature</Button>
+              </Form.Row>
+            </Form.Group>
+          </Form.Row>
+          <Form.Row>
+            <Form.Group as={Col}>
+              <Form.Row>
+                <Button className="mx-1"
+                  variant="primary"
+                  onClick={_ => this.createCategory()}>Create Category</Button>
               </Form.Row>
             </Form.Group>
           </Form.Row>
