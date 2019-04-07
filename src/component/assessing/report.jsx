@@ -19,6 +19,7 @@ class ReportBase extends React.Component {
       subjects: [],
       snapshotMap : {},
       columnDefs : this.getColumn(),
+      gridOptions : null,
       rowData: [],
       sidebarOpen: false
     }
@@ -66,27 +67,33 @@ class ReportBase extends React.Component {
     return[
       {
         headerName: "Category", 
-        field : "category"     
+        field : "category",
+        resizable : true
       },
       {
         headerName: "Feature", 
-        field : "feature"     
+        field : "feature"     ,
+        resizable : true
       },
       {
         headerName: "Criteria", 
-        field : "criteria"        
+        field : "criteria",
+        resizable : true
       },
       {
         headerName: "Date", 
-        field : "date"        
+        field : "date",
+        resizable : true
       },
       {
         headerName: "Score",
-        field : "score"
+        field : "score",
+        resizable : true
       },
       {
         headerName: "Comment", 
-        field : "comment"
+        field : "comment",
+        resizable : true
       }
     ]
   }
@@ -101,7 +108,24 @@ class ReportBase extends React.Component {
     }else{
       this.setState({subjectDocRef:documentReference});
       return manageScore.getRows(this.props.firebase.db, this.state.snapshotMap[documentReference]).then(rows =>{
-        this.setState({rowData: rows});
+        this.setState({rowData: rows},_=>{
+          // Callback sets size to whichever is wider between fit and auto.
+          this.state.gridOptions.api.sizeColumnsToFit();
+          let fit = 0;
+          this.state.gridOptions.columnApi.getColumnState().forEach(column=>{
+            fit += column.width;
+          });
+          this.state.gridOptions.columnApi.getAllColumns().forEach(column=>{
+              this.state.gridOptions.columnApi.autoSizeColumn(column.colId);
+          }, this);
+          let auto = 0;
+          this.state.gridOptions.columnApi.getColumnState().forEach(column=>{
+            auto += column.width;
+          });
+          if (auto < fit) {
+            this.state.gridOptions.api.sizeColumnsToFit();
+          }
+        });
       });
     }
   }
@@ -149,6 +173,10 @@ class ReportBase extends React.Component {
           style={{maxWidth:"100%"}}
           columnDefs = {this.state.columnDefs}
           rowData = {this.state.rowData}
+          onGridReady={params=>{
+            params.api.sizeColumnsToFit();
+            this.setState({gridOptions : params});
+          }}
         />
       </div>
     );
