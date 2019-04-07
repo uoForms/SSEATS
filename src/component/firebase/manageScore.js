@@ -66,32 +66,31 @@ let score = {
     promises.push(subjectsQuerySnapshot.ref.collection('assessments').get().then(assessments=>{
       let promises1 = [];
       for(let j in assessments.docs){
-        console.log("GetRows Call")
-        console.log(categoryRef)
-        console.log("categories/" + assessments.docs[j].get('category').id)
-        console.log(categoryRef === ("categories/" + assessments.docs[j].get('category').id))
-        //Get the Date
-        let dateValue= assessments.docs[j].get('date');
-        promises1.push(assessments.docs[j].ref.collection('scores').get().then(scores => {
-          let promises2 = [];
-          for(let k in scores.docs){
-            promises2.push(new Promise(resolve=>{
-              let score = scores.docs[k].data();
-              // Create key if not there.
-              if (scoresMap[score.type.path] === undefined){
-                scoresMap[score.type.path] = [];
-              }
-              // Start putting the score data for row.
-              scoresMap[score.type.path].push({
-                date: dateValue.toDate().toISOString().slice(0,10),
-                comment: score.comment,
-                score: score.score
-              });
-              resolve();
-            }));
-          }
-          return Promise.all(promises2);
-        }));
+        //Check if its the same as the category reference passed
+        if(categoryRef === ("categories/" + assessments.docs[j].get('category').id)){
+          //Get the Date
+          let dateValue= assessments.docs[j].get('date');
+          promises1.push(assessments.docs[j].ref.collection('scores').get().then(scores => {
+            let promises2 = [];
+            for(let k in scores.docs){
+              promises2.push(new Promise(resolve=>{
+                let score = scores.docs[k].data();
+                // Create key if not there.
+                if (scoresMap[score.type.path] === undefined){
+                  scoresMap[score.type.path] = [];
+                }
+                // Start putting the score data for row.
+                scoresMap[score.type.path].push({
+                  date: dateValue.toDate().toISOString().slice(0,10),
+                  comment: score.comment,
+                  score: score.score
+                });
+                resolve();
+              }));
+            }
+            return Promise.all(promises2);
+          }));
+        }
       }
       return Promise.all(promises1);
     }));

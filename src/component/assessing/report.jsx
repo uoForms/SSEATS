@@ -119,15 +119,12 @@ class ReportBase extends React.Component {
     context.setState({sidebarOpen:open});
   }
 
-  handleChange (documentReference){
-    if(documentReference ==="clear") {
-      this.setState({rowData:[], subjectDocRef:""});
-    }else{
-      this.setState({subjectDocRef:documentReference});
-      return manageScore.getRows(this.props.firebase.db, this.state.subjectSnapshotMap[documentReference], this.state.currentCategoryRef).then(rows =>{
+  handleChange (){
+    console.log(this.state.subjectSnapshotMap[this.state.subjectDocRef])
+    console.log(this.state.currentCategoryRef)
+      return manageScore.getRows(this.props.firebase.db, this.state.subjectSnapshotMap[this.state.subjectDocRef], this.state.currentCategoryRef).then(rows =>{
         this.setState({rowData: rows});
       });
-    }
   }
 
   render() {
@@ -142,7 +139,14 @@ class ReportBase extends React.Component {
             placeholder = "Select a Subject"
             title = "Subject"
             onChange={_ => {
-              this.handleChange(document.getElementById('subject').value)
+              if(document.getElementById('subject').value === "clear"){
+                this.setState({rowData:[], subjectDocRef:""});
+              }else{
+                this.setState({subjectDocRef : document.getElementById('subject').value});
+              }
+              if(this.state.subjectDocRef !== "" && this.state.currentCategoryRef !== ""){
+                this.handleChange()
+              }
             }}
             children = {this.state.subjects}
             >
@@ -158,7 +162,16 @@ class ReportBase extends React.Component {
             onChange={_ => {
               console.log("Adding Category")
               console.log(document.getElementById('category').value)
-              this.setState({currentCategoryRef : document.getElementById('category').value})
+              if(document.getElementById('category').value === "clear"){
+                this.setState({rowData:[],currentCategoryRef : ""})
+              }else{
+                console.log("set State")
+                this.setState({currentCategoryRef : document.getElementById('category').value})
+                if(this.state.subjectDocRef !== ""){
+                  console.log("Handle Change")
+                  this.handleChange()
+                }
+              }
             }}
             children = {this.state.categories}
             >
