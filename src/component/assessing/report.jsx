@@ -17,7 +17,10 @@ class ReportBase extends React.Component {
     this.state = {
       subjectDocRef : "",
       subjects: [],
-      snapshotMap : {},
+      subjectSnapshotMap : {},
+      currentCategoryRef:"",
+      categories:[],
+      categorySnapshotMap: {},
       columnDefs : this.getColumn(),
       rowData: [],
       sidebarOpen: false
@@ -26,6 +29,7 @@ class ReportBase extends React.Component {
 
  componentWillMount(){
   this.getSubjects()
+  this.getCategories()
  }
 
   getname(){
@@ -58,7 +62,27 @@ class ReportBase extends React.Component {
       let subjectMap = names.map((subject, i) => {
         return <option key ={i} name = {subject['name']} value = {subject['docRef']}> {subject['name']}</option>
       });
-      this.setState({subjects: subjectMap, snapshotMap: docSnapMap});
+      this.setState({subjects: subjectMap, subjectSnapshotMap: docSnapMap});
+    })
+  }
+
+  getCategories(){
+    let category = []
+    let promises = []
+    let docSnapMap = {}
+    category.push({category: "Select a Category", docRef: "clear", docSnapMap: "clear"})
+    promises.push(this.props.firebase.db.collection('categories').get().then(result=>{
+      result.docs.forEach(doc=>{
+        let subject = {name: doc.get('name'), docRef: doc.ref.path, docSnapshot: result}
+        docSnapMap[doc.ref.path] = doc
+        category.push(subject)
+      })
+    }))
+    return Promise.all(promises).then(_=>{
+      let subjectMap = category.map((subject, i) => {
+        return <option key ={i} name = {subject['name']} value = {subject['docRef']}> {subject['name']}</option>
+      });
+      this.setState({categories: subjectMap, categorySnapshotMap: docSnapMap});
     })
   }
 
@@ -100,7 +124,7 @@ class ReportBase extends React.Component {
       this.setState({rowData:[], subjectDocRef:""});
     }else{
       this.setState({subjectDocRef:documentReference});
-      return manageScore.getRows(this.props.firebase.db, this.state.snapshotMap[documentReference]).then(rows =>{
+      return manageScore.getRows(this.props.firebase.db, this.state.subjectSnapshotMap[documentReference]).then(rows =>{
         this.setState({rowData: rows});
       });
     }
@@ -124,6 +148,21 @@ class ReportBase extends React.Component {
             >
           </Form.Control>
         </Form.Group>
+
+        <Form.Group>
+        <Form.Label>Select a Category:</Form.Label>
+          <Form.Control as="select"
+            id = "category"
+            placeholder = "Select a Category"
+            title = "Category"
+            onChange={_ => {
+              this.setState({currentCategoryRef : document.getElementById('category').value})
+            }}
+            children = {this.state.categories}
+            >
+          </Form.Control>
+        </Form.Group>
+
         <Form.Group> 
           {
             this.state.sidebarOpen?
