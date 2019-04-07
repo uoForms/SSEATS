@@ -107,7 +107,6 @@ let score = {
               return criteriaDocumentReference.get().then(criteria=>{
                 // finish putting the criteria data for the row.
                 for (let i in scoresMap[criteriaPath]){
-                  scoresMap[criteriaPath][i]['category'] = category.get('name');
                   scoresMap[criteriaPath][i]['feature'] = feature.get('name');
                   scoresMap[criteriaPath][i]['criteria'] = criteria.get('name');
                 }

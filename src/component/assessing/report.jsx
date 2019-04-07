@@ -67,22 +67,22 @@ class ReportBase extends React.Component {
   }
 
   getCategories(){
-    let category = []
+    let categories = []
     let promises = []
     let docSnapMap = {}
-    category.push({category: "Select a Category", docRef: "", docSnapMap: ""})
+    categories.push({name: "Select a Category", docRef: "", docSnapMap: ""})
     promises.push(this.props.firebase.db.collection('categories').get().then(result=>{
       result.docs.forEach(doc=>{
-        let subject = {name: doc.get('name'), docRef: doc.ref.path, docSnapshot: result}
+        let category = {name: doc.get('name'), docRef: doc.ref.path, docSnapshot: result}
         docSnapMap[doc.ref.path] = doc.ref
-        category.push(subject)
+        categories.push(category)
       })
     }))
     return Promise.all(promises).then(_=>{
-      let subjectMap = category.map((subject, i) => {
-        return <option key ={i} name = {subject['name']} value = {subject['docRef']}> {subject['name']}</option>
+      let categoryMap = categories.map((category, i) => {
+        return <option key ={i} name = {category['name']} value = {category['docRef']}> {category['name']}</option>
       });
-      this.setState({categories: subjectMap, categorySnapshotMap: docSnapMap});
+      this.setState({categories: categoryMap, categorySnapshotMap: docSnapMap});
     })
   }
 
