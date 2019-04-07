@@ -124,7 +124,7 @@ class ReportBase extends React.Component {
       this.setState({rowData:[], subjectDocRef:""});
     }else{
       this.setState({subjectDocRef:documentReference});
-      return manageScore.getRows(this.props.firebase.db, this.state.subjectSnapshotMap[documentReference]).then(rows =>{
+      return manageScore.getRows(this.props.firebase.db, this.state.subjectSnapshotMap[documentReference], this.state.currentCategoryRef).then(rows =>{
         this.setState({rowData: rows});
       });
     }
@@ -156,6 +156,8 @@ class ReportBase extends React.Component {
             placeholder = "Select a Category"
             title = "Category"
             onChange={_ => {
+              console.log("Adding Category")
+              console.log(document.getElementById('category').value)
               this.setState({currentCategoryRef : document.getElementById('category').value})
             }}
             children = {this.state.categories}

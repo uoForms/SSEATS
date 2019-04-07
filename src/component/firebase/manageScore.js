@@ -57,7 +57,7 @@ let score = {
   },
 
   // Returns a promise that has rows as a value.
-  getRows: (firestore, subjectsQuerySnapshot)=>{
+  getRows: (firestore, subjectsQuerySnapshot, categoryRef)=>{
     // Key is criteria ref, value is array of corresponding rows.
     let scoresMap = {};
     
@@ -66,6 +66,10 @@ let score = {
     promises.push(subjectsQuerySnapshot.ref.collection('assessments').get().then(assessments=>{
       let promises1 = [];
       for(let j in assessments.docs){
+        console.log("GetRows Call")
+        console.log(categoryRef)
+        console.log("categories/" + assessments.docs[j].get('category').id)
+        console.log(categoryRef === ("categories/" + assessments.docs[j].get('category').id))
         //Get the Date
         let dateValue= assessments.docs[j].get('date');
         promises1.push(assessments.docs[j].ref.collection('scores').get().then(scores => {
