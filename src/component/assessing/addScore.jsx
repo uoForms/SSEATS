@@ -75,7 +75,7 @@ class AddScoreBase extends React.Component {
       manageScore.createScore(this.props.subjectDocumentReference, {
         type: this.props.firebase.db.doc(this.state.criteria),
         score: this.state.score,
-        comment: typeof this.state.comment == 'undefined'
+        comment: typeof this.state.comment === 'undefined'
           || this.state.comment === null ? '' : this.state.comment
       }).then(this.props.exit);
     }
