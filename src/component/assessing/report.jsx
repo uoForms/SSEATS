@@ -50,11 +50,11 @@ class ReportBase extends React.Component {
     let names = []
     let promises = []
     let docSnapMap = {}
-    names.push({name: "Select a Subject", docRef: "clear", docSnapMap: "clear"})
+    names.push({name: "Select a Subject", docRef: ""})
     promises.push(this.props.firebase.db.collection('subjects').get().then(result=>{
       result.docs.forEach(doc=>{
-        let subject = {name: doc.get('name'), docRef: doc.ref.path, docSnapshot: result}
-        docSnapMap[doc.ref.path] = doc
+        let subject = {name: doc.get('name'), docRef: doc.ref.path}
+        docSnapMap[doc.ref.path] = doc.ref
         names.push(subject)
       })
     }))
@@ -70,10 +70,10 @@ class ReportBase extends React.Component {
     let categories = []
     let promises = []
     let docSnapMap = {}
-    categories.push({name: "Select a Category", docRef: "", docSnapMap: ""})
+    categories.push({name: "Select a Category", docRef: ""})
     promises.push(this.props.firebase.db.collection('categories').get().then(result=>{
       result.docs.forEach(doc=>{
-        let category = {name: doc.get('name'), docRef: doc.ref.path, docSnapshot: result}
+        let category = {name: doc.get('name'), docRef: doc.ref.path}
         docSnapMap[doc.ref.path] = doc.ref
         categories.push(category)
       })
@@ -89,23 +89,23 @@ class ReportBase extends React.Component {
   getColumn(){
     return[
       {
-        headerName: "Feature", 
-        field : "feature"     
+        headerName: "Feature",
+        field : "feature"
       },
       {
-        headerName: "Criteria", 
-        field : "criteria"        
+        headerName: "Criteria",
+        field : "criteria"
       },
       {
-        headerName: "Date", 
-        field : "date"        
+        headerName: "Date",
+        field : "date"
       },
       {
         headerName: "Score",
         field : "score"
       },
       {
-        headerName: "Comment", 
+        headerName: "Comment",
         field : "comment"
       }
     ]
@@ -166,7 +166,7 @@ class ReportBase extends React.Component {
           </Form.Control>
         </Form.Group>
 
-        <Form.Group> 
+        <Form.Group>
           {
             this.state.sidebarOpen?
             <Sidebar
@@ -187,7 +187,7 @@ class ReportBase extends React.Component {
             <Button onClick={_=>this.setState({sidebarOpen:true})}>Add Score</Button>
           }
         </Form.Group>
-        <AgGridReact 
+        <AgGridReact
           style={{maxWidth:"100%"}}
           columnDefs = {this.state.columnDefs}
           rowData = {this.state.rowData}

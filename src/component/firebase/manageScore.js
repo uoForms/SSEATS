@@ -8,7 +8,7 @@ let score = {
       entry_type:'single'
     }).then(_=>assessmentDocumentReference.collection('scores').doc().set(data));
   },
-  
+
   // Returns a promise containing an object contaning a category, feature, criteria hiearchy.
   getCriterias: db=>{
     let criteriaMap = {};
@@ -60,10 +60,10 @@ let score = {
   getRows: (firestore, subjectsQuerySnapshot, categoryRef)=>{
     // Key is criteria ref, value is array of corresponding rows.
     let scoresMap = {};
-    
+
     // Step 1, get all scores and Initialize the scoresMap. O(n), n is number of scores
     let promises = [];
-    promises.push(subjectsQuerySnapshot.ref.collection('assessments')
+    promises.push(subjectsQuerySnapshot.collection('assessments')
       .where('category', '==', categoryRef).get().then(assessments=>{
       let promises1 = [];
       for(let j in assessments.docs){
