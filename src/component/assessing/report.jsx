@@ -17,7 +17,10 @@ class ReportBase extends React.Component {
     this.state = {
       subjectDocRef : "",
       subjects: [],
-      snapshotMap : {},
+      subjectSnapshotMap : {},
+      currentCategoryRef:"",
+      categories:[],
+      categorySnapshotMap: {},
       columnDefs : this.getColumn(),
       rowData: [],
       sidebarOpen: false
@@ -26,6 +29,7 @@ class ReportBase extends React.Component {
 
  componentWillMount(){
   this.getSubjects()
+  this.getCategories()
  }
 
   getname(){
@@ -58,16 +62,32 @@ class ReportBase extends React.Component {
       let subjectMap = names.map((subject, i) => {
         return <option key ={i} name = {subject['name']} value = {subject['docRef']}> {subject['name']}</option>
       });
-      this.setState({subjects: subjectMap, snapshotMap: docSnapMap});
+      this.setState({subjects: subjectMap, subjectSnapshotMap: docSnapMap});
+    })
+  }
+
+  getCategories(){
+    let categories = []
+    let promises = []
+    let docSnapMap = {}
+    categories.push({name: "Select a Category", docRef: "", docSnapMap: ""})
+    promises.push(this.props.firebase.db.collection('categories').get().then(result=>{
+      result.docs.forEach(doc=>{
+        let category = {name: doc.get('name'), docRef: doc.ref.path, docSnapshot: result}
+        docSnapMap[doc.ref.path] = doc.ref
+        categories.push(category)
+      })
+    }))
+    return Promise.all(promises).then(_=>{
+      let categoryMap = categories.map((category, i) => {
+        return <option key ={i} name = {category['name']} value = {category['docRef']}> {category['name']}</option>
+      });
+      this.setState({categories: categoryMap, categorySnapshotMap: docSnapMap});
     })
   }
 
   getColumn(){
     return[
-      {
-        headerName: "Category", 
-        field : "category"     
-      },
       {
         headerName: "Feature", 
         field : "feature"     
@@ -95,16 +115,19 @@ class ReportBase extends React.Component {
     context.setState({sidebarOpen:open});
   }
 
-  handleChange (documentReference){
-    if(documentReference ==="clear") {
-      this.setState({rowData:[], subjectDocRef:""});
+  handleChange (){
+
+    if(this.state.subjectDocRef === ""){
+      this.setState({rowData:[]});
+    }else if(this.state.currentCategoryRef === ""){
+        this.setState({rowData:[]})
     }else{
-      this.setState({subjectDocRef:documentReference});
-      return manageScore.getRows(this.props.firebase.db, this.state.snapshotMap[documentReference]).then(rows =>{
+      return manageScore.getRows(this.props.firebase.db, this.state.subjectSnapshotMap[this.state.subjectDocRef]
+              ,this.state.categorySnapshotMap[this.state.currentCategoryRef]).then(rows =>{
         this.setState({rowData: rows});
       });
-    }
   }
+}
 
   render() {
     return (
@@ -118,12 +141,31 @@ class ReportBase extends React.Component {
             placeholder = "Select a Subject"
             title = "Subject"
             onChange={_ => {
-              this.handleChange(document.getElementById('subject').value)
+                this.setState({subjectDocRef : document.getElementById('subject').value},() => {
+                  this.handleChange()
+                });
             }}
             children = {this.state.subjects}
             >
           </Form.Control>
         </Form.Group>
+
+        <Form.Group>
+        <Form.Label>Select a Category:</Form.Label>
+          <Form.Control as="select"
+            id = "category"
+            placeholder = "Select a Category"
+            title = "Category"
+            onChange={_ => {
+                this.setState({currentCategoryRef : document.getElementById('category').value},() => {
+                  this.handleChange()
+                });
+            }}
+            children = {this.state.categories}
+            >
+          </Form.Control>
+        </Form.Group>
+
         <Form.Group> 
           {
             this.state.sidebarOpen?
