@@ -90,11 +90,6 @@ class ReportBase extends React.Component {
   getColumn(){
     return[
       {
-        headerName: "Category", 
-        field : "category",
-        resizable : true
-      },
-      {
         headerName: "Feature", 
         field : "feature"     ,
         resizable : true
