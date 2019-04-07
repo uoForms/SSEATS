@@ -70,11 +70,11 @@ class ReportBase extends React.Component {
     let category = []
     let promises = []
     let docSnapMap = {}
-    category.push({category: "Select a Category", docRef: "clear", docSnapMap: "clear"})
+    category.push({category: "Select a Category", docRef: "", docSnapMap: ""})
     promises.push(this.props.firebase.db.collection('categories').get().then(result=>{
       result.docs.forEach(doc=>{
         let subject = {name: doc.get('name'), docRef: doc.ref.path, docSnapshot: result}
-        docSnapMap[doc.ref.path] = doc
+        docSnapMap[doc.ref.path] = doc.ref
         category.push(subject)
       })
     }))
@@ -88,10 +88,6 @@ class ReportBase extends React.Component {
 
   getColumn(){
     return[
-      {
-        headerName: "Category", 
-        field : "category"     
-      },
       {
         headerName: "Feature", 
         field : "feature"     
@@ -120,12 +116,18 @@ class ReportBase extends React.Component {
   }
 
   handleChange (){
-    console.log(this.state.subjectSnapshotMap[this.state.subjectDocRef])
-    console.log(this.state.currentCategoryRef)
-      return manageScore.getRows(this.props.firebase.db, this.state.subjectSnapshotMap[this.state.subjectDocRef], this.state.currentCategoryRef).then(rows =>{
+
+    if(this.state.subjectDocRef === ""){
+      this.setState({rowData:[]});
+    }else if(this.state.currentCategoryRef === ""){
+        this.setState({rowData:[]})
+    }else{
+      return manageScore.getRows(this.props.firebase.db, this.state.subjectSnapshotMap[this.state.subjectDocRef]
+              ,this.state.categorySnapshotMap[this.state.currentCategoryRef]).then(rows =>{
         this.setState({rowData: rows});
       });
   }
+}
 
   render() {
     return (
@@ -139,14 +141,9 @@ class ReportBase extends React.Component {
             placeholder = "Select a Subject"
             title = "Subject"
             onChange={_ => {
-              if(document.getElementById('subject').value === "clear"){
-                this.setState({rowData:[], subjectDocRef:""});
-              }else{
-                this.setState({subjectDocRef : document.getElementById('subject').value});
-              }
-              if(this.state.subjectDocRef !== "" && this.state.currentCategoryRef !== ""){
-                this.handleChange()
-              }
+                this.setState({subjectDocRef : document.getElementById('subject').value},() => {
+                  this.handleChange()
+                });
             }}
             children = {this.state.subjects}
             >
@@ -160,18 +157,9 @@ class ReportBase extends React.Component {
             placeholder = "Select a Category"
             title = "Category"
             onChange={_ => {
-              console.log("Adding Category")
-              console.log(document.getElementById('category').value)
-              if(document.getElementById('category').value === "clear"){
-                this.setState({rowData:[],currentCategoryRef : ""})
-              }else{
-                console.log("set State")
-                this.setState({currentCategoryRef : document.getElementById('category').value})
-                if(this.state.subjectDocRef !== ""){
-                  console.log("Handle Change")
+                this.setState({currentCategoryRef : document.getElementById('category').value},() => {
                   this.handleChange()
-                }
-              }
+                });
             }}
             children = {this.state.categories}
             >

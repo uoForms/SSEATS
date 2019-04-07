@@ -63,11 +63,10 @@ let score = {
     
     // Step 1, get all scores and Initialize the scoresMap. O(n), n is number of scores
     let promises = [];
-    promises.push(subjectsQuerySnapshot.ref.collection('assessments').get().then(assessments=>{
+    promises.push(subjectsQuerySnapshot.ref.collection('assessments')
+      .where('category', '==', categoryRef).get().then(assessments=>{
       let promises1 = [];
       for(let j in assessments.docs){
-        //Check if its the same as the category reference passed
-        if(categoryRef === ("categories/" + assessments.docs[j].get('category').id)){
           //Get the Date
           let dateValue= assessments.docs[j].get('date');
           promises1.push(assessments.docs[j].ref.collection('scores').get().then(scores => {
@@ -90,7 +89,6 @@ let score = {
             }
             return Promise.all(promises2);
           }));
-        }
       }
       return Promise.all(promises1);
     }));
