@@ -11,12 +11,10 @@ class CreateSubjectBase extends React.Component {
     super(props);
     this.INITIAL_STATE = {
       data:{
-        name:undefined,
-        creation_date:undefined
+        name:undefined
       },
       type:{
-        name:"text",
-        creation_date:"date"
+        name:"text"
       },
       showError:false,
       errorMessage:''
@@ -34,7 +32,7 @@ class CreateSubjectBase extends React.Component {
       }
       return noUndef
     })()) {
-      this.setState({showError:false, errorMessage:""})
+      this.setState({showError:false, errorMessage:""});
       manageSubjects.createSubject(this.props.firebase.db, this.state.data).then(_=>{
         this.props.history.push('/');
       }).catch((e) => {
@@ -72,7 +70,7 @@ class CreateSubjectBase extends React.Component {
           {
             (_=>{
               let fields = [];
-              for (let key in this.state.data)
+              for (let key in this.state.type)
                 fields.push(this.field(key));
               return fields;
             })()
