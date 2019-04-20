@@ -70,7 +70,7 @@ class CreateSubjectBase extends React.Component {
           {
             (_=>{
               let fields = [];
-              for (let key in this.state.type)
+              for (let key in this.state.data)
                 fields.push(this.field(key));
               return fields;
             })()
