@@ -10,14 +10,20 @@ class CreateReportTypeBase extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      scoreTypes : [],
+      scoreTypes : null,
       scores: []
     };
     this.props.firebase.db.collection('score_type').get().then(scoreTypes=>{
       this.setState({
-        scoreTypes : (scoreTypes.docs.map(doc=>{
-          return (<option name={doc.ref.path}>{doc.get("name")}</option>)
-        }))
+        scoreTypes : (_=>{
+          let key = 0;
+          return _=>{
+            key++;
+            scoreTypes.docs.map(doc=>{
+              return (<option key={doc.id+key} name={doc.ref.path}>{doc.get("name")}</option>)
+            })
+          }
+        })()
       });
     })
   }
@@ -25,7 +31,6 @@ class CreateReportTypeBase extends React.Component {
   addScore() {
     this.state.scores.push(undefined);
     this.forceUpdate();
-    console.log(this.state.scores)
   }
 
   removeScore() {
@@ -41,7 +46,6 @@ class CreateReportTypeBase extends React.Component {
         scores[index] = score.selectedIndex===0?undefined:score[score.selectedIndex].attributes.name.value;
         this.setState({scores : scores});
       }
-      console.log(this.state.scores)
     }
   }
 
@@ -60,15 +64,16 @@ class CreateReportTypeBase extends React.Component {
   renderScores() {
     let scores = this.state.scores.map((score, i)=>{
       return(
-        <Form.Group>
+        <Form.Group key={"formGroup"+i}>
           <Form.Control
+            key={"select"+i}
             as="select"
             id={"criteria_" + i}
             title="Criteria"
             onChange={this.updateScore(i)}
           >
-          <option></option>
-          {this.state.scoreTypes}
+          <option key={"empty"+i}></option>
+          {this.state.scoreTypes()}
           </Form.Control>
         </Form.Group>);
     });
