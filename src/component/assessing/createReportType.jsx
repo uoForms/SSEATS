@@ -3,7 +3,6 @@ import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
-import ListGroup from 'react-bootstrap/ListGroup';
 import { withFirebase } from '../firebase/context'
 
 class CreateReportTypeBase extends React.Component {
@@ -11,7 +10,7 @@ class CreateReportTypeBase extends React.Component {
     super(props);
     this.state = {
       scoreTypes : null,
-      scores: []
+      scores: [],
     };
     this.props.firebase.db.collection('score_type').get().then(scoreTypes=>{
       this.setState({
@@ -19,7 +18,7 @@ class CreateReportTypeBase extends React.Component {
           let key = 0;
           return _=>{
             key++;
-            scoreTypes.docs.map(doc=>{
+            return scoreTypes.docs.map(doc=>{
               return (<option key={doc.id+key} name={doc.ref.path}>{doc.get("name")}</option>)
             })
           }
@@ -29,7 +28,7 @@ class CreateReportTypeBase extends React.Component {
   }
 
   addScore() {
-    this.state.scores.push(undefined);
+    this.state.scores.push({name:undefined,value:""});
     this.forceUpdate();
   }
 
@@ -39,11 +38,13 @@ class CreateReportTypeBase extends React.Component {
   }
 
   updateScore(index) {
+    console.log("update")
     return _=>{
       let score = document.getElementById("criteria_" + index);
       if(score != null) {
         let scores = this.state.scores.slice(0);
-        scores[index] = score.selectedIndex===0?undefined:score[score.selectedIndex].attributes.name.value;
+        scores[index] = score.selectedIndex===0?{name:undefined,value:""}:
+        {name:score[score.selectedIndex].attributes.name.value,value:score[score.selectedIndex].value};
         this.setState({scores : scores});
       }
     }
@@ -51,7 +52,7 @@ class CreateReportTypeBase extends React.Component {
 
   addScoreType() {
     let name = document.getElementById('categoryName').value;
-    let scores = this.state.scores.filter(score=>score!==undefined);
+    let scores = this.state.scores.filter(score=>score.name!==undefined).map(score=>score.name);
     if (name !== "" && scores.length > 0) {
       this.props.firebase.db.collection("report_type").doc().set({
         name : name,
@@ -62,7 +63,9 @@ class CreateReportTypeBase extends React.Component {
   }
 
   renderScores() {
+    console.log("render")
     let scores = this.state.scores.map((score, i)=>{
+      console.log(score.value)
       return(
         <Form.Group key={"formGroup"+i}>
           <Form.Control
@@ -70,15 +73,16 @@ class CreateReportTypeBase extends React.Component {
             as="select"
             id={"criteria_" + i}
             title="Criteria"
+            value={score.value}
             onChange={this.updateScore(i)}
           >
-          <option key={"empty"+i}></option>
+          <option key={"empty"+i} name=""></option>
           {this.state.scoreTypes()}
           </Form.Control>
         </Form.Group>);
     });
     return (
-        <ListGroup variant="flush" children={scores} />
+        <div children={scores} />
       );
   }
 
@@ -86,7 +90,7 @@ class CreateReportTypeBase extends React.Component {
     return (
       <Card style={{ width: '80vw', maxWidth:'60rem', minWidth: '30rem', margin: '5rem auto'}}>
         <Card.Body>
-          <div className="h4">Create Report</div>
+          <div className="h4">Create Report Type</div>
           <Form.Row>
             <Form.Group as={Col}>
               <Form.Label>Report Name</Form.Label>
@@ -99,7 +103,7 @@ class CreateReportTypeBase extends React.Component {
             </Form.Group>
           </Form.Row>
           <Form.Group>
-            { this.state.scores.length > 0 ? <div className="h5 mb-0 pt-3">Scores</div> : null}
+            { this.state.scores.length > 0 ? <div>Scores</div> : null}
           </Form.Group>
           { this.state.scores.length > 0 ? this.renderScores() : null}
           <Form.Row>
@@ -119,7 +123,7 @@ class CreateReportTypeBase extends React.Component {
               <Form.Row>
                 <Button className="mx-1"
                   variant="primary"
-                  onClick={_ => this.addScoreType()}>Create Report</Button>
+                  onClick={_ => this.addScoreType()}>Create Report Type</Button>
               </Form.Row>
             </Form.Group>
           </Form.Row>
