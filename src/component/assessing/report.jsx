@@ -1,5 +1,6 @@
 import React from 'react';
 import Form from 'react-bootstrap/Form';
+import Col from 'react-bootstrap/Col'
 import Button from 'react-bootstrap/Button';
 import Sidebar from "react-sidebar";
 import { AgGridReact } from 'ag-grid-react';
@@ -90,17 +91,17 @@ class ReportBase extends React.Component {
   getColumn(){
     return[
       {
-        headerName: "Feature", 
+        headerName: "Feature",
         field : "feature"     ,
         resizable : true
       },
       {
-        headerName: "Criteria", 
+        headerName: "Criteria",
         field : "criteria",
         resizable : true
       },
       {
-        headerName: "Date", 
+        headerName: "Date",
         field : "date",
         resizable : true
       },
@@ -110,7 +111,7 @@ class ReportBase extends React.Component {
         resizable : true
       },
       {
-        headerName: "Comment", 
+        headerName: "Comment",
         field : "comment",
         resizable : true
       }
@@ -157,59 +158,51 @@ class ReportBase extends React.Component {
       <div className="ag-theme-balham"
         style = {{flex:1, height:'80vh', width: '80%', margin: '2rem auto'}}
       >
-        <Form.Group>
-        <Form.Label>Select a Subject:</Form.Label>
-          <Form.Control as="select"
-            id = "subject"
-            placeholder = "Select a Subject"
-            title = "Subject"
-            onChange={_ => {
-                this.setState({subjectDocRef : document.getElementById('subject').value},() => {
-                  this.handleChange()
-                });
-            }}
-            children = {this.state.subjects}
-            >
-          </Form.Control>
-        </Form.Group>
-
-        <Form.Group>
-        <Form.Label>Select a Category:</Form.Label>
-          <Form.Control as="select"
-            id = "category"
-            placeholder = "Select a Category"
-            title = "Category"
-            onChange={_ => {
-                this.setState({currentCategoryRef : document.getElementById('category').value},() => {
-                  this.handleChange()
-                });
-            }}
-            children = {this.state.categories}
-            >
-          </Form.Control>
-        </Form.Group>
-
-        <Form.Group>
-          {
-            this.state.sidebarOpen?
-            <Sidebar
-              sidebar={<AddScore subjectDocumentReference={this.props.firebase.db.doc(this.state.subjectDocRef)} exit={_=>{
-                this.handleChange(this.state.subjectDocRef)
-                this.setState({sidebarOpen:false})}}/>}
-              open={true}
-              children={<div/>}
-              onSetOpen={event=>this.onSetSidebarOpen(event, this)}
-              styles={{ sidebar: { background: "white" } }}
-              pullRight={true}
-            />
-            :null
-          }
-          {
-            this.state.subjectDocRef==="" ?
-            <Button variant="secondary" disabled>Add Score</Button> :
-            <Button onClick={_=>this.setState({sidebarOpen:true})}>Add Score</Button>
-          }
-        </Form.Group>
+        <Form.Row className="align-items-end">
+          <Col>
+            <Form.Group>
+              <Form.Label>Select a Subject:</Form.Label>
+              <Form.Control as="select"
+                id = "subject"
+                placeholder = "Select a Subject"
+                title = "Subject"
+                onChange={_ => {
+                    this.setState({subjectDocRef : document.getElementById('subject').value},() => {
+                      this.handleChange()
+                    });
+                }}
+                children = {this.state.subjects}
+                >
+              </Form.Control>
+            </Form.Group>
+          </Col>
+          <Col>
+            <Form.Group>
+              <Form.Label>Select a Category:</Form.Label>
+              <Form.Control as="select"
+                id = "category"
+                placeholder = "Select a Category"
+                title = "Category"
+                onChange={_ => {
+                    this.setState({currentCategoryRef : document.getElementById('category').value},() => {
+                      this.handleChange()
+                    });
+                }}
+                children = {this.state.categories}
+                >
+              </Form.Control>
+            </Form.Group>
+          </Col>
+          <Col sm={'auto'}>
+            <Form.Group>
+              {
+                this.state.subjectDocRef==="" ?
+                <Button variant="secondary" disabled>Add Score</Button> :
+                <Button onClick={_=>this.setState({sidebarOpen:true})}>Add Score</Button>
+              }
+            </Form.Group>
+          </Col>
+        </Form.Row>
         <AgGridReact
           style={{maxWidth:"100%"}}
           columnDefs = {this.state.columnDefs}
@@ -219,6 +212,20 @@ class ReportBase extends React.Component {
             this.setState({gridOptions : params});
           }}
         />
+        {
+          this.state.sidebarOpen ?
+          <Sidebar
+            sidebar={<AddScore subjectDocumentReference={this.props.firebase.db.doc(this.state.subjectDocRef)} exit={_=>{
+              this.handleChange(this.state.subjectDocRef)
+              this.setState({sidebarOpen:false})}}/>}
+            open={true}
+            children={<div/>}
+            onSetOpen={event=>this.onSetSidebarOpen(event, this)}
+            styles={{ sidebar: { background: "white" } }}
+            pullRight={true}
+          />
+          : null
+        }
       </div>
     );
   }
