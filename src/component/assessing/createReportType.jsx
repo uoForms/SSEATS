@@ -38,7 +38,6 @@ class CreateReportTypeBase extends React.Component {
   }
 
   updateScore(index) {
-    console.log("update")
     return _=>{
       let score = document.getElementById("criteria_" + index);
       if(score != null) {
@@ -63,9 +62,7 @@ class CreateReportTypeBase extends React.Component {
   }
 
   renderScores() {
-    console.log("render")
     let scores = this.state.scores.map((score, i)=>{
-      console.log(score.value)
       return(
         <Form.Group key={"formGroup"+i}>
           <Form.Control
