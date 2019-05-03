@@ -1,173 +1,231 @@
 import React from 'react';
+import Form from 'react-bootstrap/Form';
+import Col from 'react-bootstrap/Col'
+import Button from 'react-bootstrap/Button';
+import Sidebar from "react-sidebar";
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham.css';
-import { withFirebase } from '../firebase/context'
+import { withFirebase } from '../firebase/context';
+import AddScore from './addScore.jsx';
+import manageScore from '../firebase/manageScore';
+
 
 class ReportBase extends React.Component {
   constructor(props){
     super(props);
 
     this.state = {
-
+      subjectDocRef : "",
+      subjects: [],
+      subjectSnapshotMap : {},
+      currentCategoryRef:"",
+      categories:[],
+      categorySnapshotMap: {},
       columnDefs : this.getColumn(),
-      rowData: []
-
+      gridOptions : null,
+      rowData: [],
+      sidebarOpen: false
     }
-    this.getRows()
   }
- // check parent function
-  getRows(){
-    var rows = [];
-    // get all subjects
-    this.props.firebase.db.collection('subjects').get().then(subjects=>{
 
-      // iterate the arrays synchronously
-      let promises = [];
-      let promises1 = [];
-      let promises2 = [];
-      let promises3 = [];
-      let promises4 = [];
-      let promises5 = [];
-
-      for(let i in subjects.docs){
-        promises.push(subjects.docs[i].ref.collection('assessments').get().then(assessments=>{
-          for(let j in assessments.docs){
-            let categoryRef = assessments.docs[j].data();
-            //Get the Date
-            let dateValue= categoryRef['date']
-            promises1.push(categoryRef['category'].get().then(referenceCategory =>{
-              let categoryCategoryRef = referenceCategory.data()
-              //Get the Category
-              let categoryName = categoryCategoryRef['name'];
-              promises2.push(this.props.firebase.db.collection('categories').get().then(categoryDocs =>{
-                for (let x in categoryDocs.docs){
-                  promises3.push(categoryDocs.docs[x].ref.collection("features").get().then(featureDocs =>{
-                    for(let y in featureDocs.docs){
-                      let featureDocument = featureDocs.docs[y].data()
-                      //Get the Feature
-                      let featureValue = featureDocument['name'] 
-                      promises4.push(assessments.docs[j].ref.collection('scores').get().then(scoreCollection => {
-                        for(let z in scoreCollection.docs){
-                          let scoreDoc = scoreCollection.docs[z].data()
-                          //Get the Score
-                          let scoreValue = scoreDoc['score']
-                          promises5.push(scoreDoc['type'].get().then(scoreType =>{
-                            let scoreTypeData = scoreType.data()
-                            //Get the Criteria
-                            let criteriaValue = scoreTypeData['name']
-                            //Create the row
-                            var row = {
-                              category: categoryName.toString(), 
-                              feature: featureValue.toString(), 
-                              criteria: criteriaValue.toString(),
-                              date: dateValue.toDate().toISOString().slice(0,10),
-                              score: scoreValue.toString(),
-                              comment: scoreDoc['comment'],
-                            }
-                            rows.push(row)
-                          }))
-                        }
-                      }))
-                    }
-                  }))
-                }
-              }))
-            }));
-          }
-        }));
-      }
-      return Promise.all(promises).then(_=>{
-        return Promise.all(promises1).then(_=>{
-          return Promise.all(promises2).then(_=>{
-            return Promise.all(promises3).then(_=>{
-              return Promise.all(promises4).then(_=>{
-                return Promise.all(promises5).then(_=>{
-                  this.setState({rowData:rows})
-                })
-              })
-            })
-          })
-        })
-      });
-    });
-}
-
-              /* Get Score Scale */
-              /*
-              categoryCategoryRef['report_type'].get().then(reportType =>{
-                var reportRef = reportType.data()
-                console.log("reportRef", reportRef)
-                reportRef['scores'].forEach(scoreScaleDocs=> {
-                  scoreScaleDocs.get().then(scoreScale => {
-                    console.log(scoreScale.data())
-                    var scoreScaleData = scoreScale.data()
-                    var scaleMin = scoreScaleData['min']
-                    var scaleMax = scoreScaleData['max']
-                  })
-                })
-              })*/
-
-
+ componentWillMount(){
+  this.getSubjects()
+  this.getCategories()
+ }
 
   getname(){
-    this.props.firebase.db.collection('subjects').get().then(result=>{
+    let name = []
+    let promises = []
+    promises.push(this.props.firebase.db.collection('subjects').get().then(result=>{
       result.docs.forEach(doc=>{
-        var documentData = doc.data()
-        var name = documentData['name']
-        return name
-        })
-    });
+        name.push(doc.get('name'))
+      })
+    }))
+    Promise.all(promises).then(_=>{
+      return name
+
+    })
   }
 
   getSubjects(){
-    var names = []
-    this.props.firebase.db.collection('subjects').get().then(result=>{
+    let names = []
+    let promises = []
+    let docSnapMap = {}
+    names.push({name: "Select a Subject", docRef: ""})
+    promises.push(this.props.firebase.db.collection('subjects').get().then(result=>{
       result.docs.forEach(doc=>{
-        names.push(doc.get('name'))
+        let subject = {name: doc.get('name'), docRef: doc.ref.path}
+        docSnapMap[doc.ref.path] = doc.ref
+        names.push(subject)
       })
-    });
+    }))
+    return Promise.all(promises).then(_=>{
+      let subjectMap = names.map((subject, i) => {
+        return <option key ={i} name = {subject['name']} value = {subject['docRef']}> {subject['name']}</option>
+      });
+      this.setState({subjects: subjectMap, subjectSnapshotMap: docSnapMap});
+    })
+  }
+
+  getCategories(){
+    let categories = []
+    let promises = []
+    let docSnapMap = {}
+    categories.push({name: "Select a Category", docRef: ""})
+    promises.push(this.props.firebase.db.collection('categories').get().then(result=>{
+      result.docs.forEach(doc=>{
+        let category = {name: doc.get('name'), docRef: doc.ref.path}
+        docSnapMap[doc.ref.path] = doc.ref
+        categories.push(category)
+      })
+    }))
+    return Promise.all(promises).then(_=>{
+      let categoryMap = categories.map((category, i) => {
+        return <option key ={i} name = {category['name']} value = {category['docRef']}> {category['name']}</option>
+      });
+      this.setState({categories: categoryMap, categorySnapshotMap: docSnapMap});
+    })
   }
 
   getColumn(){
     return[
       {
-        headerName: "Category", 
-        field : "category"     
+        headerName: "Feature",
+        field : "feature"     ,
+        resizable : true
       },
       {
-        headerName: "Feature", 
-        field : "feature"     
+        headerName: "Criteria",
+        field : "criteria",
+        resizable : true
       },
       {
-        headerName: "Criteria", 
-        field : "criteria"        
-      },
-      {
-        headerName: "Date", 
-        field : "date"        
+        headerName: "Date",
+        field : "date",
+        resizable : true
       },
       {
         headerName: "Score",
-        field : "score"
+        field : "score",
+        resizable : true
       },
       {
-        headerName: "Comment", 
-        field : "comment"
+        headerName: "Comment",
+        field : "comment",
+        resizable : true
       }
     ]
   }
+
+  onSetSidebarOpen(open, context) {
+    context.setState({sidebarOpen:open});
+  }
+
+  handleChange (){
+
+    if(this.state.subjectDocRef === ""){
+      this.setState({rowData:[]});
+    }else if(this.state.currentCategoryRef === ""){
+        this.setState({rowData:[]})
+    }else{
+      return manageScore.getRows(this.props.firebase.db, this.state.subjectSnapshotMap[this.state.subjectDocRef]
+              ,this.state.categorySnapshotMap[this.state.currentCategoryRef]).then(rows =>{
+        this.setState({rowData: rows},_=>{
+          // Callback sets size to whichever is wider between fit and auto.
+          this.state.gridOptions.api.sizeColumnsToFit();
+          let fit = 0;
+          this.state.gridOptions.columnApi.getColumnState().forEach(column=>{
+            fit += column.width;
+          });
+          this.state.gridOptions.columnApi.getAllColumns().forEach(column=>{
+              this.state.gridOptions.columnApi.autoSizeColumn(column.colId);
+          }, this);
+          let auto = 0;
+          this.state.gridOptions.columnApi.getColumnState().forEach(column=>{
+            auto += column.width;
+          });
+          if (auto < fit) {
+            this.state.gridOptions.api.sizeColumnsToFit();
+          }
+        });
+      });
+  }
+}
 
   render() {
     return (
       <div className="ag-theme-balham"
         style = {{flex:1, height:'80vh', width: '80%', margin: '2rem auto'}}
       >
-        <AgGridReact 
+        <Form.Row className="align-items-end">
+          <Col>
+            <Form.Group>
+              <Form.Label>Select a Subject:</Form.Label>
+              <Form.Control as="select"
+                id = "subject"
+                placeholder = "Select a Subject"
+                title = "Subject"
+                onChange={_ => {
+                    this.setState({subjectDocRef : document.getElementById('subject').value},() => {
+                      this.handleChange()
+                    });
+                }}
+                children = {this.state.subjects}
+                >
+              </Form.Control>
+            </Form.Group>
+          </Col>
+          <Col>
+            <Form.Group>
+              <Form.Label>Select a Category:</Form.Label>
+              <Form.Control as="select"
+                id = "category"
+                placeholder = "Select a Category"
+                title = "Category"
+                onChange={_ => {
+                    this.setState({currentCategoryRef : document.getElementById('category').value},() => {
+                      this.handleChange()
+                    });
+                }}
+                children = {this.state.categories}
+                >
+              </Form.Control>
+            </Form.Group>
+          </Col>
+          <Col sm={'auto'}>
+            <Form.Group>
+              {
+                this.state.subjectDocRef==="" ?
+                <Button variant="secondary" disabled>Add Score</Button> :
+                <Button onClick={_=>this.setState({sidebarOpen:true})}>Add Score</Button>
+              }
+            </Form.Group>
+          </Col>
+        </Form.Row>
+        <AgGridReact
           style={{maxWidth:"100%"}}
           columnDefs = {this.state.columnDefs}
-          rowData = {this.state.rowData}>
-        </AgGridReact>
+          rowData = {this.state.rowData}
+          onGridReady={params=>{
+            params.api.sizeColumnsToFit();
+            this.setState({gridOptions : params});
+          }}
+        />
+        {
+          this.state.sidebarOpen ?
+          <Sidebar
+            sidebar={<AddScore subjectDocumentReference={this.props.firebase.db.doc(this.state.subjectDocRef)} exit={_=>{
+              this.handleChange(this.state.subjectDocRef)
+              this.setState({sidebarOpen:false})}}/>}
+            open={true}
+            children={<div/>}
+            onSetOpen={event=>this.onSetSidebarOpen(event, this)}
+            styles={{ sidebar: { background: "white" } }}
+            pullRight={true}
+          />
+          : null
+        }
       </div>
     );
   }

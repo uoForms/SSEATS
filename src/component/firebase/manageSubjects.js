@@ -13,7 +13,7 @@ function __updateSubject(userDocumentReference, data) {
   if (data.user===undefined){
     data.user = false;
   }
-  // Fix the timestamp to match firestore type
-  data.creation_date = new Date(data.creation_date);
+  // Add the creation date to the data.
+  data.creation_date = new Date();
   return userDocumentReference.set(data);
 }
