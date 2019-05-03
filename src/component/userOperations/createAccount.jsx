@@ -24,8 +24,6 @@ class CreateAccountBase extends React.Component {
     this.state = this.INITIAL_STATE;
   }
 
-
-
   handleSubmit(event){
     this.setState({
       messages: [],
@@ -36,22 +34,25 @@ class CreateAccountBase extends React.Component {
     }, () => {
       if(this.isFormValid()){
         this.props.firebase.auth.createUserWithEmailAndPassword(this.state.email, this.state.password)
-        .then(() => {
-          this.firebase.addNewUser.then(() => {
+        .then((value) => {
+          this.props.firebase.addNewUser(value.user.uid).then(() => {
             this.setState({
               accountCreated: true
             });
           }).catch((e) => {
             this.state.messages.push({
-              message: e,
+              message: 'Could not properly create your user, please contact an administrator',
               messageType: 'danger'
             });
+            this.forceUpdate()
           });
         }).catch((e) => {
+          console.log(e)
           this.state.messages.push({
-            message: e,
+            message: e.message,
             messageType: 'danger'
           });
+          this.forceUpdate()
         });
       }
     });
@@ -74,7 +75,9 @@ class CreateAccountBase extends React.Component {
 
   renderMessages(){
     return this.state.messages.map((message, i) => {
-      return (<Alert key={i} variant={message.messageType}>{message.message}</Alert>)
+      return (
+        <Alert key={i} variant={message.messageType}>{message.message}</Alert>
+      );
     });
   }
 
@@ -148,7 +151,7 @@ class CreateAccountBase extends React.Component {
       <Card style={{ width: '50vw', minWidth: '20rem',  margin: '5rem auto'}}>
         <Card.Body>
           <div className="h5">Account has been created!</div>
-          <a href="#" onClick={(event)=>this.props.history.push('/')}>Return to menu</a>
+          <Button variant="link" onClick={(event)=>this.props.history.push('/')}>Return to menu</Button>
         </Card.Body>
       </Card>
     );
