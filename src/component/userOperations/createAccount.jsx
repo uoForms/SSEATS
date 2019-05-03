@@ -10,12 +10,16 @@ class CreateAccountBase extends React.Component {
   constructor(props) {
     super(props);
     this.INITIAL_STATE = {
-      showMessage:false,
-      message:'',
-      messageType: 'danger',
+      messageType: '',
+      messages: [],
+      invalidEmailError: false,
+      passwordMatchError: false,
+      emptyPassword: false,
+      emptyPasswordConfirm: false,
       email: '',
       password: '',
-      passwordConfirm: ''
+      passwordConfirm: '',
+      accountCreated:false,
     };
     this.state = this.INITIAL_STATE;
   }
@@ -23,28 +27,73 @@ class CreateAccountBase extends React.Component {
 
 
   handleSubmit(event){
-    this.props.firebase.doAccountCreation(this.state.email, this.state.role)
-    .then(() => {
-      this.setState({
-        showMessage: true,
-        message: 'Account successfully created',
-        messageType: 'success'
-      });
-    }).catch((e) => {
-      console.log(e)
-      this.setState({
-        showMessage: true,
-        message: e,
-        messageType: 'danger'
-      });
+    this.setState({
+      messages: [],
+      invalidEmailError: !this.validEmail(),
+      passwordMatchError: !this.matchingPassword(),
+      emptyPassword: !this.emptyPassword(1),
+      emptyPasswordConfirm: !this.emptyPassword(2)
+    }, () => {
+      if(this.isFormValid()){
+        this.props.firebase.auth.createUserWithEmailAndPassword(this.state.email, this.state.password)
+        .then(() => {
+          this.firebase.addNewUser.then(() => {
+            this.setState({
+              accountCreated: true
+            });
+          }).catch((e) => {
+            this.state.messages.push({
+              message: e,
+              messageType: 'danger'
+            });
+          });
+        }).catch((e) => {
+          this.state.messages.push({
+            message: e,
+            messageType: 'danger'
+          });
+        });
+      }
     });
   }
 
-  render() {
+  matchingPassword(){
+    return this.state.password === this.state.passwordConfirm;
+  }
+
+  validEmail(){
+    let pattern = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(.\w{2,3})+$/
+    let match = this.state.email.match(pattern)
+    return !!(match && this.state.email.length === match[0].length);
+  }
+
+  isFormValid(){
+    return (!this.state.invalidEmailError && !this.state.passwordMatchError &&
+      !this.state.emptyPassword && !this.state.emptyPasswordConfirm);
+  }
+
+  renderMessages(){
+    return this.state.messages.map((message, i) => {
+      return (<Alert key={i} variant={message.messageType}>{message.message}</Alert>)
+    });
+  }
+
+  notMatchingPasswordControl(){
+      return (<Form.Control.Feedback type="invalid">Passwords need to match</Form.Control.Feedback>);
+  }
+
+  /**
+    *   Position 1 is password field, pasition 2 is password confirm field.
+    */
+  emptyPassword(position){
+    return !!(position === 1 ? this.state.password.length : this.state.passwordConfirm.length);
+  }
+
+  renderForm() {
     return (
       <Card style={{ width: '50vw', minWidth: '20rem',  margin: '5rem auto'}}>
         <Card.Body>
-          {this.state.showMessage ? <Alert variant={this.state.messageType}>{this.state.message}</Alert> : null}
+          {this.renderMessages()}
           <Form.Group>
             <Form.Label>Email address</Form.Label>
             <Form.Control
@@ -52,8 +101,11 @@ class CreateAccountBase extends React.Component {
               type="text"
               placeholder="Email Address"
               title="Email Address"
-              onChange={() => this.setState({username:document.getElementById('email').value})}
+              isInvalid={this.state.invalidEmailError}
+              onChange={() => this.setState({email:document.getElementById('email').value})}
             />
+          {this.state.invalidEmailError ?
+            (<Form.Control.Feedback type="invalid">Please provide a valid email.</Form.Control.Feedback>) : null}
           </Form.Group>
           <Form.Group>
             <Form.Label>Password</Form.Label>
@@ -61,19 +113,27 @@ class CreateAccountBase extends React.Component {
               id="password"
               placeholder="Password"
               title="Password"
+              type="password"
+              isInvalid={this.state.passwordMatchError || this.state.emptyPassword}
               onChange={() => this.setState({password:document.getElementById('password').value})}
               >
             </Form.Control>
+            {this.state.passwordMatchError ? this.notMatchingPasswordControl() : null}
+            {this.state.emptyPassword ? (<Form.Control.Feedback type="invalid">Password cannot be empty</Form.Control.Feedback>) : null}
           </Form.Group>
           <Form.Group>
             <Form.Label>Password Confirmation</Form.Label>
             <Form.Control
-              id="passwordConfirmation"
+              id="passwordConfirm"
               placeholder="Password Confirmation"
               title="Password"
-              onChange={() => this.setState({passwordConfirmation:document.getElementById('passwordConfirmation').value})}
+              type="password"
+              isInvalid={this.state.passwordMatchError || this.state.emptyPasswordConfirm}
+              onChange={() => this.setState({passwordConfirm:document.getElementById('passwordConfirm').value})}
             >
             </Form.Control>
+            {this.state.passwordMatchError ? this.notMatchingPasswordControl() : null}
+            {this.state.emptyPasswordConfirm ? (<Form.Control.Feedback type="invalid">Password confirmation cannot be empty</Form.Control.Feedback>) : null}
           </Form.Group>
           <Form.Group>
             <Button onClick={(event)=>this.handleSubmit(event)}>Create Account</Button>
@@ -81,6 +141,21 @@ class CreateAccountBase extends React.Component {
         </Card.Body>
       </Card>
     );
+  }
+
+  renderConfirmation() {
+    return (
+      <Card style={{ width: '50vw', minWidth: '20rem',  margin: '5rem auto'}}>
+        <Card.Body>
+          <div className="h5">Account has been created!</div>
+          <a href="#" onClick={(event)=>this.props.history.push('/')}>Return to menu</a>
+        </Card.Body>
+      </Card>
+    );
+  }
+
+  render() {
+    return this.state.accountCreated ? this.renderConfirmation() : this.renderForm();
   }
 }
 
