@@ -96,6 +96,7 @@ class CreateAccountBase extends React.Component {
     return (
       <Card style={{ width: '50vw', minWidth: '20rem',  margin: '5rem auto'}}>
         <Card.Body>
+          <div className="h4">Create Account</div>
           {this.renderMessages()}
           <Form.Group>
             <Form.Label>Email address</Form.Label>
@@ -150,7 +151,7 @@ class CreateAccountBase extends React.Component {
     return (
       <Card style={{ width: '50vw', minWidth: '20rem',  margin: '5rem auto'}}>
         <Card.Body>
-          <div className="h5">Account has been created!</div>
+          <div className="h4">Account has been created!</div>
           <Button variant="link" onClick={(event)=>this.props.history.push('/')}>Return to menu</Button>
         </Card.Body>
       </Card>
