@@ -35,7 +35,7 @@ class CreateAccountBase extends React.Component {
       if(this.isFormValid()){
         this.props.firebase.auth.createUserWithEmailAndPassword(this.state.email, this.state.password)
         .then((value) => {
-          this.props.firebase.addNewUser(value.user.uid).then(() => {
+          this.props.firebase.addNewUser(value.user.uid, this.state.email).then(() => {
             this.setState({
               accountCreated: true
             });

@@ -25,8 +25,8 @@ class Firebase {
   passwordResetEmail = (email) =>
     this.auth.sendPasswordResetEmail(email);
 
-  addNewUser = (id) =>
-    this.db.collection('users').doc(id).set({});
+  addNewUser = (id, email) =>
+    this.db.collection('users').doc(id).set({email:email});
 
   doLogout = () =>  this.auth.signOut().then(_ => this.userPermissions = []);
 
