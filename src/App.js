@@ -13,22 +13,25 @@ class AppBase extends Component {
   }
 
   componentDidMount() {
-    let unsubscribe = this.props.firebase.auth.onAuthStateChanged((user) => {
-      this.props.firebase.resolveUser().then((user) => {
-        this.setState({isAuthenticating: false}, () => unsubscribe());
+    if (this.props.firebase){
+      var unsubscribe = this.props.firebase.auth.onAuthStateChanged((user) => {
+        this.props.firebase.resolveUser().then((user) => {
+          this.setState({isAuthenticating: false}, () => unsubscribe());
+        });
       });
-    });
+    }
   }
 
-  render() {
-    if(this.state.isAuthenticating){
-      return null;
-    }
+  app() {
     return (
       <div style={{minHeight:"100vh", display:"flex", flexDirection:"column"}}>
         <Routes />
       </div>
     );
+  }
+
+  render() {
+    return this.state.isAuthenticating ? null : this.app();
   }
 }
 
