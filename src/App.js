@@ -6,13 +6,13 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 class AppBase extends Component {
   constructor(props){
-    super(props)
+    super(props);
     this.state = {
       isAuthenticating: true
     };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     var unsubscribe = this.props.firebase.auth.onAuthStateChanged((user) => {
       this.props.firebase.resolveUser().then((user) => {
         this.setState({isAuthenticating: false}, () => unsubscribe());
