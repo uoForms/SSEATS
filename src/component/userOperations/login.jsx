@@ -5,14 +5,11 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { withFirebase } from '../firebase/context'
 
-//Scripts
-import manageRoles from '../firebase/manageRoles.js'
-
 class LoginForm extends React.Component {
   constructor(props) {
     super(props);
     this.INITIAL_STATE = {
-      username:'',
+      email:'',
       password:'',
       showError:false,
       errorMessage:''
@@ -21,20 +18,17 @@ class LoginForm extends React.Component {
   }
 
   handleClick(event) {
-    if (this.state.username !== '' && this.state.password !== '') {
-      this.props.firebase.doSignInWithEmailAndPassword(this.state.username, this.state.password)
-      .then((userCredentials) => {
-        // update permissions
-        return manageRoles.updateUserPermissions(this.props.firebase.db.collection('users').doc(userCredentials.user.uid));
-      }).then(_=>{
+    if (this.state.email !== '' && this.state.password !== '') {
+      this.props.firebase.doSignInWithEmailAndPassword(this.state.email, this.state.password)
+      .then(_=>{
         this.setState(this.INITIAL_STATE);
-        this.props.history.push('/')
-        //window.location.reload();
+        this.props.history.push('/');
       }).catch((e) => {
-        this.setState({showError:true, errorMessage:"Invalid username or password."});
+        console.log(e)
+        this.setState({showError:true, errorMessage:e.message});
       });
-    } else if(this.state.username !== '' || this.state.password !== '') {
-      this.setState({showError:true, errorMessage:"Must enter a username and password"})
+    } else if(this.state.email !== '' || this.state.password !== '') {
+      this.setState({showError:true, errorMessage:"Must enter a email and password"})
     } else {
       this.setState({showError:false})
     }
@@ -46,13 +40,13 @@ class LoginForm extends React.Component {
         <Card.Body>
           {this.state.showError ? <Alert variant={'danger'}>{this.state.errorMessage}</Alert> : null}
           <Form.Group>
-            <Form.Label>Username</Form.Label>
+            <Form.Label>Email</Form.Label>
             <Form.Control
-              id="username"
+              id="email"
               type="text"
-              placeholder="Username"
-              title="Username"
-              onChange={() => this.setState({username:document.getElementById('username').value})}
+              placeholder="Email"
+              title="Email"
+              onChange={() => this.setState({email:document.getElementById('email').value})}
             />
           </Form.Group>
           <Form.Group className="form-group">
