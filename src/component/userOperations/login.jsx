@@ -22,15 +22,18 @@ class LoginForm extends React.Component {
       this.props.firebase.doSignInWithEmailAndPassword(this.state.email, this.state.password)
       .then(_=>{
         this.setState(this.INITIAL_STATE);
-        this.props.history.push('/');
+        this.props.firebase.resolveUser().then(()=>{
+            this.props.history.push('/');
+        }).catch ((e) => {
+          this.setState({showError:true, errorMessage:e.message});
+        });
       }).catch((e) => {
-        console.log(e)
         this.setState({showError:true, errorMessage:e.message});
       });
     } else if(this.state.email !== '' || this.state.password !== '') {
-      this.setState({showError:true, errorMessage:"Must enter a email and password"})
+      this.setState({showError:true, errorMessage:"Must enter a email and password"});
     } else {
-      this.setState({showError:false})
+      this.setState({showError:false});
     }
   }
 

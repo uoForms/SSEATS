@@ -29,34 +29,28 @@ class Firebase {
 
   resolveUser = () => {
     return new Promise((resolve, reject) => {
-      this.auth.onAuthStateChanged((user) => {
-
-        if (this.auth.currentUser!==null) {
-          // this.db.collection('users').doc(this.auth.currentUser.uid).get().then(i => console.log(i.data()));
-          // Fetch user permissions before page loads
-          resolve(this.db.collection('users').doc(this.auth.currentUser.uid)
-            .get().then((user) => {
-              resolve(user.data().role.get().then((role) => {
-                console.log(role.data().permissions)
-                let permissions = role.data().permissions;
-                let promises = [];
-                for (let i = 0; i < permissions.length; i++) {
-                  promises.push(new Promise(resolve => {
-                      console.log(permissions[i])
-                      resolve(permissions[i].get().then((permission => {
-                        Promise.all([this.userPermissions.push(permission.data())]);
-                      })));
-                  }));
-                }
-                Promise.all(promises);
-                resolve();
-              }));
-            }).then(() => user)
-          );
-        } else {
-          resolve(user);
-        }
-      });
+      let user = this.auth.user;
+      if (this.auth.currentUser!==null) {
+        // Fetch user permissions before page loads
+        resolve(this.db.collection('users').doc(this.auth.currentUser.uid)
+          .get().then((user) => {
+            return Promise.all([user.data().role.get().then((role) => {
+              let permissions = role.data().permissions;
+              let promises = [];
+              for (let i = 0; i < permissions.length; i++) {
+                promises.push(new Promise(resolve => {
+                  resolve(permissions[i].get().then((permission => {
+                    return Promise.all([this.userPermissions.push(permission.data())]);
+                  })));
+                }));
+              }
+              return Promise.all(promises);
+            })]);
+          }).then(() => user)
+        );
+      } else {
+        resolve(user);
+      }
     });
   }
 }

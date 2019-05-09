@@ -13,8 +13,10 @@ class AppBase extends Component {
   }
 
   componentWillMount() {
-    this.props.firebase.resolveUser().then((user) => {
-      this.setState({isAuthenticating: false});
+    var unsubscribe = this.props.firebase.auth.onAuthStateChanged((user) => {
+      this.props.firebase.resolveUser().then((user) => {
+        this.setState({isAuthenticating: false}, () => unsubscribe());
+      });
     });
   }
 
