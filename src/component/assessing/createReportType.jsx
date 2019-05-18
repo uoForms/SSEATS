@@ -39,6 +39,8 @@ class CreateReportTypeBase extends React.Component {
 
   updateScore(index) {
     return _=>{
+      // delay to let changes apply
+      setInterval(this.isButtonEnabled(), 100);
       let score = document.getElementById("criteria_" + index);
       if(score != null) {
         let scores = this.state.scores.slice(0);
@@ -52,13 +54,29 @@ class CreateReportTypeBase extends React.Component {
   addScoreType() {
     let name = document.getElementById('categoryName').value;
     let scores = this.state.scores.filter(score=>score.name!==undefined).map(score=>score.name);
-    if (name !== "" && scores.length > 0) {
+    console.log("clicked")
+    if (this.isButtonEnabled()) {
+      console.log("sending")
       this.props.firebase.db.collection("report_type").doc().set({
         name : name,
         scores : scores,
       }).then();
       this.props.history.push('/');
     }
+  }
+
+  isButtonEnabled() {
+    let enabled = false;
+    if (document.getElementById("submit") !== null) {
+      let name = document.getElementById('categoryName')
+      if (name !== null){
+        name = name.value;
+        let scores = this.state.scores.filter(score=>score.name!==undefined).map(score=>score.name);
+        enabled = name !== "" && scores.length > 0;
+      }
+      document.getElementById("submit").disabled = !enabled;
+    }
+    return enabled;
   }
 
   renderScores() {
@@ -95,6 +113,7 @@ class CreateReportTypeBase extends React.Component {
                   id = "categoryName"
                   placeholder = "Enter New Report Name"
                   title = "Report Name"
+                  onChange = {_ => this.isButtonEnabled()}
                   >
                 </Form.Control>
             </Form.Group>
@@ -118,9 +137,12 @@ class CreateReportTypeBase extends React.Component {
           <Form.Row>
             <Form.Group as={Col}>
               <Form.Row>
-                <Button className="mx-1"
+                  <Button 
+                  className="mx-1"
                   variant="primary"
-                  onClick={_ => this.addScoreType()}>Create Report Type</Button>
+                  id="submit"
+                  onClick={_ => this.addScoreType()}
+                  disabled>Create Report Type</Button>
               </Form.Row>
             </Form.Group>
           </Form.Row>
