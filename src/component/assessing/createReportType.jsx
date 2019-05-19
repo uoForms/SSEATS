@@ -11,6 +11,7 @@ class CreateReportTypeBase extends React.Component {
     this.state = {
       scoreTypes : null,
       scores: [],
+      buttonEnabled: false,
     };
     this.props.firebase.db.collection('score_type').get().then(scoreTypes=>{
       this.setState({
@@ -39,7 +40,7 @@ class CreateReportTypeBase extends React.Component {
 
   updateScore(index) {
     return _=>{
-      // delay to let changes apply
+      // Delay to let changes apply... doesn't really work
       setInterval(this.isButtonEnabled(), 100);
       let score = document.getElementById("criteria_" + index);
       if(score != null) {
@@ -74,7 +75,8 @@ class CreateReportTypeBase extends React.Component {
         let scores = this.state.scores.filter(score=>score.name!==undefined).map(score=>score.name);
         enabled = name !== "" && scores.length > 0;
       }
-      document.getElementById("submit").disabled = !enabled;
+      // Toggle the submit button.
+      this.setState({buttonEnabled:enabled});
     }
     return enabled;
   }
@@ -137,12 +139,21 @@ class CreateReportTypeBase extends React.Component {
           <Form.Row>
             <Form.Group as={Col}>
               <Form.Row>
+                {this.state.buttonEnabled?
                   <Button 
                   className="mx-1"
                   variant="primary"
                   id="submit"
                   onClick={_ => this.addScoreType()}
-                  disabled>Create Report Type</Button>
+                  >Create Report Type</Button>:
+                  <Button 
+                  className="mx-1"
+                  variant="primary"
+                  id="submit"
+                  disabled="true"
+                  >Create Report Type</Button>
+                }
+                  
               </Form.Row>
             </Form.Group>
           </Form.Row>
