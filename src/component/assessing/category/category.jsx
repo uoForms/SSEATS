@@ -32,7 +32,7 @@ const Category = (props) => {
         setReportOptions(reportOptionsArray);
       });
     }
-  });
+  }, [firebase]);
 
   const addCriteria = (fId) => {
     let newFeatures = _.clone(features);

@@ -16,7 +16,6 @@ class AppBase extends Component {
     if (this.props.firebase){
       var unsubscribe = this.props.firebase.auth.onAuthStateChanged((user) => {
         this.props.firebase.resolveUser().then((user) => {
-          console.log(this)
           this.setState({isAuthenticating: false}, () => unsubscribe());
         });
       });
