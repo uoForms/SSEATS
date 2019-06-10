@@ -7,6 +7,7 @@ import Header from './component/header/header.jsx';
 import Report from './component/assessing/report.jsx'
 import CreateSubject from './component/assessing/createSubject.jsx';
 import CreateCategory from './component/assessing/createCategory.jsx';
+import CreateReportType from './component/assessing/createReportType.jsx';
 import LandingPage from './component/landingPage/landingPage.jsx';
 
 import ForgotPassword from './component/userOperations/forgotPassword.jsx'
@@ -24,9 +25,10 @@ class RoutesBase extends React.Component {
     // Dictionary that contains all the possible routes
     // This is to better restrict page access using firebase
     this.pages = {
-      "/report" : Report,
+      "/report/view" : Report,
       "/subject/create" : CreateSubject,
       "/category/create" : CreateCategory,
+      "/report/create" : CreateReportType,
     };
   }
 
