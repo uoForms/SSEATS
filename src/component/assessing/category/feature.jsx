@@ -1,84 +1,92 @@
-import React from 'react';
+import * as React from 'react';
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
-import Button from 'react-bootstrap/Button';
 import { MdAdd, MdRemove } from 'react-icons/md';
 import Criteria from './criteria';
 
-export default class Feature extends React.Component {
 
-  constructor(props){
-    super(props);
-    this.state = {
-      name: '',
-      criteria: []
-    }
-  }
+const Feature = (props) => {
 
-  componentWillMount () {
-    console.log(this.key)
-    console.log(this.props.key)
-    console.log(this.props.id)
-  }
+  const [id, setId] = React.useState(null);
+  
+  React.useEffect(() => {
+    setId("f-"+props.id);
+  }, [props.id]);
 
-  addCriteria() {
-    console.log(this.state.criteria.length)
-    this.state.criteria.push(
-      <Criteria
-        key={this.state.criteria.length}
-        id={"criteria-"+this.key+"-"+this.state.criteria.length} />
-    );
-    this.forceUpdate();
-  }
+  const updateCriteria = (criteriaId, value) => {
+    props.updateCriteria(props.id, criteriaId, value)
+  };
 
-  updateFeature() {
-    this.setState({name:document.getElementById(this.props.id).value});
-  }
+  const updateFeature = () => {
+    props.updateValue(props.id, document.getElementById(id).value);
+  };
 
-  removeCriterion(i) {
-    console.log(i)
-  }
+  const addCriteria = () => {
+    props.addCriteria(props.id)
+  };
 
-  mapFeatures() {
-    return this.state.criteria.map((criterion, i) => {
+  const removeCriteria = (criteriaId) => {
+    props.removeCriteria(props.id, criteriaId);
+  };
+
+  const removeFeature = () => {
+    props.removeFeature(id);
+  };
+
+  const mapCriteria = () => {
+    return props.criteria.map((criterion, i) => {
       return (
-        <Form.Row>
-          <Form.Group>
-            <div onClick={_ => this.removeCriterion(i) }>
-              <MdRemove
-                size={28}
-                style={{color:'red'}} />
-            </div>
-          </Form.Group>
-          { criterion }
-        </Form.Row>
+        <Criteria 
+          feature={props.id}
+          value={criterion}
+          id={i}
+          key={i}
+          updateValue={updateCriteria}
+          removeCriteria={removeCriteria}
+        />
       );
     });
-  }
+  };
 
-  render() {
-    return (
-      <Form.Group>
-        <Form.Group>
+  return (
+    <Form.Group>
+      <Form.Row>
+        <Form.Group className="col-auto" as={Col}>
+          <button className="btn" onClick={removeFeature}>
+            <MdRemove
+              size={30}
+              style={{color:'red'}} />
+          </button>
+        </Form.Group>
+        <Form.Group as={Col}>
           <Form.Label>Feature Name</Form.Label>
           <Form.Control
-            id = {this.props.id}
+            id = {id}
             placeholder = "Enter a feature name"
-            title = {"Feature " + this.key}
-            onChange={_ => this.updateFeature()}>
+            title = {"Feature " + props.id}
+            onChange={updateFeature}
+            value={props.value}  
+          >
           </Form.Control>
         </Form.Group>
+      </Form.Row>
+      <div className="pl-4">
         <div className="h6 pt-2 pb-1">Criteria</div>
-        <div className="pl-4">
-          { this.mapFeatures() }
+        <div>
+          {mapCriteria()}
         </div>
         <Form.Row>
-          <Button className="mx-1"
-            variant="success"
-            onClick={_ => this.addCriteria()}>Add Criteria</Button>
+          <button className="btn" onClick={addCriteria}>
+            <MdAdd
+              size={30}
+              style={{color:'green'}} />
+          </button>
         </Form.Row>
-      </Form.Group>
-    );
-  }
+      </div>
+    </Form.Group>
+  );
 
 }
+
+
+export default Feature;

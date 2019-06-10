@@ -1,7 +1,6 @@
 import React from 'react';
 import { Router, Route, Switch, Redirect } from 'react-router-dom';
 import { withFirebase } from './component/firebase/context';
-import { createBrowserHistory } from 'history';
 
 import Header from './component/header/header.jsx';
 // Pages
@@ -15,13 +14,13 @@ import LoginPage from './component/userOperations/login.jsx';
 
 // Error
 import NotFound from './component/error/404.jsx'
+import history from './history';
 
 // Scripts
 
 class RoutesBase extends React.Component {
   constructor(props) {
     super(props);
-    this.history = createBrowserHistory();
     // Dictionary that contains all the possible routes
     // This is to better restrict page access using firebase
     this.pages = {
@@ -33,7 +32,7 @@ class RoutesBase extends React.Component {
 
   componentWillMount(){
     this.setState({perms: this.props.firebase.userPermissions})
-    this.listener = this.history.listen((location, action) => {
+    this.listener = history.listen((location, action) => {
       this.setState({perms: this.props.firebase.userPermissions})
     });
   }
@@ -44,7 +43,7 @@ class RoutesBase extends React.Component {
 
   unauthenticatedRouting() {
     return (
-        <Router history={this.history}>
+        <Router history={history}>
           <div>
             <Switch>
               <Route component={Header}></Route>
@@ -73,7 +72,7 @@ class RoutesBase extends React.Component {
 
   authenticatedRouting() {
     return (
-        <Router history={this.history}>
+        <Router history={history}>
           <div>
             <Switch>
               <Route component={Header}></Route>

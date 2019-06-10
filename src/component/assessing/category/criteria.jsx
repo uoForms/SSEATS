@@ -1,32 +1,49 @@
-import React from 'react';
+import * as React from 'react';
 import Form from 'react-bootstrap/Form';
+import Col from 'react-bootstrap/Col';
+import { MdRemove } from 'react-icons/md';
 
-export default class Criteria extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      name: ''
-    }
-  }
+/**
+ * 
+ * @param {updateValue, id, feature} props 
+ */
+const Criteria = (props) => {
 
-  updateCriteria() {
-    this.setState({name:document.getElementById(this.props.key).value});
-  }
+  const [id, setId] = React.useState("");
 
-  getValue() {
-    return this.state.name;
-  }
+  React.useEffect(() => {
+    setId("c-"+props.feature+"-"+props.id);
+  }, [props.feature, props.id]);
 
-  render() {
-    return (
-      <Form.Group key={this.props.key}>
+  const updateCriteria = () => {
+    props.updateValue(props.id, document.getElementById(id).value);
+  };
+
+  const removeCriteria = () => {
+    props.removeCriteria(props.id);
+  };
+
+  return (
+    <Form.Row className="align-items-center">
+      <Form.Group className="col-auto" as={Col}>
+        <button className="btn" onClick={removeCriteria}>
+          <MdRemove
+            size={30}
+            style={{color:'red'}} />
+        </button>
+      </Form.Group>
+      <Form.Group as={Col}>
         <Form.Control
-          id = {this.props.id}
+          id = {id}
           placeholder = "Enter a new criterion"
-          title = {"Criteria " + this.props.key}
-          onChange={_ => this.updateCriteria()}>
+          title = {"Criteria " + props.id}
+          value={props.value}
+          onChange={updateCriteria}>
         </Form.Control>
       </Form.Group>
-    );
-  }
+    </Form.Row>
+  );
+
 }
+
+export default Criteria;
