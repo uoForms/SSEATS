@@ -6,6 +6,7 @@ import Form from 'react-bootstrap/Form';
 import Feature from './feature';
 import FirebaseContext from '../../firebase/context';
 import history from '../../../history';
+import { MdAdd } from 'react-icons/md';
 
 const Category = (props) => {
 
@@ -36,7 +37,7 @@ const Category = (props) => {
 
   const addCriteria = (fId) => {
     let newFeatures = _.clone(features);
-    newFeatures[fId].criteria.push("");
+    newFeatures[fId].criteria.unshift("");
     setFeatures(newFeatures);
   }
 
@@ -66,7 +67,7 @@ const Category = (props) => {
   
   const addFeature = () => {
     let newFeatures = _.cloneDeep(features);
-    newFeatures.push({
+    newFeatures.unshift({
       criteria: [],
       value: "",
     });
@@ -114,11 +115,11 @@ const Category = (props) => {
       );
     });
   }
-
-
-
+  
+  
+  
   return (
-    <div>
+    <React.Fragment>
       <Form.Row>
         <Form.Group as={Col}>
           <Form.Label>Category Name</Form.Label>
@@ -146,21 +147,20 @@ const Category = (props) => {
             </Form.Control>
         </Form.Group>
       </Form.Row>
-      <div className="h5 mb-0 py-3">Features</div>
+      <div className="h5 mb-0 py-3">
+        <span>Features</span>
+        <button className="btn"
+          onClick={addFeature}>
+            <MdAdd
+              size={30}
+              style={{color:'green'}} />
+        </button>
+      </div>
       <div>
         {mapFeatures()}
       </div>
       <Form.Row>
-        <Form.Group as={Col}>
-          <Form.Row>
-            <Button className="mx-1"
-              variant="success"
-              onClick={addFeature}>Add Feature</Button>
-          </Form.Row>
-        </Form.Group>
-      </Form.Row>
-      <Form.Row>
-        <Form.Group as={Col}>
+        <Form.Group className="col-auto" as={Col}>
           <Form.Row>
             <Button className="mx-1"
               variant="primary"
@@ -168,7 +168,7 @@ const Category = (props) => {
           </Form.Row>
         </Form.Group>
       </Form.Row>
-    </div>
+    </React.Fragment>
   );
 };
 

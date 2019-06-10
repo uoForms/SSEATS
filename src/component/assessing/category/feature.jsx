@@ -71,17 +71,17 @@ const Feature = (props) => {
         </Form.Group>
       </Form.Row>
       <div className="pl-4">
-        <div className="h6 pt-2 pb-1">Criteria</div>
-        <div>
-          {mapCriteria()}
-        </div>
-        <Form.Row>
+        <div className="h6 pt-2 pb-1">
+          <span>Criteria</span>
           <button className="btn" onClick={addCriteria}>
             <MdAdd
               size={30}
               style={{color:'green'}} />
           </button>
-        </Form.Row>
+        </div>
+        <div>
+          {mapCriteria()}
+        </div>
       </div>
     </Form.Group>
   );
