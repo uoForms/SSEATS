@@ -101,6 +101,11 @@ class ReportBase extends React.Component {
         resizable : true
       },
       {
+        headerName: "Assessor",
+        field: "assessor",
+        resizable: true
+      },
+      {
         headerName: "Date",
         field : "date",
         resizable : true

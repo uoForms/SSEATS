@@ -53,6 +53,10 @@ class Firebase {
       }
     });
   }
+
+  getUserDoc = async () => {
+    return await this.db.collection('users').doc(this.auth.currentUser.uid);
+  };
 }
 
 
