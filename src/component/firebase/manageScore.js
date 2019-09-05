@@ -4,6 +4,7 @@ let score = {
     let assessmentDocumentReference = subjectDocumentReference.collection('assessments').doc()
     return assessmentDocumentReference.set({
       category:data.type.parent.parent.parent.parent,
+      assessor: data.assessor,
       date:new Date(),
       entry_type:'single'
     }).then(_=>assessmentDocumentReference.collection('scores').doc().set(data));
@@ -81,6 +82,7 @@ let score = {
                 // Start putting the score data for row.
                 scoresMap[score.type.path].push({
                   date: dateValue.toDate().toISOString().slice(0,10),
+                  assessor: assessments.docs[j].get('assessor'),
                   comment: score.comment,
                   score: score.score
                 });

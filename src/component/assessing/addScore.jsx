@@ -70,11 +70,13 @@ class AddScoreBase extends React.Component {
     }
   }
 
-  handleClick() {
+  async handleClick() {
     if (this.props.subjectDocumentReference && this.state.criteria) {
+      const user = await this.props.firebase.getUserDoc();
       manageScore.createScore(this.props.subjectDocumentReference, {
         type: this.props.firebase.db.doc(this.state.criteria),
         score: this.state.score,
+        assessor: user.firstName ? user.firstName + " " + user.lastName : user.email, 
         comment: typeof this.state.comment === 'undefined'
           || this.state.comment === null ? '' : this.state.comment
       }).then(this.props.exit);
