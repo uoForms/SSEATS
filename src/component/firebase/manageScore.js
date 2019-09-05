@@ -5,6 +5,7 @@ let score = {
     return assessmentDocumentReference.set({
       category:data.type.parent.parent.parent.parent,
       assessor: data.assessor,
+      assessorRef: data.assessorRef,
       date:new Date(),
       entry_type:'single'
     }).then(_=>assessmentDocumentReference.collection('scores').doc().set(data));

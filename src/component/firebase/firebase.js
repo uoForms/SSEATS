@@ -55,7 +55,7 @@ class Firebase {
   }
 
   getUserDoc = async () => {
-    return await this.db.collection('users').doc(this.auth.currentUser.uid).get().then((user) => user.data());
+    return await this.db.collection('users').doc(this.auth.currentUser.uid);
   };
 }
 
