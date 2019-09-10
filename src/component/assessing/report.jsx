@@ -22,6 +22,7 @@ class ReportBase extends React.Component {
       currentCategoryRef:"",
       categories:[],
       categorySnapshotMap: {},
+      defaultColDef: this.getDefaultColDef(),
       columnDefs : this.getColumn(),
       gridOptions : null,
       rowData: [],
@@ -86,6 +87,12 @@ class ReportBase extends React.Component {
       });
       this.setState({categories: categoryMap, categorySnapshotMap: docSnapMap});
     })
+  }
+
+  getDefaultColDef () {
+    return {
+      sortable: true
+    };
   }
 
   getColumn(){
@@ -210,6 +217,7 @@ class ReportBase extends React.Component {
         </Form.Row>
         <AgGridReact
           style={{maxWidth:"100%"}}
+          defaultColDef = {this.state.defaultColDef}
           columnDefs = {this.state.columnDefs}
           rowData = {this.state.rowData}
           onGridReady={params=>{

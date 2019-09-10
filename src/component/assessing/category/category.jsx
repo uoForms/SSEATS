@@ -140,7 +140,7 @@ const Category = (props) => {
               placeholder = "Select a Report Type"
               title = "Report Type"
               onChange={_ => {
-                this.setSelectedType(document.getElementById('reportType').value)
+                setSelectedType(document.getElementById('reportType').value)
               }}
               children = {reportOptions ? reportOptions : []}
               >
