@@ -9,9 +9,10 @@ class AddScoreBase extends React.Component {
     super(props);
     this.state = {
       criteriaOptions : null,
+      selectNames : null,
       selectOptions : null,
       criteria : undefined,
-      score : undefined,
+      score : [],
       comment : undefined
     };
     manageScore.getCriterias(this.props.firebase.db).then(criteriaMap=>{
@@ -36,7 +37,7 @@ class AddScoreBase extends React.Component {
               }
               options.push((_=>{
                 return(
-                  <optgroup key={feature} label={category + ": " + feature}>
+                  <optgroup key={category + ':' + feature} label={category + ": " + feature}>
                     {categoryOptions}
                   </optgroup>
                 );
@@ -49,23 +50,55 @@ class AddScoreBase extends React.Component {
     });
   }
 
+  scores() {
+    let scores = [];
+    for (let i=0; i < this.state.selectOptions.length; i++) {
+      scores.push(
+        <Form.Group key={this.state.selectNames[i]}>
+          <Form.Label>{this.state.selectNames[i]}</Form.Label>
+          <Form.Control
+            as="select"
+            id="score"
+            title="Score"
+            onChange={_=>{
+              let select = document.getElementById("score");
+              let score = this.state.score;
+              score[i] = select[select.selectedIndex].value
+              this.setState({score:score});
+            }}
+          >
+          {this.state.selectOptions[i]}
+          </Form.Control>
+        </Form.Group>
+        );
+    }
+    return scores;
+  }
+
   setScores() {
     if (this.state.criteria !== undefined) {
       manageScore.getScore(this.props.firebase.db.doc(this.state.criteria.split('/features/')[0])).then(scores=>{
-        let scale = [];
-        scale.push(
-          <option key="null" value={scores[0].null}>
-            {scores[0].null}
-          </option>
-        );
-        for (let i=scores[0].min; i<=scores[0].max; i+=scores[0].interval) {
-          scale.push(
-            <option key={i} value={i}>
-              {i}
+        let scales = [];
+        let names = [];
+        for (let i in scores){
+          scales.push([]);
+          names.push(scores[i].name)
+          let s = scales.length - 1;
+          scales[s].push(
+            <option key="null" value={scores[i].null}>
+              {scores[i].null}
             </option>
           );
+          for (let j=scores[i].min; j<=scores[i].max; j+=scores[i].interval) {
+            scales[s].push(
+              <option key={j} value={j}>
+                {j}
+              </option>
+            );
+          }
         }
-        this.setState({selectOptions : scale});
+        this.setState({selectNames : names});
+        this.setState({selectOptions : scales});
       });
     }
   }
@@ -104,20 +137,9 @@ class AddScoreBase extends React.Component {
             {this.state.criteriaOptions}
           </Form.Control>
         </Form.Group>
-        <Form.Group>
-          <Form.Label>Score</Form.Label>
-          <Form.Control
-            as="select"
-            id="score"
-            title="Score"
-            onChange={_=>{
-              let select = document.getElementById("score");
-              this.setState({score:select[select.selectedIndex].value});
-            }}
-          >
-          {this.state.selectOptions}
-          </Form.Control>
-        </Form.Group>
+
+        {this.state.selectOptions!=null?this.scores():<Form.Label>Score</Form.Label>}
+
         <Form.Group>
           <Form.Label>Comment</Form.Label>
           <Form.Control
