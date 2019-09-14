@@ -25,7 +25,7 @@ class CreateSubjectBase extends React.Component {
   handleClick(event) {
     if ((_=>{
       let noUndef = true;
-      for (let i in this.state.data){
+      for (var i in this.state.data){
         if (this.state.data[i] === undefined){
           noUndef = false;
         }
@@ -70,7 +70,7 @@ class CreateSubjectBase extends React.Component {
           {
             (_=>{
               let fields = [];
-              for (let key in this.state.data)
+              for (var key in this.state.data)
                 fields.push(this.field(key));
               return fields;
             })()
