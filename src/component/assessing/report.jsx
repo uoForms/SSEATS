@@ -53,20 +53,28 @@ class ReportBase extends React.Component {
     let names = []
     let promises = []
     let docSnapMap = {}
-    names.push({name: "Select a Subject", docRef: ""})
-    promises.push(this.props.firebase.db.collection('subjects').get().then(result=>{
-      result.docs.forEach(doc=>{
-        let subject = {name: doc.get('name'), docRef: doc.ref.path}
-        docSnapMap[doc.ref.path] = doc.ref
-        names.push(subject)
-      })
-    }))
-    return Promise.all(promises).then(_=>{
-      let subjectMap = names.map((subject, i) => {
-        return <option key ={i} name = {subject['name']} value = {subject['docRef']}> {subject['name']}</option>
+    names.push({name: "Select a Subject", docRef: ""});
+    
+    return this.props.firebase.getViewableSubjectRefs().then((refs) => {
+      // Turn the refs into usable information
+      refs.forEach((ref) => {
+        promises.push(
+          ref.get().then((doc) => {
+            let subject = {name: doc.get('name'), docRef: doc.ref.path};
+            docSnapMap[doc.ref.path] = doc.ref;
+            names.push(subject);
+          })
+        );
       });
-      this.setState({subjects: subjectMap, subjectSnapshotMap: docSnapMap});
-    })
+    }).then (() => {
+      // Wait for all document fetches to end, then convert to options
+      return Promise.all(promises).then(_=>{
+        let subjectMap = names.map((subject, i) => {
+          return <option key ={i} name = {subject['name']} value = {subject['docRef']}> {subject['name']}</option>
+        });
+        this.setState({subjects: subjectMap, subjectSnapshotMap: docSnapMap});
+      })
+    });
   }
 
   getCategories(){

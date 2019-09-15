@@ -55,9 +55,7 @@ class CreateReportTypeBase extends React.Component {
   addScoreType() {
     let name = document.getElementById('categoryName').value;
     let scores = this.state.scores.filter(score=>score.name!==undefined).map(score=>score.name);
-    console.log("clicked")
     if (this.isButtonEnabled()) {
-      console.log("sending")
       this.props.firebase.db.collection("report_type").doc().set({
         name : name,
         scores : scores,

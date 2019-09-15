@@ -89,9 +89,34 @@ class Firebase {
       return Promise.all(promises);
     }).then(_=>criteriaMap);
   }
+
+  findByRole = async (role) => {
+    const roleRef = this.db.collection("roles").doc(role);
+    return roleRef ? await this.db.collection('users').where("role", "==", roleRef).get().then((result) => result.docs) : [];
+  };
+
+  getSubjects = async () => {
+    return await this.db.collection("subjects").get().then((result) => result.docs);
+  };
+
+  getViewableSubjectRefs = async () => {
+    const userData = await this.db.collection('users').doc(this.auth.currentUser.uid).get();
+
+    if (!userData.data().subjects){
+      return [];
+    } else {
+      return userData.data().subjects;
+    }
+
+
+  };
+
+  assignSubjects = async (assessor, subjects) => {
+    assessor.update({
+      subjects: subjects,
+    });
+  };
 }
-
-
 
 export default Firebase;
 
