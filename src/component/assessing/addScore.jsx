@@ -15,7 +15,7 @@ class AddScoreBase extends React.Component {
       score : [],
       comment : undefined
     };
-    manageScore.getCriterias(this.props.firebase.db).then(criteriaMap=>{
+    manageScore.getCriterias(this.props.firebase.db, this.props.selectedCategory).then(criteriaMap=>{
       let options = [];
       for (let category in criteriaMap) {
         if (criteriaMap.hasOwnProperty(category)){
@@ -26,6 +26,7 @@ class AddScoreBase extends React.Component {
                 for(let criteria in criteriaMap[category][feature][i]) {
                   if (criteriaMap[category][feature][i].hasOwnProperty(criteria)){
                     categoryOptions.push((_=>{
+                      this.setState({criteria:criteriaMap[category][feature][i][criteria]});
                       return(
                         <option key={criteria} value={criteriaMap[category][feature][i][criteria]}>
                           {criteria}
@@ -47,6 +48,7 @@ class AddScoreBase extends React.Component {
         }
       }
       this.setState({criteriaOptions : options});
+      this.setScores()
     });
   }
 
