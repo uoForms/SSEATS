@@ -12,15 +12,14 @@ let score = {
   },
 
   // Returns a promise containing an object contaning a category, feature, criteria hiearchy.
-  // 
-  getCriterias: (db, selectedCategory=undefined)=>{
+  // selectedCategory allows to restrict the return value to one category if need be.
+  getCriterias: (db, selectedCategory="")=>{
     let criteriaMap = {};
     return db.collection('categories').get().then(categories=>{
       let promises = [];
       for (let i in categories.docs) {
         let category = categories.docs[i].get('name');
-        console.log(categories.docs[i].ref.path)
-        if (selectedCategory !== undefined && categories.docs[i].ref.path === selectedCategory)
+        if (selectedCategory === "" || categories.docs[i].ref.path === selectedCategory)
         {
           criteriaMap[category] = {};
           promises.push(categories.docs[i].ref.collection('features').get().then(features=>{
