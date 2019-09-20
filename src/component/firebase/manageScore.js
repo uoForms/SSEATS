@@ -53,7 +53,7 @@ let score = {
     }).then(report_type=>{
       let promises = [];
       let scores = report_type.get('scores');
-      for (let i in scores) {
+      for (var i in scores) {
         promises.push(scores[i].get().then(score=>{
           scoreRefs.push(score.data())
         }))
@@ -63,7 +63,7 @@ let score = {
   },
 
   // Returns a promise that has rows as a value.
-  getRows: (firestore, subjectsQuerySnapshot, categoryRef)=>{
+  getRows: (firestore, subjectsQuerySnapshot, categoryRef) => {
     // Key is criteria ref, value is array of corresponding rows.
     let scoresMap = {};
 
@@ -72,14 +72,16 @@ let score = {
     promises.push(subjectsQuerySnapshot.collection('assessments')
       .where('category', '==', categoryRef).get().then(assessments=>{
       let promises1 = [];
-      for(let j in assessments.docs){
+      for(var j in assessments.docs){
+          let assessmentIndex = j;
           //Get the Date
-          let dateValue= assessments.docs[j].get('date');
-          promises1.push(assessments.docs[j].ref.collection('scores').get().then(scores => {
+          let dateValue= assessments.docs[assessmentIndex].get('date');
+          promises1.push(assessments.docs[assessmentIndex].ref.collection('scores').get().then(scores => {
             let promises2 = [];
-            for(let k in scores.docs){
+            for(var k in scores.docs){
+              let scoreIndex = k;
               promises2.push(new Promise(resolve=>{
-                let score = scores.docs[k].data();
+                let score = scores.docs[scoreIndex].data();
                 // Create key if not there.
                 if (scoresMap[score.type.path] === undefined){
                   scoresMap[score.type.path] = [];
@@ -87,7 +89,7 @@ let score = {
                 // Start putting the score data for row.
                 scoresMap[score.type.path].push({
                   date: dateValue.toDate().toISOString().slice(0,10),
-                  assessor: assessments.docs[j].get('assessor'),
+                  assessor: assessments.docs[assessmentIndex].get('assessor'),
                   comment: score.comment,
                   score: score.score
                 });
@@ -103,7 +105,8 @@ let score = {
     // Step 2 get all data from the criteria and it's parents and update the scoresMap. O(n)
     .then(_=>{
       let promises = [];
-      for (let criteriaPath in scoresMap) {
+      for (var i in scoresMap) {
+        let criteriaPath = i;
         // Only iterate over object values and not the other stuff inside objects.
         if (scoresMap.hasOwnProperty(criteriaPath)) {
           let criteriaDocumentReference = firestore.doc(criteriaPath);
@@ -113,7 +116,7 @@ let score = {
             return featureDocumentReference.get().then(feature=>{
               return criteriaDocumentReference.get().then(criteria=>{
                 // finish putting the criteria data for the row.
-                for (let i in scoresMap[criteriaPath]){
+                for (var i in scoresMap[criteriaPath]){
                   scoresMap[criteriaPath][i]['feature'] = feature.get('name');
                   scoresMap[criteriaPath][i]['criteria'] = criteria.get('name');
                 }
@@ -126,7 +129,7 @@ let score = {
     })
     .then(_=>{
       let rows = [];
-      for (let key in scoresMap) {
+      for (var key in scoresMap) {
         // Only iterate over object values and not the other stuff inside objects.
         if (scoresMap.hasOwnProperty(key)) {
           rows = rows.concat(scoresMap[key]);
