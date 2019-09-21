@@ -17,19 +17,19 @@ let score = {
     let criteriaMap = {};
     return db.collection('categories').get().then(categories=>{
       let promises = [];
-      for (let i in categories.docs) {
+      for (var i in categories.docs) {
         let category = categories.docs[i].get('name');
         if (selectedCategory === "" || categories.docs[i].ref.path === selectedCategory)
         {
           criteriaMap[category] = {};
           promises.push(categories.docs[i].ref.collection('features').get().then(features=>{
             let promises1 = [];
-            for (let j in features.docs) {
+            for (var j in features.docs) {
               let feature = features.docs[j].get('name');
               criteriaMap[category][feature] = [];
               promises1.push(features.docs[j].ref.collection('criteria').get().then(criterias=>{
                 let promises2 = [];
-                for (let k in criterias.docs) {
+                for (var k in criterias.docs) {
                   promises2.push(new Promise(resolve=>{
                     criteriaMap[category][feature].push({[criterias.docs[k].get('name')] : criterias.docs[k].ref.path});
                     resolve();

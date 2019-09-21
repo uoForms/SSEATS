@@ -17,13 +17,13 @@ class AddScoreBase extends React.Component {
     };
     manageScore.getCriterias(this.props.firebase.db, this.props.selectedCategory).then(criteriaMap=>{
       let options = [];
-      for (let category in criteriaMap) {
+      for (var category in criteriaMap) {
         if (criteriaMap.hasOwnProperty(category)){
-          for(let feature in criteriaMap[category]) {
+          for(var feature in criteriaMap[category]) {
             if (criteriaMap[category].hasOwnProperty(feature)){
               let categoryOptions = [];
-              for (let i in criteriaMap[category][feature]) {
-                for(let criteria in criteriaMap[category][feature][i]) {
+              for (var i in criteriaMap[category][feature]) {
+                for(var criteria in criteriaMap[category][feature][i]) {
                   if (criteriaMap[category][feature][i].hasOwnProperty(criteria)){
                     categoryOptions.push((_=>{
                       this.setState({criteria:criteriaMap[category][feature][i][criteria]});
@@ -54,7 +54,7 @@ class AddScoreBase extends React.Component {
 
   scores() {
     let scores = [];
-    for (let i=0; i < this.state.selectOptions.length; i++) {
+    for (var i=0; i < this.state.selectOptions.length; i++) {
       scores.push(
         <Form.Group key={this.state.selectNames[i]}>
           <Form.Label>{this.state.selectNames[i]}</Form.Label>
@@ -82,7 +82,7 @@ class AddScoreBase extends React.Component {
       manageScore.getScore(this.props.firebase.db.doc(this.state.criteria.split('/features/')[0])).then(scores=>{
         let scales = [];
         let names = [];
-        for (let i in scores){
+        for (var i in scores){
           scales.push([]);
           names.push(scores[i].name)
           let s = scales.length - 1;
@@ -91,7 +91,7 @@ class AddScoreBase extends React.Component {
               {scores[i].null}
             </option>
           );
-          for (let j=scores[i].min; j<=scores[i].max; j+=scores[i].interval) {
+          for (var j=scores[i].min; j<=scores[i].max; j+=scores[i].interval) {
             scales[s].push(
               <option key={j} value={j}>
                 {j}
