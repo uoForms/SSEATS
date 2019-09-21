@@ -236,7 +236,7 @@ class ReportBase extends React.Component {
         {
           this.state.sidebarOpen ?
           <Sidebar
-            sidebar={<AddScore subjectDocumentReference={this.props.firebase.db.doc(this.state.subjectDocRef)} exit={_=>{
+            sidebar={<AddScore subjectDocumentReference={this.props.firebase.db.doc(this.state.subjectDocRef)} selectedCategory={this.state.currentCategoryRef} exit={_=>{
               this.handleChange(this.state.subjectDocRef)
               this.setState({sidebarOpen:false})}}/>}
             open={true}

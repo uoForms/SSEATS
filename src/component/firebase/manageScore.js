@@ -11,6 +11,41 @@ let score = {
     }).then(_=>assessmentDocumentReference.collection('scores').doc().set(data));
   },
 
+  // Returns a promise containing an object contaning a category, feature, criteria hiearchy.
+  // selectedCategory allows to restrict the return value to one category if need be.
+  getCriterias: (db, selectedCategory="")=>{
+    let criteriaMap = {};
+    return db.collection('categories').get().then(categories=>{
+      let promises = [];
+      for (var i in categories.docs) {
+        let category = categories.docs[i].get('name');
+        if (selectedCategory === "" || categories.docs[i].ref.path === selectedCategory)
+        {
+          criteriaMap[category] = {};
+          promises.push(categories.docs[i].ref.collection('features').get().then(features=>{
+            let promises1 = [];
+            for (var j in features.docs) {
+              let feature = features.docs[j].get('name');
+              criteriaMap[category][feature] = [];
+              promises1.push(features.docs[j].ref.collection('criteria').get().then(criterias=>{
+                let promises2 = [];
+                criterias.docs.forEach(doc=>{
+                  promises2.push(new Promise(resolve=>{
+                    criteriaMap[category][feature].push({[doc.get('name')] : doc.ref.path});
+                    resolve();
+                  }));
+                });
+                return Promise.all(promises2);
+              }));
+            }
+            return Promise.all(promises1);
+          }));
+        }
+      }
+      return Promise.all(promises);
+    }).then(_=>criteriaMap);
+  },
+
   getScore: (categoryDocumentReference)=>{
     let scoreRefs = [];
     return categoryDocumentReference.get().then(category=>{
