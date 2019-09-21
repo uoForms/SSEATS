@@ -25,24 +25,20 @@ class AddScoreBase extends React.Component {
               for (var i in criteriaMap[category][feature]) {
                 for(var criteria in criteriaMap[category][feature][i]) {
                   if (criteriaMap[category][feature][i].hasOwnProperty(criteria)){
-                    categoryOptions.push((_=>{
-                      this.setState({criteria:criteriaMap[category][feature][i][criteria]});
-                      return(
+                    this.setState({criteria:criteriaMap[category][feature][i][criteria]});
+                    categoryOptions.push(
                         <option key={criteria} value={criteriaMap[category][feature][i][criteria]}>
                           {criteria}
                         </option>
-                      );
-                    })());
+                    );
                   }
                 }
               }
-              options.push((_=>{
-                return(
+              options.push(
                   <optgroup key={category + ':' + feature} label={category + ": " + feature}>
                     {categoryOptions}
                   </optgroup>
-                );
-              })());
+              );
             }
           }
         }
@@ -62,12 +58,15 @@ class AddScoreBase extends React.Component {
             as="select"
             id="score"
             title="Score"
-            onChange={_=>{
-              let select = document.getElementById("score");
-              let score = this.state.score;
-              score[i] = select[select.selectedIndex].value
-              this.setState({score:score});
-            }}
+            onChange={(index=>{
+              // Pass argument to avoid no-loop-func
+              return (_=>{
+                let select = document.getElementById("score");
+                let score = this.state.score;
+                score[index] = select[select.selectedIndex].value
+                this.setState({score:score});
+              })
+            })(i)}
           >
           {this.state.selectOptions[i]}
           </Form.Control>

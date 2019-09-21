@@ -29,12 +29,12 @@ let score = {
               criteriaMap[category][feature] = [];
               promises1.push(features.docs[j].ref.collection('criteria').get().then(criterias=>{
                 let promises2 = [];
-                for (var k in criterias.docs) {
+                criterias.docs.forEach(doc=>{
                   promises2.push(new Promise(resolve=>{
-                    criteriaMap[category][feature].push({[criterias.docs[k].get('name')] : criterias.docs[k].ref.path});
+                    criteriaMap[category][feature].push({[doc.get('name')] : doc.ref.path});
                     resolve();
                   }));
-                }
+                });
                 return Promise.all(promises2);
               }));
             }
