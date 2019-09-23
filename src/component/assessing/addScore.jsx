@@ -98,8 +98,10 @@ class AddScoreBase extends React.Component {
             );
           }
         }
-        this.setState({selectNames : names});
-        this.setState({selectOptions : scales});
+        this.setState({
+          selectNames : names,
+          selectOptions: scales,
+        });
       });
     }
   }
@@ -139,7 +141,7 @@ class AddScoreBase extends React.Component {
           </Form.Control>
         </Form.Group>
 
-        {this.state.selectOptions!=null?this.scores():<Form.Label>Score</Form.Label>}
+        {this.state.selectOptions!=null?this.scores():null}
 
         <Form.Group>
           <Form.Label>Comment</Form.Label>

@@ -18,9 +18,11 @@ class ReportBase extends React.Component {
     this.state = {
       subjectDocRef : "",
       subjects: [],
+      // scores of the category, key is the category
+      scores: {},
       subjectSnapshotMap : {},
       currentCategoryRef:"",
-      categories:[],
+      categories: [],
       categorySnapshotMap: {},
       defaultColDef: this.getDefaultColDef(),
       columnDefs : this.getColumn(),
@@ -30,23 +32,9 @@ class ReportBase extends React.Component {
     }
   }
 
- componentWillMount(){
-  this.getSubjects()
-  this.getCategories()
- }
-
-  getname(){
-    let name = []
-    let promises = []
-    promises.push(this.props.firebase.db.collection('subjects').get().then(result=>{
-      result.docs.forEach(doc=>{
-        name.push(doc.get('name'))
-      })
-    }))
-    Promise.all(promises).then(_=>{
-      return name
-
-    })
+  componentWillMount() {
+    this.getSubjects();
+    this.getCategories();
   }
 
   getSubjects(){
@@ -77,23 +65,45 @@ class ReportBase extends React.Component {
     });
   }
 
-  getCategories(){
-    let categories = []
-    let promises = []
-    let docSnapMap = {}
-    categories.push({name: "Select a Category", docRef: ""})
-    promises.push(this.props.firebase.db.collection('categories').get().then(result=>{
-      result.docs.forEach(doc=>{
-        let category = {name: doc.get('name'), docRef: doc.ref.path}
-        docSnapMap[doc.ref.path] = doc.ref
-        categories.push(category)
-      })
+  async getScoreData(score) {
+    let score_doc = await score.get();
+    return score_doc.data()
+  }
+
+  async mapScores (report_type) {
+    let scores = await report_type.get("scores");
+    return await Promise.all(scores.map(score => {
+      let thing = this.getScoreData(score)
+      return thing
+    }
+    ));
+  }
+  
+
+  async getCategories() {
+    let categories = [];
+    let promises = [];
+    let scores_map = {};
+    let docSnapMap = {};
+    categories.push({name: "Select a Category", docRef: ""});
+    promises.push(this.props.firebase.db.collection('categories').get().then(async (result) =>{
+      await Promise.all(result.docs.map(async (doc)=>{
+        let report_type = await doc.get("report_type").get();
+        let scores = await this.mapScores(report_type);
+        let category = {
+          name: doc.get('name'), 
+          docRef: doc.ref.path,
+        };
+        scores_map[doc.ref.path] = scores;
+        docSnapMap[doc.ref.path] = doc.ref;
+        categories.push(category);
+      }));
     }))
     return Promise.all(promises).then(_=>{
       let categoryMap = categories.map((category, i) => {
         return <option key ={i} name = {category['name']} value = {category['docRef']}> {category['name']}</option>
       });
-      this.setState({categories: categoryMap, categorySnapshotMap: docSnapMap});
+      this.setState({categories: categoryMap, categorySnapshotMap: docSnapMap, scores: scores_map});
     })
   }
 
@@ -104,7 +114,7 @@ class ReportBase extends React.Component {
   }
 
   getColumn(){
-    return[
+    let columns = [
       {
         headerName: "Feature",
         field : "feature"     ,
@@ -125,17 +135,27 @@ class ReportBase extends React.Component {
         field : "date",
         resizable : true
       },
-      {
-        headerName: "Score",
-        field : "score",
-        resizable : true
-      },
-      {
-        headerName: "Comment",
-        field : "comment",
-        resizable : true
+    ];
+
+    if(this.state) {
+      let scores = this.state.scores[this.state.currentCategoryRef];
+      if(scores) {
+        scores.forEach((score) => {
+          columns.push({
+            headerName: score.name,
+            field: score.name,
+            resizable: true,
+          });
+        });
       }
-    ]
+    }
+
+    columns.push({
+      headerName: "Comment",
+      field : "comment",
+      resizable : true
+    });
+    return columns;
   }
 
   onSetSidebarOpen(open, context) {
@@ -150,8 +170,12 @@ class ReportBase extends React.Component {
         this.setState({rowData:[]})
     }else{
       return manageScore.getRows(this.props.firebase.db, this.state.subjectSnapshotMap[this.state.subjectDocRef]
-              ,this.state.categorySnapshotMap[this.state.currentCategoryRef]).then(rows =>{
-        this.setState({rowData: rows},_=>{
+              ,this.state.categorySnapshotMap[this.state.currentCategoryRef], 
+              this.state.scores[this.state.currentCategoryRef]).then(rows =>{
+        this.setState({
+          rowData: rows,
+          columnDefs: this.getColumn(),
+        },_=>{
           // Callback sets size to whichever is wider between fit and auto.
           this.state.gridOptions.api.sizeColumnsToFit();
           let fit = 0;
