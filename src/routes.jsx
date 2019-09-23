@@ -10,6 +10,7 @@ import CreateCategory from './component/assessing/createCategory.jsx';
 import CreateReportType from './component/assessing/createReportType.jsx';
 import LandingPage from './component/landingPage/landingPage.jsx';
 import AssignSubjectPage from './component/assessing/assign/assignSubjectPage.jsx';
+import ViewSubjectsAssessments from './component/assessing/viewAssessments.jsx';
 
 import ForgotPassword from './component/userOperations/forgotPassword.jsx'
 import LoginPage from './component/userOperations/login.jsx';
@@ -31,6 +32,7 @@ class RoutesBase extends React.Component {
       "/category/create" : CreateCategory,
       "/report/create" : CreateReportType,
       "/subject/assign": AssignSubjectPage,
+      "/assessments/view" : ViewSubjectsAssessments,
     };
   }
 
