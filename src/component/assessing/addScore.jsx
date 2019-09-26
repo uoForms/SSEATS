@@ -50,6 +50,7 @@ class AddScoreBase extends React.Component {
 
   scores() {
     let scores = [];
+    let formScore = [];
     for (var i=0; i < this.state.selectOptions.length; i++) {
       scores.push(
         <Form.Group key={this.state.selectNames[i]}>
@@ -72,6 +73,12 @@ class AddScoreBase extends React.Component {
           </Form.Control>
         </Form.Group>
         );
+      formScore.push(this.state.selectOptions[i][0].props.value);
+    }
+    // Initialize the score array when it's empty
+    if (this.state.score.length === 0)
+    {
+      this.setState({score:formScore});
     }
     return scores;
   }
