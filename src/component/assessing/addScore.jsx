@@ -64,7 +64,7 @@ class AddScoreBase extends React.Component {
               return (_=>{
                 let select = document.getElementById("score");
                 let score = this.state.score;
-                score[index] = select[select.selectedIndex].value
+                score[index] = this.state.selectOptions[index][select.selectedIndex].props.value
                 this.setState({score:score});
               })
             })(i)}
