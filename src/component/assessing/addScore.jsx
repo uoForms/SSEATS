@@ -50,6 +50,7 @@ class AddScoreBase extends React.Component {
 
   scores() {
     let scores = [];
+    let formScore = [];
     for (var i=0; i < this.state.selectOptions.length; i++) {
       scores.push(
         <Form.Group key={this.state.selectNames[i]}>
@@ -63,7 +64,7 @@ class AddScoreBase extends React.Component {
               return (_=>{
                 let select = document.getElementById("score");
                 let score = this.state.score;
-                score[index] = select[select.selectedIndex].value
+                score[index] = this.state.selectOptions[index][select.selectedIndex].props.value
                 this.setState({score:score});
               })
             })(i)}
@@ -72,6 +73,12 @@ class AddScoreBase extends React.Component {
           </Form.Control>
         </Form.Group>
         );
+      formScore.push(this.state.selectOptions[i][0].props.value);
+    }
+    // Initialize the score array when it's empty
+    if (this.state.score.length === 0)
+    {
+      this.setState({score:formScore});
     }
     return scores;
   }
