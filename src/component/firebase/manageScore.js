@@ -63,7 +63,7 @@ let score = {
   },
 
   // Returns a promise that has rows as a value.
-  getRows: (firestore, subjectsQuerySnapshot, categoryRef) => {
+  getRows: (firestore, subjectsQuerySnapshot, categoryRef, scoreMapping) => {
     // Key is criteria ref, value is array of corresponding rows.
     let scoresMap = {};
 
@@ -87,12 +87,15 @@ let score = {
                   scoresMap[score.type.path] = [];
                 }
                 // Start putting the score data for row.
-                scoresMap[score.type.path].push({
+                let row = {
                   date: dateValue.toDate().toISOString().slice(0,10),
                   assessor: assessments.docs[assessmentIndex].get('assessor'),
                   comment: score.comment,
-                  score: score.score
+                };
+                scoreMapping.forEach((mapping, i) => {
+                  row[mapping.name] = score.score[i];
                 });
+                scoresMap[score.type.path].push(row);
                 resolve();
               }));
             }
