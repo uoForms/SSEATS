@@ -46,7 +46,7 @@ class CreateReportTypeBase extends React.Component {
       if(score != null) {
         let scores = this.state.scores.slice(0);
         scores[index] = score.selectedIndex===0?{name:undefined,value:""}:
-        {name:score[score.selectedIndex].attributes.name.value,value:score[score.selectedIndex].value};
+        {name:this.props.firebase.db.doc(score[score.selectedIndex].attributes.name.value), value:score[score.selectedIndex].value};
         this.setState({scores : scores});
       }
     }
