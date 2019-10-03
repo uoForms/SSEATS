@@ -164,6 +164,10 @@ const Category = (props) => {
           <Form.Row>
             <Button className="mx-1"
               variant="primary"
+              disabled={
+                /*Validation ensures there are at least one feature/criteria and no empty fields*/
+                categoryName==="" || features.length===0 || !features.every(f=>f.value!=="" && f.criteria.length!==0 && f.criteria.every(c=>c!==""))
+              }
               onClick={createCategory}>Create Category</Button>
           </Form.Row>
         </Form.Group>
