@@ -9,6 +9,7 @@ import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 import { withFirebase } from '../firebase/context';
 import AddScore from './addScore.jsx';
 import manageScore from '../firebase/manageScore';
+import ScoreColour from './scoreColour.jsx'
 
 
 class ReportBase extends React.Component {
@@ -28,7 +29,8 @@ class ReportBase extends React.Component {
       columnDefs : this.getColumn(),
       gridOptions : null,
       rowData: [],
-      sidebarOpen: false
+      sidebarOpen: false,
+      colourGradients: []
     }
   }
 
@@ -140,13 +142,32 @@ class ReportBase extends React.Component {
     if(this.state) {
       let scores = this.state.scores[this.state.currentCategoryRef];
       if(scores) {
+        let colours = []
         scores.forEach((score) => {
+          // Create the colour gradient maps here
+          colours.push({
+            name : score.name,
+            valueMap : (s=>{
+              let gradient = {};
+              let rgb = (r, g, b)=>('#'+(r).toString(16).padStart(2,'0')+(g).toString(16).padStart(2,'0')+(b).toString(16).padStart(2,'0'));
+              gradient[s['null']] = rgb(128, 128, 128);
+              for (let i = s.min;i <= s.max; i += s.interval)
+              {
+                let j = Math.floor((i-s.min)*255/s.max)
+                gradient[i] = rgb(j,255-j,0);
+              }
+              return gradient;
+            })(score)
+          });
+          // Add score to the table
           columns.push({
             headerName: score.name,
             field: score.name,
+            cellRenderer:"scoreColour",
             resizable: true,
           });
         });
+        this.setState({colourGradients:colours})
       }
     }
 
@@ -172,9 +193,18 @@ class ReportBase extends React.Component {
       return manageScore.getRows(this.props.firebase.db, this.state.subjectSnapshotMap[this.state.subjectDocRef]
               ,this.state.categorySnapshotMap[this.state.currentCategoryRef], 
               this.state.scores[this.state.currentCategoryRef]).then(rows =>{
+                // Create columns first to create the colour gradient.
+                let columns = this.getColumn();
+                rows.forEach(r=>this.state.colourGradients.forEach(c=>
+                  {
+                    r[c.name] = {
+                      number:r[c.name],
+                      colour:c.valueMap[r[c.name]]
+                    }
+                  }));
         this.setState({
           rowData: rows,
-          columnDefs: this.getColumn(),
+          columnDefs: columns,
         },_=>{
           // Callback sets size to whichever is wider between fit and auto.
           this.state.gridOptions.api.sizeColumnsToFit();
@@ -250,6 +280,7 @@ class ReportBase extends React.Component {
         <AgGridReact
           style={{maxWidth:"100%"}}
           defaultColDef = {this.state.defaultColDef}
+          frameworkComponents = {{scoreColour:ScoreColour}}
           columnDefs = {this.state.columnDefs}
           rowData = {this.state.rowData}
           onGridReady={params=>{
