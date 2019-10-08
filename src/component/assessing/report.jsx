@@ -153,7 +153,7 @@ class ReportBase extends React.Component {
               gradient[s['null']] = rgb(128, 128, 128);
               for (let i = s.min;i <= s.max; i += s.interval)
               {
-                let j = Math.floor((i-s.min)*255/s.max)
+                let j = Math.floor((s.max-i)*255/s.max)
                 gradient[i] = rgb(j,255-j,0);
               }
               return gradient;
