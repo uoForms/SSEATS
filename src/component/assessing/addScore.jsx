@@ -57,12 +57,12 @@ class AddScoreBase extends React.Component {
           <Form.Label>{this.state.selectNames[i]}</Form.Label>
           <Form.Control
             as="select"
-            id="score"
+            id={"score"+i}
             title="Score"
             onChange={(index=>{
               // Pass argument to avoid no-loop-func
               return (_=>{
-                let select = document.getElementById("score");
+                let select = document.getElementById("score"+index);
                 let score = this.state.score;
                 score[index] = this.state.selectOptions[index][select.selectedIndex].props.value
                 this.setState({score:score});
