@@ -169,6 +169,21 @@ class Firebase {
     return categories;
   };
 
+  saveReview = async (review, reviewValue, date, subject) => {
+    let reviewDoc;
+    if(!review) {
+      reviewDoc = subject.collection("reviews").doc();
+    } else {
+      reviewDoc = subject.collection("reviews").doc(review);
+    }
+
+    reviewDoc.set({
+      review: reviewValue,
+      date: date,
+    });
+    return reviewDoc;
+  }
+
 }
 
 //Got and inspired from  https://stackoverflow.com/questions/1129216/sort-array-of-objects-by-string-property-value
