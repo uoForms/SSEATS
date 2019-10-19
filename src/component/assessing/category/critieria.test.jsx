@@ -1,41 +1,34 @@
-import React from 'react';
+import * as React from 'react';
 import Criteria from './criteria.jsx';
-import { mount } from 'enzyme';
+import { shallow, mount, render } from 'enzyme';
+// in app/src/setupTests.js file
 
+const Enzyme = require('enzyme');
 
+// this is where we reference the adapter package we installed  
+const EnzymeAdapter = require('enzyme-adapter-react-16');
+
+// This sets up the adapter to be used by Enzyme
+Enzyme.configure({ adapter: new EnzymeAdapter() });
 
 
 function func(){
     //Empty function
 }
-var props = {updateValue: func ,id:1,feature:1};
 
+const props = {
+  updateValue: func(),
+  id:1,
+  feature:1
+}
 
-test.todo('lmao'
-
-);
-
-let container = null;
-beforeEach(() => {
-  // setup a DOM element as a render target
-  container = document.createElement("div");
-  document.body.appendChild(container);
-});
-
-afterEach(() => {
-  // cleanup on exiting
-  container.remove();
-  container = null;
-});
-
-it("renders prop info", () => {
-    const props = {
-        updateValue: func(),
-        id:1,
-        feature:1
-    }
-
-    CriteriaComponent = mount(<Critiera {...props} />);
-
-    expect((CriteriaComponent).prop('id')).toEqual(1);
-});
+describe('Rendering',() => {
+  it("Test to verify is the form exists in the componenet", () => {
+    const wrapper = mount (< Criteria {...props} />);
+    expect(
+      wrapper.containsMatchingElement(                              
+        <input placeholder="Enter a new criterion" title="Criteria 1" id="c-1-1"  className="form-control" />
+      )
+    ).toBeTruthy();
+  }); 
+})
