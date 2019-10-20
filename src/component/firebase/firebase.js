@@ -25,6 +25,14 @@ class Firebase {
   passwordResetEmail = (email) =>
     this.auth.sendPasswordResetEmail(email);
 
+  addNewUser = (id, email, firstName, lastName) =>
+    this.db.collection('users').doc(id).set({
+      email:email,
+      firstName: firstName,
+      lastName: lastName,
+      role: this.db.collection("roles").doc("assessor"),
+    });
+
   doLogout = () =>  this.auth.signOut().then(_ => this.userPermissions = []);
 
   resolveUser = () => {
@@ -168,6 +176,8 @@ class Firebase {
     }
     return categories;
   };
+
+getRoleList = () => this.db.collection('roles').get();
 
 }
 

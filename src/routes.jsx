@@ -14,6 +14,7 @@ import ViewSubjectsAssessments from './component/assessing/viewAssessments.jsx';
 
 import ForgotPassword from './component/userOperations/forgotPassword.jsx'
 import LoginPage from './component/userOperations/login.jsx';
+import CreateAccount from './component/userOperations/createAccount.jsx';
 
 // Error
 import NotFound from './component/error/404.jsx'
@@ -57,6 +58,7 @@ class RoutesBase extends React.Component {
             <Switch>
               <Route exact path='/' component={LandingPage} />
               <Route exact path='/login' component={LoginPage} />
+              <Route exact path='/account/create' component={CreateAccount} />
               <Route exact path='/forgotPassword' component={ForgotPassword}/>
               <Route component={NotFound} />
             </Switch>

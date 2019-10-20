@@ -25,6 +25,11 @@ class LandingPageBase extends React.Component {
         To use this application, you need to be logged in. Click here to log in.
       </ListGroup.Item>
     );
+    listItems.push(
+      <ListGroup.Item action className="h5" key="1" onClick={(event)=>this.props.history.push('/account/create')}>
+        If you do not have an account, click here!
+      </ListGroup.Item>
+    );
     return listItems;
   }
 
