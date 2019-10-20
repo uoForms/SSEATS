@@ -15,7 +15,7 @@ const ReviewForm = (props) => {
 
     const [date, setDate] = React.useState();
     const [review, setReview] = React.useState();
-    const [subjects, setSubjects] = React.useState([]);;
+    const [subjects, setSubjects] = React.useState([]);
     const [selectedSubject, setSelectedSubject] = React.useState();
 
     const [error, setError] = React.useState("");
@@ -30,7 +30,12 @@ const ReviewForm = (props) => {
 
     React.useEffect(() => {
         if(props.review) {
-
+            console.log(props.review)
+            props.review.get().then((reviewDoc) => {
+                console.log(reviewDoc)
+                setDate(reviewDoc.data().date.toDate());
+                setReview(reviewDoc.data().review);
+            })
         } else {
             setDate(new Date());
             setSelectedSubject([]);
@@ -62,12 +67,8 @@ const ReviewForm = (props) => {
     const saveReview = () => {
         setError("");
         setMessage("");
-        firebase.saveReview(props.review, review, date, selectedSubject.document.ref).then(() => {
-            if(props.review) {
-                setMessage("The review has been saved");
-            } else {
-                // redirect to review list
-            }
+        firebase.saveReview(props.review, review, date, selectedSubject ? selectedSubject.document.ref : null).then(() => {
+            setMessage("The review has been saved");
         }).catch((e) => {
             setError(e.message);
         });
@@ -84,18 +85,26 @@ const ReviewForm = (props) => {
                         selected={date}
                         onChange={setDate}
                         className={"form-control"}
+                        showTimeSelect
+                        timeFormat="HH:mm"
+                        timeIntervals={15}
+                        timeCaption="time"
+                        dateFormat="MMMM d, yyyy h:mm aa"
                     />
                 </div>
             </Form.Group>
-            <Form.Group>
-                <Form.Label>Subject</Form.Label>
-                <Select
-                    options={mapSubjects()}
-                    placeholder={"Select Subjects..."}
-                    value={selectedSubject}
-                    onChange={onSelectedSubject}
-                />
-            </Form.Group>
+            {!props.review ? (
+                <Form.Group>
+                    <Form.Label>Subject</Form.Label>
+                    <Select
+                        options={mapSubjects()}
+                        placeholder={"Select a Subject..."}
+                        value={selectedSubject}
+                        onChange={onSelectedSubject}
+                    />
+                </Form.Group>
+            ): null}
+            
             <Form.Group>
                 <Form.Label>Review</Form.Label>
                 <Form.Control 

@@ -174,7 +174,7 @@ class Firebase {
     if(!review) {
       reviewDoc = subject.collection("reviews").doc();
     } else {
-      reviewDoc = subject.collection("reviews").doc(review);
+      reviewDoc = review;
     }
 
     reviewDoc.set({
@@ -183,6 +183,16 @@ class Firebase {
     });
     return reviewDoc;
   }
+
+  getReviews = async (subjectRef) => {
+    let reviews = {};
+    const reviewsData = await subjectRef.collection("reviews").orderBy("date", "desc").get();
+    for (var i in reviewsData.docs) {
+      let reviewRef = reviewsData.docs[i].id;
+      reviews[reviewRef] = reviewsData.docs[i].data();
+    }
+    return reviews;
+  };
 
 }
 
