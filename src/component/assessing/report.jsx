@@ -9,6 +9,7 @@ import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 import { withFirebase } from '../firebase/context';
 import AddScore from './addScore.jsx';
 import manageScore from '../firebase/manageScore';
+import ScoreColour from './scoreColour.jsx'
 
 
 class ReportBase extends React.Component {
@@ -18,78 +19,104 @@ class ReportBase extends React.Component {
     this.state = {
       subjectDocRef : "",
       subjects: [],
+      // scores of the category, key is the category
+      scores: {},
       subjectSnapshotMap : {},
       currentCategoryRef:"",
-      categories:[],
+      categories: [],
       categorySnapshotMap: {},
+      defaultColDef: this.getDefaultColDef(),
       columnDefs : this.getColumn(),
       gridOptions : null,
       rowData: [],
-      sidebarOpen: false
+      sidebarOpen: false,
+      colourGradients: []
     }
   }
 
- componentWillMount(){
-  this.getSubjects()
-  this.getCategories()
- }
-
-  getname(){
-    let name = []
-    let promises = []
-    promises.push(this.props.firebase.db.collection('subjects').get().then(result=>{
-      result.docs.forEach(doc=>{
-        name.push(doc.get('name'))
-      })
-    }))
-    Promise.all(promises).then(_=>{
-      return name
-
-    })
+  componentWillMount() {
+    this.getSubjects();
+    this.getCategories();
   }
 
   getSubjects(){
     let names = []
     let promises = []
     let docSnapMap = {}
-    names.push({name: "Select a Subject", docRef: ""})
-    promises.push(this.props.firebase.db.collection('subjects').get().then(result=>{
-      result.docs.forEach(doc=>{
-        let subject = {name: doc.get('name'), docRef: doc.ref.path}
-        docSnapMap[doc.ref.path] = doc.ref
-        names.push(subject)
-      })
-    }))
-    return Promise.all(promises).then(_=>{
-      let subjectMap = names.map((subject, i) => {
-        return <option key ={i} name = {subject['name']} value = {subject['docRef']}> {subject['name']}</option>
+    names.push({name: "Select a Subject", docRef: ""});
+    
+    return this.props.firebase.getViewableSubjectRefs().then((refs) => {
+      // Turn the refs into usable information
+      refs.forEach((ref) => {
+        promises.push(
+          ref.get().then((doc) => {
+            let subject = {name: doc.get('name'), docRef: doc.ref.path};
+            docSnapMap[doc.ref.path] = doc.ref;
+            names.push(subject);
+          })
+        );
       });
-      this.setState({subjects: subjectMap, subjectSnapshotMap: docSnapMap});
-    })
+    }).then (() => {
+      // Wait for all document fetches to end, then convert to options
+      return Promise.all(promises).then(_=>{
+        let subjectMap = names.map((subject, i) => {
+          return <option key ={i} name = {subject['name']} value = {subject['docRef']}> {subject['name']}</option>
+        });
+        this.setState({subjects: subjectMap, subjectSnapshotMap: docSnapMap});
+      })
+    });
   }
 
-  getCategories(){
-    let categories = []
-    let promises = []
-    let docSnapMap = {}
-    categories.push({name: "Select a Category", docRef: ""})
-    promises.push(this.props.firebase.db.collection('categories').get().then(result=>{
-      result.docs.forEach(doc=>{
-        let category = {name: doc.get('name'), docRef: doc.ref.path}
-        docSnapMap[doc.ref.path] = doc.ref
-        categories.push(category)
-      })
+  async getScoreData(score) {
+    let score_doc = await score.get();
+    return score_doc.data()
+  }
+
+  async mapScores (report_type) {
+    let scores = await report_type.get("scores");
+    return await Promise.all(scores.map(score => {
+      let thing = this.getScoreData(score)
+      return thing
+    }
+    ));
+  }
+  
+
+  async getCategories() {
+    let categories = [];
+    let promises = [];
+    let scores_map = {};
+    let docSnapMap = {};
+    categories.push({name: "Select a Category", docRef: ""});
+    promises.push(this.props.firebase.db.collection('categories').get().then(async (result) =>{
+      await Promise.all(result.docs.map(async (doc)=>{
+        let report_type = await doc.get("report_type").get();
+        let scores = await this.mapScores(report_type);
+        let category = {
+          name: doc.get('name'), 
+          docRef: doc.ref.path,
+        };
+        scores_map[doc.ref.path] = scores;
+        docSnapMap[doc.ref.path] = doc.ref;
+        categories.push(category);
+      }));
     }))
     return Promise.all(promises).then(_=>{
       let categoryMap = categories.map((category, i) => {
         return <option key ={i} name = {category['name']} value = {category['docRef']}> {category['name']}</option>
       });
-      this.setState({categories: categoryMap, categorySnapshotMap: docSnapMap});
+      this.setState({categories: categoryMap, categorySnapshotMap: docSnapMap, scores: scores_map});
     })
   }
 
+  getDefaultColDef () {
+    return {
+      sortable: true
+    };
+  }
+
   getColumn(){
-    return[
+    let columns = [
       {
         headerName: "Feature",
         field : "feature"     ,
@@ -101,21 +128,55 @@ class ReportBase extends React.Component {
         resizable : true
       },
       {
+        headerName: "Assessor",
+        field: "assessor",
+        resizable: true
+      },
+      {
         headerName: "Date",
         field : "date",
         resizable : true
       },
-      {
-        headerName: "Score",
-        field : "score",
-        resizable : true
-      },
-      {
-        headerName: "Comment",
-        field : "comment",
-        resizable : true
+    ];
+
+    if(this.state) {
+      let scores = this.state.scores[this.state.currentCategoryRef];
+      if(scores) {
+        let colours = []
+        scores.forEach((score) => {
+          // Create the colour gradient maps here
+          colours.push({
+            name : score.name,
+            valueMap : (s=>{
+              let gradient = {};
+              let rgb = (r, g, b)=>('#'+(r).toString(16).padStart(2,'0')+(g).toString(16).padStart(2,'0')+(b).toString(16).padStart(2,'0'));
+              gradient[s['null']] = rgb(128, 128, 128);
+              for (let i = s.min;i <= s.max; i += s.interval)
+              {
+                let j = Math.floor((s.max-i)*255/s.max)
+                gradient[i] = rgb(j,255-j,0);
+              }
+              return gradient;
+            })(score)
+          });
+          // Add score to the table
+          columns.push({
+            headerName: score.name,
+            field: score.name,
+            cellRenderer:"scoreColour",
+            resizable: true,
+          });
+        });
+        this.setState({colourGradients:colours})
       }
-    ]
+    }
+
+    columns.push({
+      headerName: "Comment",
+      field : "comment",
+      resizable : true
+    });
+    return columns;
   }
 
   onSetSidebarOpen(open, context) {
@@ -130,8 +191,21 @@ class ReportBase extends React.Component {
         this.setState({rowData:[]})
     }else{
       return manageScore.getRows(this.props.firebase.db, this.state.subjectSnapshotMap[this.state.subjectDocRef]
-              ,this.state.categorySnapshotMap[this.state.currentCategoryRef]).then(rows =>{
-        this.setState({rowData: rows},_=>{
+              ,this.state.categorySnapshotMap[this.state.currentCategoryRef], 
+              this.state.scores[this.state.currentCategoryRef]).then(rows =>{
+                // Create columns first to create the colour gradient.
+                let columns = this.getColumn();
+                rows.forEach(r=>this.state.colourGradients.forEach(c=>
+                  {
+                    r[c.name] = {
+                      number:r[c.name],
+                      colour:c.valueMap[r[c.name]]
+                    }
+                  }));
+        this.setState({
+          rowData: rows,
+          columnDefs: columns,
+        },_=>{
           // Callback sets size to whichever is wider between fit and auto.
           this.state.gridOptions.api.sizeColumnsToFit();
           let fit = 0;
@@ -205,6 +279,8 @@ class ReportBase extends React.Component {
         </Form.Row>
         <AgGridReact
           style={{maxWidth:"100%"}}
+          defaultColDef = {this.state.defaultColDef}
+          frameworkComponents = {{scoreColour:ScoreColour}}
           columnDefs = {this.state.columnDefs}
           rowData = {this.state.rowData}
           onGridReady={params=>{
@@ -215,7 +291,7 @@ class ReportBase extends React.Component {
         {
           this.state.sidebarOpen ?
           <Sidebar
-            sidebar={<AddScore subjectDocumentReference={this.props.firebase.db.doc(this.state.subjectDocRef)} exit={_=>{
+            sidebar={<AddScore subjectDocumentReference={this.props.firebase.db.doc(this.state.subjectDocRef)} selectedCategory={this.state.currentCategoryRef} exit={_=>{
               this.handleChange(this.state.subjectDocRef)
               this.setState({sidebarOpen:false})}}/>}
             open={true}

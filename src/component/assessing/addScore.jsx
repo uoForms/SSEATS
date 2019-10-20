@@ -9,72 +9,119 @@ class AddScoreBase extends React.Component {
     super(props);
     this.state = {
       criteriaOptions : null,
+      selectNames : null,
       selectOptions : null,
       criteria : undefined,
-      score : undefined,
+      score : [],
       comment : undefined
     };
-    manageScore.getCriterias(this.props.firebase.db).then(criteriaMap=>{
+    manageScore.getCriterias(this.props.firebase.db, this.props.selectedCategory).then(criteriaMap=>{
       let options = [];
-      for (let category in criteriaMap) {
+      for (var category in criteriaMap) {
         if (criteriaMap.hasOwnProperty(category)){
-          for(let feature in criteriaMap[category]) {
+          for(var feature in criteriaMap[category]) {
             if (criteriaMap[category].hasOwnProperty(feature)){
               let categoryOptions = [];
-              for (let i in criteriaMap[category][feature]) {
-                for(let criteria in criteriaMap[category][feature][i]) {
+              for (var i in criteriaMap[category][feature]) {
+                for(var criteria in criteriaMap[category][feature][i]) {
                   if (criteriaMap[category][feature][i].hasOwnProperty(criteria)){
-                    categoryOptions.push((_=>{
-                      return(
+                    this.setState({criteria:criteriaMap[category][feature][i][criteria]});
+                    categoryOptions.push(
                         <option key={criteria} value={criteriaMap[category][feature][i][criteria]}>
                           {criteria}
                         </option>
-                      );
-                    })());
+                    );
                   }
                 }
               }
-              options.push((_=>{
-                return(
-                  <optgroup key={feature} label={category + ": " + feature}>
+              options.push(
+                  <optgroup key={category + ':' + feature} label={category + ": " + feature}>
                     {categoryOptions}
                   </optgroup>
-                );
-              })());
+              );
             }
           }
         }
       }
       this.setState({criteriaOptions : options});
+      this.setScores()
     });
+  }
+
+  scores() {
+    let scores = [];
+    let formScore = [];
+    for (var i=0; i < this.state.selectOptions.length; i++) {
+      scores.push(
+        <Form.Group key={this.state.selectNames[i]}>
+          <Form.Label>{this.state.selectNames[i]}</Form.Label>
+          <Form.Control
+            as="select"
+            id={"score"+i}
+            title="Score"
+            onChange={(index=>{
+              // Pass argument to avoid no-loop-func
+              return (_=>{
+                let select = document.getElementById("score"+index);
+                let score = this.state.score;
+                score[index] = this.state.selectOptions[index][select.selectedIndex].props.value
+                this.setState({score:score});
+              })
+            })(i)}
+          >
+          {this.state.selectOptions[i]}
+          </Form.Control>
+        </Form.Group>
+        );
+      formScore.push(this.state.selectOptions[i][0].props.value);
+    }
+    // Initialize the score array when it's empty
+    if (this.state.score.length === 0)
+    {
+      this.setState({score:formScore});
+    }
+    return scores;
   }
 
   setScores() {
     if (this.state.criteria !== undefined) {
       manageScore.getScore(this.props.firebase.db.doc(this.state.criteria.split('/features/')[0])).then(scores=>{
-        let scale = [];
-        scale.push(
-          <option key="null" value={scores[0].null}>
-            {scores[0].null}
-          </option>
-        );
-        for (let i=scores[0].min; i<=scores[0].max; i+=scores[0].interval) {
-          scale.push(
-            <option key={i} value={i}>
-              {i}
+        let scales = [];
+        let names = [];
+        for (var i in scores){
+          scales.push([]);
+          names.push(scores[i].name)
+          let s = scales.length - 1;
+          scales[s].push(
+            <option key="null" value={scores[i].null}>
+              {scores[i].null}
             </option>
           );
+          for (var j=scores[i].min; j<=scores[i].max; j+=scores[i].interval) {
+            scales[s].push(
+              <option key={j} value={j}>
+                {j}
+              </option>
+            );
+          }
         }
-        this.setState({selectOptions : scale});
+        this.setState({
+          selectNames : names,
+          selectOptions: scales,
+        });
       });
     }
   }
 
-  handleClick() {
+  async handleClick() {
     if (this.props.subjectDocumentReference && this.state.criteria) {
+      const userRef = await this.props.firebase.getUserDoc();
+      const userData = await userRef.get().then((user) => user.data());
       manageScore.createScore(this.props.subjectDocumentReference, {
         type: this.props.firebase.db.doc(this.state.criteria),
         score: this.state.score,
+        assessor: userData.firstName ? userData.firstName + " " + userData.lastName : userData.email, 
+        assessorRef: userRef,
         comment: typeof this.state.comment === 'undefined'
           || this.state.comment === null ? '' : this.state.comment
       }).then(this.props.exit);
@@ -100,20 +147,9 @@ class AddScoreBase extends React.Component {
             {this.state.criteriaOptions}
           </Form.Control>
         </Form.Group>
-        <Form.Group>
-          <Form.Label>Score</Form.Label>
-          <Form.Control
-            as="select"
-            id="score"
-            title="Score"
-            onChange={_=>{
-              let select = document.getElementById("score");
-              this.setState({score:select[select.selectedIndex].value});
-            }}
-          >
-          {this.state.selectOptions}
-          </Form.Control>
-        </Form.Group>
+
+        {this.state.selectOptions!=null?this.scores():null}
+
         <Form.Group>
           <Form.Label>Comment</Form.Label>
           <Form.Control

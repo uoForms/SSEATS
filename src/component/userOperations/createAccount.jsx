@@ -14,6 +14,10 @@ class CreateAccountBase extends React.Component {
       messages: [],
       invalidEmailError: false,
       passwordMatchError: false,
+      emptyFirstName: false,
+      firstName: "",
+      emptyLastName: false,
+      lastName:"",
       emptyPassword: false,
       emptyPasswordConfirm: false,
       email: '',
@@ -30,12 +34,14 @@ class CreateAccountBase extends React.Component {
       invalidEmailError: !this.validEmail(),
       passwordMatchError: !this.matchingPassword(),
       emptyPassword: !this.emptyPassword(1),
-      emptyPasswordConfirm: !this.emptyPassword(2)
+      emptyPasswordConfirm: !this.emptyPassword(2),
+      emptyFirstName: this.emptyFirstName(),
+      emptyLastName: this.emptyLastName(),
     }, () => {
       if(this.isFormValid()){
         this.props.firebase.auth.createUserWithEmailAndPassword(this.state.email, this.state.password)
         .then((value) => {
-          this.props.firebase.addNewUser(value.user.uid, this.state.email).then(() => {
+          this.props.firebase.addNewUser(value.user.uid, this.state.email, this.state.firstName, this.state.lastName).then(() => {
             this.setState({
               accountCreated: true
             });
@@ -69,8 +75,10 @@ class CreateAccountBase extends React.Component {
   }
 
   isFormValid(){
+    console.log(!this.state.emptyFirstName && !this.state.emptyLastName)
     return (!this.state.invalidEmailError && !this.state.passwordMatchError &&
-      !this.state.emptyPassword && !this.state.emptyPasswordConfirm);
+      !this.state.emptyPassword && !this.state.emptyPasswordConfirm &&
+      !this.state.emptyFirstName && !this.state.emptyLastName);
   }
 
   renderMessages(){
@@ -86,10 +94,20 @@ class CreateAccountBase extends React.Component {
   }
 
   /**
-    *   Position 1 is password field, pasition 2 is password confirm field.
+    *   Position 1 is password field, position 2 is password confirm field.
     */
   emptyPassword(position){
     return !!(position === 1 ? this.state.password.length : this.state.passwordConfirm.length);
+  }
+
+  emptyFirstName() {
+    console.log("first", !this.state.firstName);
+    return !this.state.firstName;
+  }
+
+  emptyLastName() {
+    console.log("last", !this.state.lastName);
+    return !this.state.lastName;
   }
 
   renderForm() {
@@ -98,6 +116,32 @@ class CreateAccountBase extends React.Component {
         <Card.Body>
           <div className="h4">Create Account</div>
           {this.renderMessages()}
+          <Form.Group>
+            <Form.Label>First Name</Form.Label>
+            <Form.Control
+              id="firstName"
+              type="text"
+              placeholder="First Name"
+              title="First Name"
+              isInvalid={this.state.emptyFirstName}
+              onChange={() => this.setState({firstName:document.getElementById('firstName').value})}
+            />
+            {this.state.emptyFirstName ?
+            (<Form.Control.Feedback type="invalid">Please provide a first name.</Form.Control.Feedback>) : null}
+          </Form.Group>
+          <Form.Group>
+            <Form.Label>Last Name</Form.Label>
+            <Form.Control
+              id="lastName"
+              type="text"
+              placeholder="Last Name"
+              title="Last Name"
+              isInvalid={this.state.emptyLastName}
+              onChange={() => this.setState({lastName:document.getElementById('lastName').value})}
+            />
+            {this.state.emptyLastName ?
+              (<Form.Control.Feedback type="invalid">Please provide a last name.</Form.Control.Feedback>) : null}
+          </Form.Group>
           <Form.Group>
             <Form.Label>Email address</Form.Label>
             <Form.Control

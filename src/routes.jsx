@@ -1,14 +1,16 @@
 import React from 'react';
 import { Router, Route, Switch, Redirect } from 'react-router-dom';
 import { withFirebase } from './component/firebase/context';
-import { createBrowserHistory } from 'history';
 
 import Header from './component/header/header.jsx';
 // Pages
 import Report from './component/assessing/report.jsx'
 import CreateSubject from './component/assessing/createSubject.jsx';
 import CreateCategory from './component/assessing/createCategory.jsx';
+import CreateReportType from './component/assessing/createReportType.jsx';
 import LandingPage from './component/landingPage/landingPage.jsx';
+import AssignSubjectPage from './component/assessing/assign/assignSubjectPage.jsx';
+import ViewSubjectsAssessments from './component/assessing/viewAssessments.jsx';
 
 import ForgotPassword from './component/userOperations/forgotPassword.jsx'
 import LoginPage from './component/userOperations/login.jsx';
@@ -16,25 +18,28 @@ import CreateAccount from './component/userOperations/createAccount.jsx';
 
 // Error
 import NotFound from './component/error/404.jsx'
+import history from './history';
 
 // Scripts
 
 class RoutesBase extends React.Component {
   constructor(props) {
     super(props);
-    this.history = createBrowserHistory();
     // Dictionary that contains all the possible routes
     // This is to better restrict page access using firebase
     this.pages = {
-      "/report" : Report,
+      "/report/view" : Report,
       "/subject/create" : CreateSubject,
       "/category/create" : CreateCategory,
+      "/report/create" : CreateReportType,
+      "/subject/assign": AssignSubjectPage,
+      "/assessments/view" : ViewSubjectsAssessments,
     };
   }
 
   componentWillMount(){
     this.setState({perms: this.props.firebase.userPermissions})
-    this.listener = this.history.listen((location, action) => {
+    this.listener = history.listen((location, action) => {
       this.setState({perms: this.props.firebase.userPermissions})
     });
   }
@@ -45,7 +50,7 @@ class RoutesBase extends React.Component {
 
   unauthenticatedRouting() {
     return (
-        <Router history={this.history}>
+        <Router history={history}>
           <div>
             <Switch>
               <Route component={Header}></Route>
@@ -75,7 +80,7 @@ class RoutesBase extends React.Component {
 
   authenticatedRouting() {
     return (
-        <Router history={this.history}>
+        <Router history={history}>
           <div>
             <Switch>
               <Route component={Header}></Route>

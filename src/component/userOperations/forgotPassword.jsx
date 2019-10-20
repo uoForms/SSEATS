@@ -20,11 +20,9 @@ class ForgotPasswordBase extends React.Component {
     if (this.state.email !== '') {
       this.props.firebase.passwordResetEmail(this.state.email)
       .then(() => {
-        console.log('success');
         this.setState(this.INITIAL_STATE);
         this.props.history.push('/');
       }).catch(() => {
-        console.log('failed');
         this.setState({showError:true, errorMessage:"Invalid Email."});
       });
     } else if(this.state.email === '') {

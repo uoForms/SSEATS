@@ -47,17 +47,20 @@ class HeaderBase extends React.Component {
 
   render() {
     return (
-        <Navbar bg="dark" variant="dark">
+        <Navbar bg="dark" variant="dark" expand="md">
           <Navbar.Brand onClick={(event)=>this.props.history.push('/')}>SSEATS</Navbar.Brand>
-          <Nav className="mr-auto">
-            <Nav.Item>
-              <Nav.Link onClick={(event)=>this.props.history.push('/')}>Home</Nav.Link>
-            </Nav.Item>
-            {this.routingNavItems()}
-          </Nav>
-          <Nav>
-            {this.userNavItems()}
-          </Nav>
+          <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+          <Navbar.Collapse id="responsive-navbar-nav">
+            <Nav className="mr-auto">
+              <Nav.Item>
+                <Nav.Link onClick={(event)=>this.props.history.push('/')}>Home</Nav.Link>
+              </Nav.Item>
+              {this.routingNavItems()}
+            </Nav>
+            <Nav>
+              {this.userNavItems()}
+            </Nav>
+          </Navbar.Collapse>
         </Navbar>
 
     );
