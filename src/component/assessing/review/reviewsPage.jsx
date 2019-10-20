@@ -65,6 +65,13 @@ const ReviewsPage = (props) => {
         }
     };
 
+    const closeReview = async () => {
+        const newReviews = _.clone(reviews);
+        delete newReviews[selectedSubject.document.ref.path];
+        setReviews(newReviews);
+        setReview(null);
+    }
+
     return (
         <div style={{ width: '90vw', maxWidth: '50rem', margin: '5rem auto'}}>
             <Form.Group>
@@ -76,43 +83,44 @@ const ReviewsPage = (props) => {
                     onChange={onSelectedSubject}
                 />
             </Form.Group>
-            {selectedSubject ? (
-                    <Card>
-                        {review ? (
-                            <Card.Body>
-                                <Form.Group>
-                                    <Button
-                                        variant="danger"
-                                        onClick={_ => setReview(null)}
-                                    >
-                                        Close Review
-                                    </Button>
-                                </Form.Group>
-                                <ReviewForm
-                                    review={review}
+            <Card>
+                {selectedSubject ? (
+                    review ? (
+                        <Card.Body>
+                            <Form.Group>
+                                <Button
+                                    variant="danger"
+                                    onClick={closeReview}
+                                >
+                                    Close Review
+                                </Button>
+                            </Form.Group>
+                            <ReviewForm
+                                review={review}
+                            />
+                        </Card.Body>
+                    ) : (
+                        <React.Fragment>
+                            {getReviews(selectedSubject).length ? (
+                                <List
+                                    type={"flush"}
+                                    list={getReviews(selectedSubject)}
+                                    template={ReviewListItem}
                                 />
-                            </Card.Body>
-                        ) : (
-                            <React.Fragment>
-                                {getReviews(selectedSubject).length ? (
-                                    <List
-                                        type={"flush"}
-                                        list={getReviews(selectedSubject)}
-                                        template={ReviewListItem}
-                                    />
 
-                                ): (
-                                    <Card.Body>
-                                        <h4>No reviews for this subject</h4>
-                                    </Card.Body>
-                                )}
-                            </React.Fragment>
-                        )
-
-                        }
-                    </Card>
-                ): null
-            }
+                            ): (
+                                <Card.Body>
+                                    <h4>No reviews for this subject</h4>
+                                </Card.Body>
+                            )}
+                        </React.Fragment>
+                    )
+                ): (
+                    <Card.Body>
+                        <h4>Select a subject to view his reviews</h4>
+                    </Card.Body>
+                )}
+                </Card>
         </div>
     );
 

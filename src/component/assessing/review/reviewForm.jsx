@@ -15,6 +15,7 @@ const ReviewForm = (props) => {
 
     const [date, setDate] = React.useState();
     const [review, setReview] = React.useState();
+    const [reviewName, setReviewName] = React.useState();
     const [subjects, setSubjects] = React.useState([]);
     const [selectedSubject, setSelectedSubject] = React.useState();
 
@@ -35,10 +36,12 @@ const ReviewForm = (props) => {
                 console.log(reviewDoc)
                 setDate(reviewDoc.data().date.toDate());
                 setReview(reviewDoc.data().review);
+                setReviewName(reviewDoc.data().name)
             })
         } else {
             setDate(new Date());
-            setSelectedSubject([]);
+            setSelectedSubject();
+            setReviewName("");
         }
     }, [props.review])
 
@@ -64,10 +67,14 @@ const ReviewForm = (props) => {
         setReview(event.currentTarget.value);
     };
 
+    const updateReviewName = (event) => {
+        setReviewName(event.currentTarget.value);
+    };
+
     const saveReview = () => {
         setError("");
         setMessage("");
-        firebase.saveReview(props.review, review, date, selectedSubject ? selectedSubject.document.ref : null).then(() => {
+        firebase.saveReview(props.review, reviewName, review, date, selectedSubject ? selectedSubject.document.ref : null).then(() => {
             setMessage("The review has been saved");
         }).catch((e) => {
             setError(e.message);
@@ -78,6 +85,13 @@ const ReviewForm = (props) => {
         <div>
             {error ? <Alert variant={'danger'}>{error}</Alert> : null}
             {message ? <Alert variant={'success'}>{message}</Alert> : null}
+            <Form.Group>
+                <Form.Label>Review Name</Form.Label>
+                <Form.Control 
+                    value={reviewName}
+                    onChange={updateReviewName}
+                />
+            </Form.Group>
             <Form.Group>
                 <Form.Label>Review Date</Form.Label>
                 <div>
@@ -115,7 +129,10 @@ const ReviewForm = (props) => {
                 />
             </Form.Group>
             <Form.Group>
-                <Button onClick={saveReview}>
+                <Button
+                    disabled={!reviewName || !date || (!selectedSubject && !props.review)}
+                    onClick={saveReview}
+                >
                     Save review
                 </Button>
             </Form.Group>

@@ -10,7 +10,14 @@ const ReviewListItem = (props) => {
             className="h5"
             onClick={props.onClick}
         >  
-            <Form.Group>
+            <Form.Group className="mb-1">
+                <Form.Label className="mb-0">
+                    <h3 className="mb-0">
+                    {props.name}
+                    </h3>
+                </Form.Label>
+            </Form.Group>
+            <Form.Group className="mb-2">
                 <Form.Label>{props.date.toDate().toLocaleString("en-CA")}</Form.Label>
                 <div
                     className={"text-secondary"}

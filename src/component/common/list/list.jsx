@@ -13,8 +13,12 @@ import ListGroup from 'react-bootstrap/ListGroup';
 const List = (props) => {
 
     const mapData = () => {
-        return props.list.map((prop, i) => {
-            return props.template(prop);
+        return props.list.map((prop, i) => { 
+            return (
+                <React.Fragment key={i}>
+                    {props.template(prop)}
+                </React.Fragment>
+            );
         });
     }
 
