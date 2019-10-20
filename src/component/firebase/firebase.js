@@ -177,7 +177,7 @@ class Firebase {
     return categories;
   };
 
-  saveReview = async (review, reviewValue, date, subject) => {
+  saveReview = async (review, reviewName, reviewValue, date, subject) => {
     let reviewDoc;
     if(!review) {
       reviewDoc = subject.collection("reviews").doc();
@@ -186,6 +186,7 @@ class Firebase {
     }
 
     reviewDoc.set({
+      name: reviewName,
       review: reviewValue,
       date: date,
     });
