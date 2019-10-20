@@ -26,12 +26,17 @@ class HeaderBase extends React.Component {
     if(this.props.firebase.auth.currentUser === null){
       navItems.push(
         <Nav.Item key='0'>
+          <Nav.Link onClick={(event)=>this.props.history.push('/account/create')}>Create Account</Nav.Link>
+        </Nav.Item>
+      );
+      navItems.push(
+        <Nav.Item key='1'>
           <Nav.Link onClick={(event)=>this.props.history.push('/login')}>Login</Nav.Link>
         </Nav.Item>
       );
     } else {
       navItems.push(
-        <Nav.Item key="0">
+        <Nav.Item key='0'>
           <Nav.Link onClick={(event)=>this.handleClick(event)}>Logout</Nav.Link>
         </Nav.Item>
       );
