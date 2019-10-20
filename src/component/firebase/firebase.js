@@ -177,7 +177,32 @@ class Firebase {
     return categories;
   };
 
-getRoleList = () => this.db.collection('roles').get();
+  saveReview = async (review, reviewValue, date, subject) => {
+    let reviewDoc;
+    if(!review) {
+      reviewDoc = subject.collection("reviews").doc();
+    } else {
+      reviewDoc = review;
+    }
+
+    reviewDoc.set({
+      review: reviewValue,
+      date: date,
+    });
+    return reviewDoc;
+  }
+
+  getReviews = async (subjectRef) => {
+    let reviews = {};
+    const reviewsData = await subjectRef.collection("reviews").orderBy("date", "desc").get();
+    for (var i in reviewsData.docs) {
+      let reviewRef = reviewsData.docs[i].id;
+      reviews[reviewRef] = reviewsData.docs[i].data();
+    }
+    return reviews;
+  };
+  
+  getRoleList = () => this.db.collection('roles').get();
 
 }
 

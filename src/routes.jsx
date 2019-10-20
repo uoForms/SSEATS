@@ -11,6 +11,8 @@ import CreateReportType from './component/assessing/createReportType.jsx';
 import LandingPage from './component/landingPage/landingPage.jsx';
 import AssignSubjectPage from './component/assessing/assign/assignSubjectPage.jsx';
 import ViewSubjectsAssessments from './component/assessing/viewAssessments.jsx';
+import ReviewPage from './component/assessing/review/reviewPage.jsx';
+import ReviewsPage from './component/assessing/review/reviewsPage.jsx';
 
 import ForgotPassword from './component/userOperations/forgotPassword.jsx'
 import LoginPage from './component/userOperations/login.jsx';
@@ -34,6 +36,8 @@ class RoutesBase extends React.Component {
       "/report/create" : CreateReportType,
       "/subject/assign": AssignSubjectPage,
       "/assessments/view" : ViewSubjectsAssessments,
+      "/review/create" : ReviewPage,
+      "/reviews" : ReviewsPage,
     };
   }
 
