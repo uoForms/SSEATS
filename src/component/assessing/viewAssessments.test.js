@@ -1,7 +1,6 @@
 import * as React from 'react';
-import ViewAssessments from './ViewAssessments.jsx';
-import { shallow, mount, render } from 'enzyme';
-// in app/src/setupTests.js file
+import ViewAssessments from './viewAssessments.jsx';
+import {mount} from 'enzyme';
 
 const Enzyme = require('enzyme');
 
