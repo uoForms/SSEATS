@@ -158,7 +158,7 @@ class ReportBase extends React.Component {
               {
                 let j = Math.floor((s_max-i)*255/s_max)
                 // Reverse index if min and max were swapped
-                gradient[s.min==s_min?i:s_max+s_min-i] = rgb(j,255-j,0);
+                gradient[s.min===s_min?i:s_max+s_min-i] = rgb(j,255-j,0);
               }
               return gradient;
             })(score)
