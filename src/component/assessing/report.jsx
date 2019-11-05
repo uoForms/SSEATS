@@ -151,10 +151,14 @@ class ReportBase extends React.Component {
               let gradient = {};
               let rgb = (r, g, b)=>('#'+(r).toString(16).padStart(2,'0')+(g).toString(16).padStart(2,'0')+(b).toString(16).padStart(2,'0'));
               gradient[s['null']] = rgb(128, 128, 128);
-              for (let i = s.min;i <= s.max; i += s.interval)
+              // Inverse min and max if needed and adjust interval
+              let s_min = Math.min(s.min, s.max);
+              let s_max = Math.max(s.min, s.max);
+              for (let i = s_min;i <= s_max; i += Math.abs(s.interval))
               {
-                let j = Math.floor((s.max-i)*255/s.max)
-                gradient[i] = rgb(j,255-j,0);
+                let j = Math.floor((s_max-i)*255/s_max)
+                // Reverse index if min and max were swapped
+                gradient[s.min===s_min?i:s_max+s_min-i] = rgb(j,255-j,0);
               }
               return gradient;
             })(score)
