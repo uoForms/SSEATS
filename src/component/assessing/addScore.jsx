@@ -92,18 +92,20 @@ class AddScoreBase extends React.Component {
           scales.push([]);
           names.push(scores[i].name)
           let s = scales.length - 1;
+          let nullLabel = scores[i].labels?' - '+scores[i].labels[scores[i].null]||'':'';
           scales[s].push(
             <option key="null" value={scores[i].null}>
-              {scores[i].null}
+              {scores[i].null + nullLabel}
             </option>
           );
           let bounded = (val, a, b)=>{
             return val <= Math.max(a, b) && val >= Math.min(a, b)
           }
           for (var j=scores[i].min; bounded(j, scores[i].min, scores[i].max); j+=scores[i].interval) {
+            let label = scores[i].labels?' - '+scores[i].labels[j]||'':'';
             scales[s].push(
               <option key={j} value={j}>
-                {j}
+                {j + label}
               </option>
             );
           }
