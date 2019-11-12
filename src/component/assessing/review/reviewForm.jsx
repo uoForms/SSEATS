@@ -15,7 +15,7 @@ const ReviewForm = (props) => {
 
     const [date, setDate] = React.useState();
     const [review, setReview] = React.useState();
-    const [reviewName, setReviewName] = React.useState();
+    const [reviewName, setReviewName] = React.useState("");
     const [subjects, setSubjects] = React.useState([]);
     const [selectedSubject, setSelectedSubject] = React.useState();
 
@@ -24,7 +24,8 @@ const ReviewForm = (props) => {
     
     React.useEffect(() => {
         const onMount = async () => {
-            setSubjects(await firebase.getSubjects());
+            let subjectRefs = await firebase.getViewableSubjectRefs();
+            Promise.all(subjectRefs.map(subjectRef => subjectRef.get())).then(setSubjects);
         };
         onMount();
     }, [firebase]);
