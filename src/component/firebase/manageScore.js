@@ -140,9 +140,7 @@ let score = {
       for (var key in scoresMap) {
       
         // Only iterate over object values and not the other stuff inside objects.
-                  console.log(scoresMap[key]);
-        
-                  scoresMap[key].sort(function(a,b) {return (a.date < b.date) ? 1 : ((b.date < a.date) ? -1 : 0);} );
+        scoresMap[key].sort(function(a,b) {return (a.date < b.date) ? 1 : ((b.date < a.date) ? -1 : 0);} );
 
         if (scoresMap.hasOwnProperty(key)) {
           rows = rows.concat(scoresMap[key]);
