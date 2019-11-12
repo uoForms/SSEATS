@@ -11,7 +11,6 @@ import AddScore from './addScore.jsx';
 import manageScore from '../firebase/manageScore';
 import ScoreColour from './scoreColour.jsx'
 
-
 class ReportBase extends React.Component {
   constructor(props){
     super(props);

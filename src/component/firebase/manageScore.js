@@ -1,3 +1,5 @@
+//import _ from "lodash";
+
 let score = {
   // create assessment, then create score
   createScore: (subjectDocumentReference, data)=>{
@@ -132,14 +134,28 @@ let score = {
     })
     .then(_=>{
       let rows = [];
+      console.log(typeof(scoresMap));
+
+      
       for (var key in scoresMap) {
+      
         // Only iterate over object values and not the other stuff inside objects.
+                  console.log(scoresMap[key]);
+        
+                  scoresMap[key].sort(function(a,b) {return (a.date < b.date) ? 1 : ((b.date < a.date) ? -1 : 0);} );
+
         if (scoresMap.hasOwnProperty(key)) {
           rows = rows.concat(scoresMap[key]);
         }
       }
+
+      rows.sort(function(a,b) {return (a.criteria > b.criteria) ? 1 : ((b.criteria > a.criteria) ? -1 : 0);} );
+
       return rows;
     });
-  }
+  },  
 };
+
+
+
 export default score;
