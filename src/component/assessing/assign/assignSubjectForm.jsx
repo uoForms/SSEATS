@@ -19,7 +19,8 @@ const AssignSubjectForm = () => {
     React.useEffect(() => {
         const onMount = async () => {
             setAssessors(await firebase.findByRole("assessor"));
-            setSubjects(await firebase.getSubjects());
+            let subjectRefs = await firebase.getViewableSubjectRefs();
+            Promise.all(subjectRefs.map(subjectRef => subjectRef.get())).then(setSubjects);
         };
         onMount();
     }, [firebase]);
