@@ -110,10 +110,16 @@ class Firebase {
   getViewableSubjectRefs = async () => {
     const userData = await this.db.collection('users').doc(this.auth.currentUser.uid).get();
     if (!userData.data().subjects){
-      return [];
+      // If they are a coordinator or admin, they can view all assessors
+      if(userData.data().role.path === this.db.collection("roles").doc("coordinator").path
+        || userData.data().role.path === this.db.collection("roles").doc("admin").path) {
+          let subjects = await this.getSubjects();
+          return subjects.map(sub => sub.ref);
+        }
     } else {
       return userData.data().subjects;
     }
+    return [];
   };
 
   assignSubjects = async (assessor, subjects) => {
