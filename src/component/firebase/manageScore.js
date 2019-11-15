@@ -132,14 +132,22 @@ let score = {
     })
     .then(_=>{
       let rows = [];
+      
       for (var key in scoresMap) {
         // Only iterate over object values and not the other stuff inside objects.
         if (scoresMap.hasOwnProperty(key)) {
           rows = rows.concat(scoresMap[key]);
         }
       }
+
+      //Sort by feature, then criteria then by date.
+      rows.sort((a, b) => (a.feature > b.feature) ? 1 : (a.feature === b.feature) ? ((a.criteria > b.criteria) ? 1 : (a.criteria === b.criteria) ? ((a.date < b.date) ? 1 : -1) : -1 ) : -1)
+
       return rows;
     });
   }
 };
+
+
+
 export default score;
