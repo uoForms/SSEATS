@@ -134,20 +134,16 @@ let score = {
     })
     .then(_=>{
       let rows = [];
-      console.log(typeof(scoresMap));
-
       
       for (var key in scoresMap) {
-      
         // Only iterate over object values and not the other stuff inside objects.
-        scoresMap[key].sort(function(a,b) {return (a.date < b.date) ? 1 : ((b.date < a.date) ? -1 : 0);} );
-
         if (scoresMap.hasOwnProperty(key)) {
           rows = rows.concat(scoresMap[key]);
         }
       }
 
-      rows.sort(function(a,b) {return (a.criteria > b.criteria) ? 1 : ((b.criteria > a.criteria) ? -1 : 0);} );
+      //Sort by feature, then criteria then by date.
+      rows.sort((a, b) => (a.feature > b.feature) ? 1 : (a.feature === b.feature) ? ((a.criteria > b.criteria) ? 1 : (a.criteria === b.criteria) ? ((a.date < b.date) ? 1 : -1) : -1 ) : -1)
 
       return rows;
     });
