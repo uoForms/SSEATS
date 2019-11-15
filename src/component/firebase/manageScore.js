@@ -1,5 +1,3 @@
-//import _ from "lodash";
-
 let score = {
   // create assessment, then create score
   createScore: (subjectDocumentReference, data)=>{
@@ -147,7 +145,7 @@ let score = {
 
       return rows;
     });
-  },  
+  }
 };
 
 
