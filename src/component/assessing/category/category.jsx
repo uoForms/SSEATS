@@ -37,7 +37,7 @@ const Category = (props) => {
 
   const addCriteria = (fId) => {
     let newFeatures = _.clone(features);
-    newFeatures[fId].criteria.unshift("");
+    newFeatures[fId].criteria.push("");
     setFeatures(newFeatures);
   }
 
@@ -67,7 +67,7 @@ const Category = (props) => {
   
   const addFeature = () => {
     let newFeatures = _.cloneDeep(features);
-    newFeatures.unshift({
+    newFeatures.push({
       criteria: [],
       value: "",
     });
