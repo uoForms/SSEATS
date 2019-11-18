@@ -3,12 +3,11 @@ import 'firebase/auth';
 import 'firebase/firestore'
 
 var config = {
-  apiKey: "AIzaSyBYhYolH-zgdIn_980Ij1mal54zwHSRpw4",
-  authDomain: "sse-ats.firebaseapp.com",
-  databaseURL: "https://sse-ats.firebaseio.com",
-  projectId: "sse-ats",
-  storageBucket: "sse-ats.appspot.com",
-  messagingSenderId: "642639128592"
+  apiKey: "AIzaSyAqueI9K4QvtdJVdnDHZxik8G2FAk2GqS8 ",
+  authDomain: "icf-patient-card.firebaseapp.com",
+  databaseURL: "https://icf-patient-card.firebaseio.com",
+  projectId: "icf-patient-card",
+  storageBucket: "icf-patient-card.appspot.com"
 };
 
 class Firebase {
