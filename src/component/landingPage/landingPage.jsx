@@ -37,7 +37,7 @@ class LandingPageBase extends React.Component {
     return(
       <Card style={{ width: '75vw', minWidth: '10rem', margin: '5rem auto'}}>
         <Card.Body>
-          <div className="h3">Welcome to SSEATS!</div>
+          <div className="h3">Welcome to ICF!</div>
         </Card.Body>
         {/* List of actions available, basically acts as a navbar for the home page */}
         <ListGroup variant="flush">
