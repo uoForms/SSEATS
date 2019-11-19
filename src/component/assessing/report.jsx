@@ -231,6 +231,16 @@ class ReportBase extends React.Component {
   }
 }
 
+  exportCSV(){
+    var params = {
+      skipHeader: false,
+      skipFooters: true,
+      skipGroups: true,
+      fileName: "export.csv"
+  };
+  this.gridOptions.api.exportDataAsCsv(params);
+  }
+
   render() {
     return (
       <div className="ag-theme-balham"
@@ -292,6 +302,11 @@ class ReportBase extends React.Component {
             this.setState({gridOptions : params});
           }}
         />
+
+        <div>
+          <button type="button" className="btn btn-secondary" onClick={this.exportCSV}>Export to CSV</button>
+        </div>
+
         {
           this.state.sidebarOpen ?
           <Sidebar
