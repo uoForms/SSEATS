@@ -229,19 +229,21 @@ class ReportBase extends React.Component {
       });
   }
 }
-
+  //Exporting to CSV
   exportCSV(){
-    var params = {
+    var exportParams = {
       skipHeader: false,
       skipFooters: true,
       skipGroups: true,
       fileName: "export.csv"
   };
-  this.gridOptions.api.exportDataAsCsv(params);
+    this.state.gridOptions.api.exportDataAsCsv(exportParams);
   }
 
   render() {
     return (
+
+      
       <div className="ag-theme-balham"
         style = {{flex:1, height:'80vh', width: '80%', margin: '2rem auto'}}
       >
@@ -303,7 +305,7 @@ class ReportBase extends React.Component {
         />
 
         <div>
-          <button type="button" className="btn btn-secondary" onClick={this.exportCSV}>Export to CSV</button>
+          <button type="button" className="btn btn-secondary" onClick={_ => {this.exportCSV()}}>Export to CSV</button>
         </div>
 
         {
