@@ -48,7 +48,7 @@ class HeaderBase extends React.Component {
   render() {
     return (
         <Navbar bg="dark" variant="dark" expand="md">
-          <Navbar.Brand onClick={(event)=>this.props.history.push('/')}>SSEATS</Navbar.Brand>
+          <Navbar.Brand onClick={(event)=>this.props.history.push('/')}>ICF</Navbar.Brand>
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
           <Navbar.Collapse id="responsive-navbar-nav">
             <Nav className="mr-auto">
