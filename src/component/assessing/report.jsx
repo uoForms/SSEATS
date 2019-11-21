@@ -74,8 +74,7 @@ class ReportBase extends React.Component {
   async mapScores (report_type) {
     let scores = await report_type.get("scores");
     return await Promise.all(scores.map(score => {
-      let thing = this.getScoreData(score)
-      return thing
+      return this.getScoreData(score);
     }
     ));
   }
