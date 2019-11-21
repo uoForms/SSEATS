@@ -235,8 +235,19 @@ class ReportBase extends React.Component {
       skipHeader: false,
       skipFooters: true,
       skipGroups: true,
-      fileName: "export.csv"
+      fileName: "export.csv",
+      processCellCallback : function(params){
+        //Check if the value is a score which is an object of "number" and "colour"
+        if(typeof params.value === "object"){
+          //If object, only return the number value for the csv
+          return params.value.number;
+        }else{
+          return params.value;
+        }
+      }
   };
+
+    //Export the displayed values from the table to CSV
     this.state.gridOptions.api.exportDataAsCsv(exportParams);
   }
 
