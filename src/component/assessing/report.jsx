@@ -187,7 +187,6 @@ class ReportBase extends React.Component {
   }
 
   handleChange (){
-
     if(this.state.subjectDocRef === ""){
       this.setState({rowData:[]});
     }else if(this.state.currentCategoryRef === ""){
@@ -303,6 +302,17 @@ class ReportBase extends React.Component {
             </Form.Group>
           </Col>
         </Form.Row>
+        <Form.Row>
+          <Col sm={'auto'}>
+          <Form.Group>
+              {
+                ((this.state.currentCategoryRef==="") || (this.state.subjectDocRef==="")) ?
+                <Button variant="secondary" disabled>Export to CSV</Button> :
+                <Button onClick={_ => {this.exportCSV()}}>Export to CSV</Button>
+              }
+            </Form.Group>
+          </Col>
+        </Form.Row>
         <AgGridReact
           style={{maxWidth:"100%"}}
           defaultColDef = {this.state.defaultColDef}
@@ -314,11 +324,6 @@ class ReportBase extends React.Component {
             this.setState({gridOptions : params});
           }}
         />
-
-        <div>
-          <button type="button" className="btn btn-secondary" onClick={_ => {this.exportCSV()}}>Export to CSV</button>
-        </div>
-
         {
           this.state.sidebarOpen ?
           <Sidebar
