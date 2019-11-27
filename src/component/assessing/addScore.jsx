@@ -127,7 +127,7 @@ class AddScoreBase extends React.Component {
             score={this.state.score}
           >   
           </Score>:
-          <div>sadf</div>
+          null
         }
 
         <Form.Group>
