@@ -9,8 +9,14 @@ class ScoreColourBase extends React.Component {
     }
   }
   render() {
+
     return(
-    <span className="badge badge-pill" style={{backgroundColor: this.state.value.colour}}>{this.state.value.number}</span>
+      <div>{
+        this.state.value===undefined ?
+        null:
+        <span className="badge badge-pill" style={{backgroundColor: this.state.value.colour}}>{this.state.value.number}</span>
+      }
+      </div>
   );
   }
 }

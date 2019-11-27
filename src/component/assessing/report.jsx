@@ -11,7 +11,6 @@ import AddScore from './addScore.jsx';
 import manageScore from '../firebase/manageScore';
 import ScoreColour from './scoreColour.jsx'
 
-
 class ReportBase extends React.Component {
   constructor(props){
     super(props);
@@ -75,8 +74,7 @@ class ReportBase extends React.Component {
   async mapScores (report_type) {
     let scores = await report_type.get("scores");
     return await Promise.all(scores.map(score => {
-      let thing = this.getScoreData(score)
-      return thing
+      return this.getScoreData(score);
     }
     ));
   }
@@ -188,7 +186,6 @@ class ReportBase extends React.Component {
   }
 
   handleChange (){
-
     if(this.state.subjectDocRef === ""){
       this.setState({rowData:[]});
     }else if(this.state.currentCategoryRef === ""){
@@ -230,9 +227,32 @@ class ReportBase extends React.Component {
       });
   }
 }
+  //Exporting to CSV
+  exportCSV(){
+    var exportParams = {
+      skipHeader: false,
+      skipFooters: true,
+      skipGroups: true,
+      fileName: "export.csv",
+      processCellCallback : function(params){
+        //Check if the value is a score which is an object of "number" and "colour"
+        if(typeof params.value === "object"){
+          //If object, only return the number value for the csv
+          return params.value.number;
+        }else{
+          return params.value;
+        }
+      }
+  };
+
+    //Export the displayed values from the table to CSV
+    this.state.gridOptions.api.exportDataAsCsv(exportParams);
+  }
 
   render() {
     return (
+
+      
       <div className="ag-theme-balham"
         style = {{flex:1, height:'80vh', width: '80%', margin: '2rem auto'}}
       >
@@ -277,6 +297,17 @@ class ReportBase extends React.Component {
                 this.state.subjectDocRef==="" ?
                 <Button variant="secondary" disabled>Add Score</Button> :
                 <Button onClick={_=>this.setState({sidebarOpen:true})}>Add Score</Button>
+              }
+            </Form.Group>
+          </Col>
+        </Form.Row>
+        <Form.Row>
+          <Col sm={'auto'}>
+          <Form.Group>
+              {
+                ((this.state.currentCategoryRef==="") || (this.state.subjectDocRef==="")) ?
+                <Button variant="secondary" disabled>Export to CSV</Button> :
+                <Button onClick={_ => {this.exportCSV()}}>Export to CSV</Button>
               }
             </Form.Group>
           </Col>
