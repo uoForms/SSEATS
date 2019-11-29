@@ -125,8 +125,7 @@ class AddScoreBase extends React.Component {
             selectNames={this.state.selectNames}
             selectOptions={this.state.selectOptions}
             score={this.state.score}
-          >   
-          </Score>:
+          />:
           null
         }
 

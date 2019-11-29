@@ -3,6 +3,13 @@ import Form from 'react-bootstrap/Form';
 import { withFirebase } from '../firebase/context'
 
 class ScoreBase extends React.Component {
+  /*
+  * Props should have the following values for the component to work properly:
+  * selectNames     Array of strings for labelling each select
+  * selectOptions   Array containing the component array for each select
+  * score           The currently selected score value for each select
+  * See addScore.jsx for an example
+  */
   constructor(props){
     super(props);
     let formScore = props.score;
@@ -57,5 +64,5 @@ class ScoreBase extends React.Component {
   }
 }
 
-const Score = withFirebase(ScoreBase);
-export default Score
+const Score = ScoreBase;
+export default Score;

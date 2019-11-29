@@ -21,5 +21,5 @@ class ScoreColourBase extends React.Component {
   }
 }
 
-const ScoreColour = withFirebase(ScoreColourBase);
+const ScoreColour = ScoreColourBase;
 export default ScoreColour;
