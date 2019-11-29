@@ -1,7 +1,6 @@
 import React from 'react';
-import { withFirebase } from '../firebase/context';
 
-class ScoreColourBase extends React.Component {
+class ScoreColour extends React.Component {
   constructor(props){
     super(props)
     this.state = {
@@ -21,5 +20,4 @@ class ScoreColourBase extends React.Component {
   }
 }
 
-const ScoreColour = withFirebase(ScoreColourBase);
 export default ScoreColour;

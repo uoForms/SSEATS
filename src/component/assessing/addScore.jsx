@@ -3,6 +3,7 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { withFirebase } from '../firebase/context'
 import manageScore from '../firebase/manageScore'
+import Score from './Score'
 
 class AddScoreBase extends React.Component {
   constructor(props){
@@ -46,41 +47,6 @@ class AddScoreBase extends React.Component {
       this.setState({criteriaOptions : options});
       this.setScores()
     });
-  }
-
-  scores() {
-    let scores = [];
-    let formScore = [];
-    for (var i=0; i < this.state.selectOptions.length; i++) {
-      scores.push(
-        <Form.Group key={this.state.selectNames[i]}>
-          <Form.Label>{this.state.selectNames[i]}</Form.Label>
-          <Form.Control
-            as="select"
-            id={"score"+i}
-            title="Score"
-            onChange={(index=>{
-              // Pass argument to avoid no-loop-func
-              return (_=>{
-                let select = document.getElementById("score"+index);
-                let score = this.state.score;
-                score[index] = this.state.selectOptions[index][select.selectedIndex].props.value
-                this.setState({score:score});
-              })
-            })(i)}
-          >
-          {this.state.selectOptions[i]}
-          </Form.Control>
-        </Form.Group>
-        );
-      formScore.push(this.state.selectOptions[i][0].props.value);
-    }
-    // Initialize the score array when it's empty
-    if (this.state.score.length === 0)
-    {
-      this.setState({score:formScore});
-    }
-    return scores;
   }
 
   setScores() {
@@ -153,7 +119,15 @@ class AddScoreBase extends React.Component {
           </Form.Control>
         </Form.Group>
 
-        {this.state.selectOptions!=null?this.scores():null}
+        {
+          this.state.selectOptions!=null ?
+          <Score 
+            selectNames={this.state.selectNames}
+            selectOptions={this.state.selectOptions}
+            score={this.state.score}
+          />:
+          null
+        }
 
         <Form.Group>
           <Form.Label>Comment</Form.Label>
