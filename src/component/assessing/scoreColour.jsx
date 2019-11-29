@@ -1,5 +1,4 @@
 import React from 'react';
-import { withFirebase } from '../firebase/context';
 
 class ScoreColourBase extends React.Component {
   constructor(props){

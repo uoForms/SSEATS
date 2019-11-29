@@ -1,6 +1,5 @@
 import React from 'react';
 import Form from 'react-bootstrap/Form';
-import { withFirebase } from '../firebase/context'
 
 class ScoreBase extends React.Component {
   /*
