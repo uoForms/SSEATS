@@ -1,6 +1,6 @@
 import React from 'react';
 
-class ScoreColourBase extends React.Component {
+class ScoreColour extends React.Component {
   constructor(props){
     super(props)
     this.state = {
@@ -20,5 +20,4 @@ class ScoreColourBase extends React.Component {
   }
 }
 
-const ScoreColour = ScoreColourBase;
 export default ScoreColour;

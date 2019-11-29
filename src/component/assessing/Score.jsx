@@ -1,7 +1,7 @@
 import React from 'react';
 import Form from 'react-bootstrap/Form';
 
-class ScoreBase extends React.Component {
+class Score extends React.Component {
   /*
   * Props should have the following values for the component to work properly:
   * selectNames     Array of strings for labelling each select
@@ -63,5 +63,4 @@ class ScoreBase extends React.Component {
   }
 }
 
-const Score = ScoreBase;
 export default Score;
