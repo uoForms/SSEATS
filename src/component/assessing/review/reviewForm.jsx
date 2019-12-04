@@ -32,9 +32,7 @@ const ReviewForm = (props) => {
 
     React.useEffect(() => {
         if(props.review) {
-            console.log(props.review)
             props.review.get().then((reviewDoc) => {
-                console.log(reviewDoc)
                 setDate(reviewDoc.data().date.toDate());
                 setReview(reviewDoc.data().review);
                 setReviewName(reviewDoc.data().name)
