@@ -3,6 +3,7 @@ import FirebaseContext from '../../firebase/context';
 import Select from 'react-select';
 import Form from "react-bootstrap/Form";
 import Button from 'react-bootstrap/Button';
+import Alert from 'react-bootstrap/Alert';
 
 const AssignSubjectForm = () => {
 
@@ -13,6 +14,8 @@ const AssignSubjectForm = () => {
     const [subjects, setSubjects] = React.useState([]);;
     const [selectedSubjects, setSelectedSubjects] = React.useState([]);
 
+    const [error, setError] = React.useState("");
+    const [success, setSuccess] = React.useState("");
     
 
     //On mount
@@ -24,6 +27,11 @@ const AssignSubjectForm = () => {
         };
         onMount();
     }, [firebase]);
+
+    const resetMessages = () => {
+        setError("");
+        setSuccess("");
+    }
 
     const subjectToOption = (subject, index) => {
         return {
@@ -40,6 +48,7 @@ const AssignSubjectForm = () => {
     };
 
     const onSelectedSubject = (value, action) => {
+        resetMessages();
         setSelectedSubjects(value);
     }
 
@@ -54,6 +63,7 @@ const AssignSubjectForm = () => {
     }
 
     const onSelectedAssessor = async (value) => {
+        resetMessages();
         value.document.ref.get().then((result) => {
             const data = result.data();
             if (data.subjects) {
@@ -69,11 +79,17 @@ const AssignSubjectForm = () => {
     };
 
     const updateAssignment = () => {
-        firebase.assignSubjects(selectedAssessor.document.ref, selectedSubjects.map((subject) => subject.document.ref));
+        firebase.assignSubjects(selectedAssessor.document.ref, selectedSubjects.map((subject) => subject.document.ref)).then(() => {
+            setSuccess("The assessor has been updated with his new assignments")
+        }).catch((e) => {
+            setError("Could not update assignment, please try again");
+        });
     }
 
     return (
         <div>
+            {error ? <Alert variant={'danger'}>{error}</Alert> : null}
+            {success ? <Alert variant={'success'}>{success}</Alert> : null}
             <Form.Group>
                 <Form.Label>Assessor</Form.Label>
                 <Select

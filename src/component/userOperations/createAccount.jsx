@@ -42,8 +42,10 @@ class CreateAccountBase extends React.Component {
         this.props.firebase.auth.createUserWithEmailAndPassword(this.state.email, this.state.password)
         .then((value) => {
           this.props.firebase.addNewUser(value.user.uid, this.state.email, this.state.firstName, this.state.lastName).then(() => {
-            this.setState({
-              accountCreated: true
+            this.props.firebase.doLogout().then(() => {
+              this.setState({
+                accountCreated: true
+              });
             });
           }).catch((e) => {
             this.state.messages.push({
@@ -53,7 +55,6 @@ class CreateAccountBase extends React.Component {
             this.forceUpdate()
           });
         }).catch((e) => {
-          console.log(e)
           this.state.messages.push({
             message: e.message,
             messageType: 'danger'
@@ -75,7 +76,6 @@ class CreateAccountBase extends React.Component {
   }
 
   isFormValid(){
-    console.log(!this.state.emptyFirstName && !this.state.emptyLastName)
     return (!this.state.invalidEmailError && !this.state.passwordMatchError &&
       !this.state.emptyPassword && !this.state.emptyPasswordConfirm &&
       !this.state.emptyFirstName && !this.state.emptyLastName);
@@ -101,12 +101,10 @@ class CreateAccountBase extends React.Component {
   }
 
   emptyFirstName() {
-    console.log("first", !this.state.firstName);
     return !this.state.firstName;
   }
 
   emptyLastName() {
-    console.log("last", !this.state.lastName);
     return !this.state.lastName;
   }
 
