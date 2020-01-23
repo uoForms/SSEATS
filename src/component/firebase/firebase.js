@@ -3,12 +3,14 @@ import 'firebase/auth';
 import 'firebase/firestore'
 
 var config = {
-  apiKey: "AIzaSyBYhYolH-zgdIn_980Ij1mal54zwHSRpw4",
-  authDomain: "sse-ats.firebaseapp.com",
-  databaseURL: "https://sse-ats.firebaseio.com",
-  projectId: "sse-ats",
-  storageBucket: "sse-ats.appspot.com",
-  messagingSenderId: "642639128592"
+  apiKey: "AIzaSyAkrOWM_iZb4BUzEAfgebzgG39yARoiqLE",
+  authDomain: "playground-a5c42.firebaseapp.com",
+  databaseURL: "https://playground-a5c42.firebaseio.com",
+  projectId: "playground-a5c42",
+  storageBucket: "playground-a5c42.appspot.com",
+  messagingSenderId: "298536703634",
+  appId: "1:298536703634:web:c2ae7c250910fef008784b",
+  measurementId: "G-HG3GB4BL6Q"
 };
 
 class Firebase {
